@@ -8,7 +8,7 @@
 	<packaging>apk</packaging>
 
 	<parent>
-		<groupId>com.mobivery.smart-location</groupId>
+		<groupId>com.mobivery.smartlocation</groupId>
 		<artifactId>parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
@@ -27,7 +27,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.mobivery.smart-location</groupId>
+			<groupId>com.mobivery.smartlocation</groupId>
 			<artifactId>library</artifactId>
 			<version>${project.version}</version>
 			<type>apklib</type>
