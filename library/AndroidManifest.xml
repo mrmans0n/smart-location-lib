@@ -6,4 +6,8 @@
     android:versionName="1.0.0">
 
     <uses-sdk android:minSdkVersion="8" />
+    <application>
+        <service android:name=".ActivityRecognitionService"/>
+        <service android:name=".SmartLocationService"/>
+    </application>
 </manifest>

@@ -3,6 +3,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+    <groupId>com.mobivery.smartlocation</groupId>
 	<artifactId>library</artifactId>
 	<name>SmartLocation Library</name>
 	<packaging>apklib</packaging>
@@ -23,7 +24,20 @@
 		<dependency>
 		  	<groupId>android.support</groupId>
 		  	<artifactId>compatibility-v4</artifactId>
+            <version>13</version>
 		</dependency>
+        <dependency>
+            <groupId>com.google.android.gms</groupId>
+            <artifactId>google-play-services</artifactId>
+            <version>7</version>
+            <type>apklib</type>
+        </dependency>
+        <dependency>
+            <groupId>com.google.android.gms</groupId>
+            <artifactId>google-play-services</artifactId>
+            <version>7</version>
+            <type>jar</type>
+        </dependency>
 	</dependencies>
 
 	<build>
