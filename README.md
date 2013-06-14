@@ -7,9 +7,9 @@ Usage
 -----
 
 ````xml
-<parent>
+<dependency>
 	<groupId>com.mobivery.smart-location</groupId>
 	<artifactId>parent</artifactId>
 	<version>1.0-SNAPSHOT</version>
-</parent>
+</dependency>
 ````
