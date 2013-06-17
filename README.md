@@ -62,7 +62,7 @@ SmartLocation.getInstance().cleanup(context);
 
 The Service will send the information of user's location and current activity via intents.
 
-The default intent that will be broadcasted will be `com.mobivery.smartlocation.LOCATION_UPDATED`, but you can configure the package by using a SmartLocationOptions object but more on that later.
+The default intent that will be broadcasted will be `com.mobivery.smartlocation.LOCATION_UPDATED`. You can configure the package by passing a SmartLocationOptions object to the start method but more on that later.
 
 Here goes an example of how to capture the intent and do things with it.
 
