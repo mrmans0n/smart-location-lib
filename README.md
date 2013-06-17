@@ -102,7 +102,7 @@ In the following example you can see how to setup a new package for the LOCATION
         SmartLocation.getInstance().start(context, options);
 ````
 
-With this call, the intent you will want to watch for is ´com.mypackage.name.LOCATION_UPDATED´.
+With this call, the intent you will want to watch for is `com.mypackage.name.LOCATION_UPDATED`.
 
 License
 -------
