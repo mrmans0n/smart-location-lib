@@ -1,7 +1,7 @@
 smart-location-lib
 ==================
 
-Android library project that intends to use the minimum battery drain possible
+Android library project that intends to use the minimum battery drain possible when used in navigation apps.
 
 Getting started
 ---------------
