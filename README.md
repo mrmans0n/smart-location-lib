@@ -19,11 +19,25 @@ You should add this dependency.
 Permissions
 -----------
 
-You must add these permissions to your app. 
+You must add these permissions to your AndroidManifest.xml. 
 
 ````xml
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+<uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
+<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
 
 ````
+
+You also have to add two services to your application node in the manifest.
+
+````xml
+<service android:name="com.mobivery.smartlocation.ActivityRecognitionService"/>
+<service android:name="com.mobivery.smartlocation.SmartLocationService"/>
+````
+
+Check out the sample project for seeing how it should be in a real situation.
 
 Usage
 -----

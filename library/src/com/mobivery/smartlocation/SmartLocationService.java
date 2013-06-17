@@ -23,11 +23,6 @@ import com.google.android.gms.location.LocationRequest;
  */
 public class SmartLocationService extends Service implements LocationListener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 
-    public static final String DETECTED_ACTIVITY = "ACTIVITY";
-    public static final String DETECTED_LOCATION = "LOCATION";
-
-    private static final String LOCATION_BROADCAST_INTENT = ".LOCATION_UPDATED";
-
     private static final int IN_VEHICLE_UPDATE_INTERVAL_IN_SECONDS = 2;
     private static final int STILL_UPDATE_INTERVAL_IN_SECONDS = 5;
 
@@ -90,7 +85,7 @@ public class SmartLocationService extends Service implements LocationListener, G
         locationClient = new LocationClient(this, this, this);
         locationRequest = LocationRequest.create();
 
-        setInVehicleSettings();
+        setNonMovingSettings();
     }
 
     private void setInVehicleSettings() {
@@ -109,13 +104,6 @@ public class SmartLocationService extends Service implements LocationListener, G
     private void initActivityRecognition() {
         detectionRequester = new ActivityDetectionRequester(this);
         detectionRemover = new ActivityDetectionRemover(this);
-    }
-
-    /**
-     * Starts the process in which we will locate the user using fused location updates, with a default package name
-     */
-    public void startLocation() {
-        startLocation(null);
     }
 
     /**
@@ -162,7 +150,7 @@ public class SmartLocationService extends Service implements LocationListener, G
      * @return
      */
     public String getLocationUpdatedIntentName() {
-        return callerPackage + LOCATION_BROADCAST_INTENT;
+        return callerPackage + SmartLocation.LOCATION_BROADCAST_INTENT_TRAIL;
     }
 
     private BroadcastReceiver activityUpdatesReceiver = new BroadcastReceiver() {
@@ -195,8 +183,8 @@ public class SmartLocationService extends Service implements LocationListener, G
         Log.i(getClass().getSimpleName(), "Broadcasting new location intent " + intentName);
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(intentName);
-        broadcastIntent.putExtra(DETECTED_ACTIVITY, currentActivity);
-        broadcastIntent.putExtra(DETECTED_LOCATION, location);
+        broadcastIntent.putExtra(SmartLocation.DETECTED_ACTIVITY_KEY, currentActivity);
+        broadcastIntent.putExtra(SmartLocation.DETECTED_LOCATION_KEY, location);
         getApplicationContext().sendBroadcast(broadcastIntent);
     }
 
