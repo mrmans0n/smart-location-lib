@@ -17,7 +17,7 @@ You should add this dependency.
 
 ````xml
 <dependency>
-	<groupId>com.mobivery.smartlocation</groupId>
+	<groupId>com.mobivery.greent.smartlocation</groupId>
 	<artifactId>library</artifactId>
 	<version>1.0-SNAPSHOT</version>
 </dependency>
