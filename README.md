@@ -3,6 +3,13 @@ smart-location-lib
 
 Android library project that intends to use the minimum battery drain possible when used in navigation apps.
 
+It allows any Android project to smartly control the location sensors usage when using it to access user's location data, using it as a replacement to the system Location APIs. 
+The principle behind it is detecting the activity the user is doing (moving in a vehicle, riding a bicycle, walking, running, being still) and based on those results, changing the accuracy for the detection and the sensors used. In our case, we will detect if we are moving in a vehicle.
+
+All this is done to be more battery efficient than the usual location strategies.
+
+**Supported Android versions**: Android 2.2+
+
 Getting started
 ---------------
 
@@ -39,6 +46,8 @@ You also have to add two services to your application node in the manifest.
 
 Check out the sample project for seeing how it should be in a real situation.
 
+Internally, the ActivityRecognitionService will provide with the user's activity information to the SmartLocationService, which will be the one deciding on the best settings for the location usage at any time.
+
 Usage
 -----
 
@@ -59,6 +68,12 @@ For stopping it for good and avoid service leaks, you must call the cleanup meth
 ````java
 SmartLocation.getInstance().cleanup(context);
 ````
+
+The best practices for using these methods would be:
+
+* Adding the **start** call on the onResume method of the Activity.
+* Adding the **stop** call on the onPause method of the Activity.
+* Adding the **cleanup** call on the onDestroy method of the Activity.
 
 The Service will send the information of user's location and current activity via intents.
 
