@@ -1,11 +1,11 @@
-package com.mobivery.smartlocation;
+package com.mobivery.greent.smartlocation;
 
 /**
  * Created by MVY11 on 12/06/13.
  */
 public class ActivityRecognitionConstants {
 
-    public static final String ACTIVITY_CHANGED_INTENT = "com.mobivery.green-t.ACTIVITY_CHANGED";
+    public static final String ACTIVITY_CHANGED_INTENT = "com.mobivery.greent.smartlocation.ACTIVITY_CHANGED";
     public static final String ACTIVITY_KEY = "ACTIVITY";
 
     // Intervalo de deteccion entre actividades

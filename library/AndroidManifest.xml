@@ -13,7 +13,7 @@
 
     <uses-sdk android:minSdkVersion="8" />
     <application>
-        <service android:name=".ActivityRecognitionService"/>
-        <service android:name=".SmartLocationService"/>
+        <service android:name="com.mobivery.greent.smartlocation.ActivityRecognitionService"/>
+        <service android:name="com.mobivery.greent.smartlocation.SmartLocationService"/>
     </application>
 </manifest>

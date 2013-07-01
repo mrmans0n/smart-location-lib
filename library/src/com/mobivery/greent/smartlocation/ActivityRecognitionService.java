@@ -1,4 +1,4 @@
-package com.mobivery.smartlocation;
+package com.mobivery.greent.smartlocation;
 
 import android.app.IntentService;
 import android.content.Context;

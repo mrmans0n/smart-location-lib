@@ -1,4 +1,4 @@
-package com.mobivery.smartlocation.sample;
+package com.mobivery.greent.smartlocation.sample;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -12,8 +12,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.location.DetectedActivity;
-import com.mobivery.smartlocation.SmartLocation;
-import com.mobivery.smartlocation.SmartLocationOptions;
+import com.mobivery.greent.smartlocation.SmartLocation;
+import com.mobivery.greent.smartlocation.SmartLocationOptions;
+import com.mobivery.smartlocation.sample.R;
 
 public class MainActivity extends Activity {
 

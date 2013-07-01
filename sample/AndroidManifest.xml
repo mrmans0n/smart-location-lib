@@ -19,7 +19,7 @@
             android:icon="@drawable/ic_launcher">
 
         <activity
-                android:name=".MainActivity"
+                android:name="com.mobivery.greent.smartlocation.sample.MainActivity"
                 android:label="SmartLocation Sample">
 
             <intent-filter>
@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.mobivery.smartlocation.ActivityRecognitionService"/>
-        <service android:name="com.mobivery.smartlocation.SmartLocationService"/>
+        <service android:name="com.mobivery.greent.smartlocation.ActivityRecognitionService"/>
+        <service android:name="com.mobivery.greent.smartlocation.SmartLocationService"/>
     </application>
 </manifest>

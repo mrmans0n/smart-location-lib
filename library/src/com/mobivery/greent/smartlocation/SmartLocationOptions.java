@@ -1,4 +1,4 @@
-package com.mobivery.smartlocation;
+package com.mobivery.greent.smartlocation;
 
 /**
  * Created by MVY11 on 17/06/13.

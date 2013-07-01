@@ -10,7 +10,7 @@ You should add this dependency.
 
 ````xml
 <dependency>
-	<groupId>com.mobivery.smartlocation</groupId>
+	<groupId>com.mobivery.greent.smartlocation</groupId>
 	<artifactId>library</artifactId>
 	<version>1.0-SNAPSHOT</version>
 </dependency>
@@ -33,8 +33,8 @@ You must add these permissions to your AndroidManifest.xml.
 You also have to add two services to your application node in the manifest.
 
 ````xml
-<service android:name="com.mobivery.smartlocation.ActivityRecognitionService"/>
-<service android:name="com.mobivery.smartlocation.SmartLocationService"/>
+<service android:name="com.mobivery.greent.smartlocation.ActivityRecognitionService"/>
+<service android:name="com.mobivery.greent.smartlocation.SmartLocationService"/>
 ````
 
 Check out the sample project for seeing how it should be in a real situation.
