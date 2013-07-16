@@ -78,7 +78,7 @@ public class SmartLocationService extends Service implements LocationListener, G
     }
 
     private void initPackageName() {
-        callerPackage = getClass().getPackage().getName();
+        callerPackage = SmartLocation.DEFAULT_PACKAGE;
     }
 
     private void initLocation() {

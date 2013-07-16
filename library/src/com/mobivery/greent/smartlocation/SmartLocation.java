@@ -13,9 +13,12 @@ public class SmartLocation {
 
     /**
      * Intent action name. The rest of the package can be configured.
-     * The default action name is com.mobivery.smartlocation.LOCATION_UPDATED
+     * The default action name is com.mobivery.smartlocation.greent.LOCATION_UPDATED
      */
     public static final String LOCATION_BROADCAST_INTENT_TRAIL = ".LOCATION_UPDATED";
+
+    public static final String DEFAULT_PACKAGE = "com.mobivery.smartlocation.greent";
+
 
     /**
      * Detected location key for the intent bundle. Returns a Location object.
@@ -95,7 +98,11 @@ public class SmartLocation {
 
     private void unbindService(Context context) {
         if (isServiceBound) {
-            context.unbindService(serviceConnection);
+            try {
+                context.unbindService(serviceConnection);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

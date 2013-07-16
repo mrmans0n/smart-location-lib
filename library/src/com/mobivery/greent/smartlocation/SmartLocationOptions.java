@@ -5,7 +5,7 @@ package com.mobivery.greent.smartlocation;
  */
 public class SmartLocationOptions {
 
-    private String packageName;
+    private String packageName = SmartLocation.DEFAULT_PACKAGE + SmartLocation.LOCATION_BROADCAST_INTENT_TRAIL;
 
     public String getPackageName() {
         return packageName;
@@ -13,5 +13,9 @@ public class SmartLocationOptions {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public String getIntentActionString() {
+        return getPackageName() + SmartLocation.LOCATION_BROADCAST_INTENT_TRAIL;
     }
 }

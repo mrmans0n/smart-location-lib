@@ -18,7 +18,7 @@ import com.mobivery.smartlocation.sample.R;
 
 public class MainActivity extends Activity {
 
-    private static final String PACKAGE_NAME = "com.mobivery.smartlocation.sample";
+    private static final String PACKAGE_NAME = "com.mobivery.smartlocation.greent.sample";
     private static final String LOCATION_UPDATED_INTENT = PACKAGE_NAME + SmartLocation.LOCATION_BROADCAST_INTENT_TRAIL;
 
     private TextView locationText;
