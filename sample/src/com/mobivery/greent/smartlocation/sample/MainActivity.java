@@ -23,6 +23,7 @@ public class MainActivity extends Activity {
 
     private TextView locationText;
     private boolean isCapturingLocation = false;
+    private boolean userWantsLocation = false;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -33,6 +34,7 @@ public class MainActivity extends Activity {
         startLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                userWantsLocation = true;
                 startLocation(MainActivity.this);
             }
         });
@@ -41,6 +43,7 @@ public class MainActivity extends Activity {
         stopLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                userWantsLocation = false;
                 stopLocation(MainActivity.this);
             }
         });
@@ -52,7 +55,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        if (isCapturingLocation) {
+        if (userWantsLocation && !isCapturingLocation) {
             startLocation(this);
         }
 
@@ -107,7 +110,7 @@ public class MainActivity extends Activity {
     };
 
     private void showLocation(Location location, int activityType) {
-        String activityName = getNameFromType(activityType);
+        String activityName = getNameFromType(activityType) + " (" + activityType + ")";
         if (location != null) {
             locationText.setText(
                     String.format("Latitude %.6f, Longitude %.6f, Activity %s",
@@ -130,11 +133,10 @@ public class MainActivity extends Activity {
                 return "on_foot";
             case DetectedActivity.STILL:
                 return "still";
-            case DetectedActivity.UNKNOWN:
-                return "unknown";
             case DetectedActivity.TILTING:
                 return "tilting";
+            default:
+                return "unknown";
         }
-        return "unknown";
     }
 }

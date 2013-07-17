@@ -39,7 +39,9 @@ public class SmartLocationService extends Service implements LocationListener, G
     private final IBinder mBinder = new LocalBinder();
 
     private String callerPackage;
-    private int currentActivity;
+    private int currentActivity = DetectedActivity.UNKNOWN;
+
+    private Location lastLocation;
 
     private LocationClient locationClient;
     private LocationRequest locationRequest;
@@ -159,6 +161,9 @@ public class SmartLocationService extends Service implements LocationListener, G
             int activityType = intent.getIntExtra(ActivityRecognitionConstants.ACTIVITY_KEY, DetectedActivity.UNKNOWN);
             Log.i(getClass().getSimpleName(), "[ACTIVITY] new activity detected = " + activityType);
             currentActivity = activityType;
+            if (lastLocation != null) {
+                processLocation(lastLocation);
+            }
 
             switch (activityType) {
                 case DetectedActivity.IN_VEHICLE:
@@ -174,6 +179,7 @@ public class SmartLocationService extends Service implements LocationListener, G
 
     @Override
     public void onLocationChanged(Location location) {
+        lastLocation = location;
         processLocation(location);
 
     }

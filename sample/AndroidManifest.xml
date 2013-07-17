@@ -20,7 +20,8 @@
 
         <activity
                 android:name="com.mobivery.greent.smartlocation.sample.MainActivity"
-                android:label="SmartLocation Sample">
+                android:label="SmartLocation Sample"
+                android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
