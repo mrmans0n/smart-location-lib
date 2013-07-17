@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.google.android.gms.location.DetectedActivity;
 import com.mobivery.greent.smartlocation.SmartLocation;
 import com.mobivery.greent.smartlocation.SmartLocationOptions;
+import com.mobivery.greent.smartlocation.UpdateStrategy;
 import com.mobivery.smartlocation.sample.R;
 
 public class MainActivity extends Activity {
@@ -72,6 +73,20 @@ public class MainActivity extends Activity {
     private void startLocation(Context context) {
         SmartLocationOptions options = new SmartLocationOptions();
         options.setPackageName(PACKAGE_NAME);
+        options.setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT);
+        options.setOnLocationUpdatedNewStrategy(new SmartLocationOptions.OnLocationUpdated() {
+            @Override
+            public UpdateStrategy getUpdateStrategyForActivity(int detectedActivity) {
+                switch (detectedActivity) {
+                    case DetectedActivity.IN_VEHICLE:
+                    case DetectedActivity.ON_BICYCLE:
+                        return UpdateStrategy.NAVIGATION;
+                    default:
+                        return UpdateStrategy.BEST_EFFORT;
+                }
+            }
+        });
+
         SmartLocation.getInstance().start(context, options);
 
         captureIntent();

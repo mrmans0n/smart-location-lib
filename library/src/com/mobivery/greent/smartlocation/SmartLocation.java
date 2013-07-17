@@ -54,7 +54,7 @@ public class SmartLocation {
      * @param context
      */
     public void start(Context context) {
-        start(context, null);
+        start(context, new SmartLocationOptions());
     }
 
     /**
@@ -63,7 +63,7 @@ public class SmartLocation {
      * @param context
      */
     public void start(Context context, SmartLocationOptions options) {
-        smartLocationOptions = options;
+        setOptions(options);
         bindService(context);
     }
 
@@ -85,6 +85,22 @@ public class SmartLocation {
      */
     public void cleanup(Context context) {
         unbindService(context);
+    }
+
+    /**
+     * Set a new options bundle, to be updated immediatly if the service is working
+     *
+     * @param options
+     */
+    public void setOptions(SmartLocationOptions options) {
+
+        if (options == null)
+            throw new IllegalArgumentException("options value can't be null");
+
+        smartLocationOptions = options;
+        if (isServiceConnected) {
+            boundService.setOptions(options);
+        }
     }
 
     private boolean bindService(Context context) {
@@ -127,7 +143,9 @@ public class SmartLocation {
         if (smartLocationOptions != null) {
             packageName = smartLocationOptions.getPackageName();
         }
-        boundService.startLocation(packageName);
+        if (boundService != null) {
+            boundService.startLocation(smartLocationOptions);
+        }
     }
 
     private void destroyServiceConnection() {

@@ -119,6 +119,28 @@ In the following example you can see how to setup a new package for the LOCATION
 
 With this call, the intent you will want to watch for is `com.mypackage.name.LOCATION_UPDATED`.
 
+We can also customize the update strategy in the options class, both the default behavior and the behavior derived from the activity recognizer. Check out the comments of the UpdateStrategy class for more info. By default, it is set to **BEST_EFFORT** location, which will perform the best location accuracy without the battery drainage of only GPS location strategies.
+
+For example, we will set a typical strategy for a navigation app (for both cars and bicycles) in this code.
+
+````java
+        SmartLocationOptions options = new SmartLocationOptions();
+        options.setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT);
+        options.setOnLocationUpdatedNewStrategy(new SmartLocationOptions.OnLocationUpdated() {
+            @Override
+            public UpdateStrategy getUpdateStrategyForActivity(int detectedActivity) {
+                switch (detectedActivity) {
+                    case DetectedActivity.IN_VEHICLE:
+                    case DetectedActivity.ON_BICYCLE:
+                        return UpdateStrategy.NAVIGATION;
+                    default:
+                        return UpdateStrategy.BEST_EFFORT;
+                }
+            }
+        });
+        SmartLocation.getInstance().start(context, options);
+````
+
 License
 -------
 

@@ -23,23 +23,11 @@ import com.google.android.gms.location.LocationRequest;
  */
 public class SmartLocationService extends Service implements LocationListener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 
-    private static final int IN_VEHICLE_UPDATE_INTERVAL_IN_SECONDS = 2;
-    private static final int STILL_UPDATE_INTERVAL_IN_SECONDS = 5;
-
-    private static final int MILLISECONDS_PER_SECOND = 1000;
-
-    private static final long VEHICLE_INTERVAL =
-            MILLISECONDS_PER_SECOND * IN_VEHICLE_UPDATE_INTERVAL_IN_SECONDS;
-    private static final long STILL_INTERVAL = STILL_UPDATE_INTERVAL_IN_SECONDS * MILLISECONDS_PER_SECOND;
-
-    private static final int FASTEST_INTERVAL_IN_SECONDS = 1;
-    private static final long FASTEST_INTERVAL =
-            MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
-
     private final IBinder mBinder = new LocalBinder();
 
     private String callerPackage;
     private int currentActivity = DetectedActivity.UNKNOWN;
+    private SmartLocationOptions options;
 
     private Location lastLocation;
 
@@ -86,22 +74,7 @@ public class SmartLocationService extends Service implements LocationListener, G
     private void initLocation() {
         locationClient = new LocationClient(this, this, this);
         locationRequest = LocationRequest.create();
-
-        setNonMovingSettings();
     }
-
-    private void setInVehicleSettings() {
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(VEHICLE_INTERVAL);
-        locationRequest.setFastestInterval(FASTEST_INTERVAL);
-    }
-
-    private void setNonMovingSettings() {
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        locationRequest.setInterval(STILL_INTERVAL);
-        locationRequest.setFastestInterval(FASTEST_INTERVAL);
-    }
-
 
     private void initActivityRecognition() {
         detectionRequester = new ActivityDetectionRequester(this);
@@ -111,19 +84,35 @@ public class SmartLocationService extends Service implements LocationListener, G
     /**
      * Starts the process in which we will locate the user using fused location updates
      *
-     * @param packageName caller package's name
+     * @param options caller options
      */
-    public void startLocation(String packageName) {
-        if (packageName == null) {
-            initPackageName();
-        } else {
-            callerPackage = packageName;
+    public void startLocation(SmartLocationOptions options) {
+        this.options = options;
+        if (options.getPackageName() != null) {
+            callerPackage = options.getPackageName();
         }
 
         if (!locationClient.isConnected()) {
             locationClient.connect();
             detectionRequester.requestUpdates();
         }
+    }
+
+    /**
+     * Stores an updated version of the options bundle
+     *
+     * @param options
+     */
+    public void setOptions(SmartLocationOptions options) {
+        this.options = options;
+        setLocationRequestValues(options.getDefaultUpdateStrategy());
+    }
+
+    private void setLocationRequestValues(UpdateStrategy strategy) {
+        locationRequest
+                .setPriority(strategy.getLocationRequestPriority())
+                .setInterval(strategy.getUpdateInterval())
+                .setFastestInterval(strategy.getFastestInterval());
     }
 
     private void continueStartLocation() {
@@ -143,7 +132,6 @@ public class SmartLocationService extends Service implements LocationListener, G
             locationClient.removeLocationUpdates(this);
             locationClient.disconnect();
         }
-
     }
 
     /**
@@ -161,19 +149,13 @@ public class SmartLocationService extends Service implements LocationListener, G
             int activityType = intent.getIntExtra(ActivityRecognitionConstants.ACTIVITY_KEY, DetectedActivity.UNKNOWN);
             Log.i(getClass().getSimpleName(), "[ACTIVITY] new activity detected = " + activityType);
             currentActivity = activityType;
+
             if (lastLocation != null) {
                 processLocation(lastLocation);
             }
 
-            switch (activityType) {
-                case DetectedActivity.IN_VEHICLE:
-                    setInVehicleSettings();
-                    break;
-                default:
-                    setNonMovingSettings();
-                    break;
-            }
-
+            UpdateStrategy strategy = options.getOnLocationUpdatedNewStrategy().getUpdateStrategyForActivity(activityType);
+            setLocationRequestValues(strategy);
         }
     };
 
