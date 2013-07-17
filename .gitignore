@@ -33,7 +33,7 @@ aa-test/
 */gen-gen-external-apklibs/
 */gen-external-apklibs/
 
-*/out/
+out/
 
 # Apple crap
 .DS_Store
