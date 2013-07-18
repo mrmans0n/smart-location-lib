@@ -3,12 +3,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
-
     <groupId>com.mobivery.greent.smartlocation</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
@@ -84,16 +78,73 @@
 			</dependency>
         </dependencies>
     </dependencyManagement>
-    <repositories>
-        <repository>
-            <id>Mobivery S3 Release</id>
-            <url>http://maven-repo.mobivery.com.s3.amazonaws.com/release</url>
-        </repository>
-        <repository>
-            <id>Mobivery S3 Snapshot</id>
-            <url>http://maven-repo.mobivery.com.s3.amazonaws.com/snapshot</url>
-        </repository>
-    </repositories>
+	<repositories>
+		<!-- Building repo, for everyone -->
+		<repository>
+			<id>public-maven-mobivery-repo</id>
+			<url>http://maven-repo.mobivery.com.s3.amazonaws.com/release</url>
+		</repository>
+		<!-- Deployment repos -->
+		<repository>
+			<id>maven-s3-mobivery-repo</id>
+			<name>S3 Mobivery Repository</name>
+			<url>s3://maven-repo.mobivery.com/release</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>maven-s3-mobivery-snapshot-repo</id>
+			<name>S3 Mobivery Snapshot Repository</name>
+			<url>s3://maven-repo.mobivery.com/snapshot</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>maven-s3-mobivery-repo</id>
+			<name>S3 Mobivery Repository</name>
+			<url>s3://maven-repo.mobivery.com/release</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>maven-s3-mobivery-snapshot-repo</id>
+			<name>S3 Mobivery Snapshot Repository</name>
+			<url>s3://maven-repo.mobivery.com/snapshot</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+	<distributionManagement>
+		<repository>
+			<id>maven-s3-mobivery-repo</id>
+			<name>S3 Mobivery Repository</name>
+			<url>s3://maven-repo.mobivery.com/release</url>
+		</repository>
+		<snapshotRepository>
+			<id>maven-s3-mobivery-snapshot-repo</id>
+			<name>S3 Mobivery Snapshot Repository</name>
+			<url>s3://maven-repo.mobivery.com/snapshot</url>
+		</snapshotRepository>
+	</distributionManagement>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -132,5 +183,12 @@
                 </configuration>
             </plugin>
         </plugins>
+		<extensions>
+			<extension>
+				<groupId>org.springframework.build.aws</groupId>
+				<artifactId>org.springframework.build.aws.maven</artifactId>
+				<version>3.0.0.RELEASE</version>
+			</extension>
+		</extensions>
     </build>
 </project>

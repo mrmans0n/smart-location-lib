@@ -23,6 +23,17 @@ You should add this dependency.
 </dependency>
 ````
 
+And you should add Mobivery's repository to the pom.xml <repositories> tag also.
+
+````xml
+<repository>
+	<id>mobivery-repository</id>
+    <url>http://maven-repo.mobivery.com.s3.amazonaws.com/snapshot</url>
+</repository>
+````
+
+When the time is right (ie, we consider this is stable enough), we will switch to the release repository.
+
 Permissions
 -----------
 
