@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mobivery.greent.smartlocation</groupId>
@@ -9,7 +11,9 @@
     <version>1.0-SNAPSHOT</version>
 
     <name>SmartLocation</name>
-    <description>Android library project that intends to use the minimum battery drain possible in Navigation apps</description>
+    <description>Android library project that intends to use the minimum battery drain possible in
+        Navigation apps
+    </description>
     <url>https://github.com/mobivery/smart-location-lib</url>
 
     <modules>
@@ -20,14 +24,15 @@
     <scm>
         <url>https://github.com/mobivery/smart-location-lib</url>
         <connection>scm:git:git://github.com/mobivery/smart-location-lib.git</connection>
-        <developerConnection>scm:git:git@github.com:mobivery/smart-location-lib.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:mobivery/smart-location-lib.git
+        </developerConnection>
     </scm>
 
     <licenses>
-      <license>
-        <name>MIT license</name>
-        <url>http://www.opensource.org/licenses/mit-license.php</url>
-      </license>
+        <license>
+            <name>MIT license</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
     </licenses>
 
     <organization>
@@ -59,91 +64,91 @@
                 <artifactId>android</artifactId>
                 <version>${android.version}</version>
             </dependency>
-			<dependency>
-			  <groupId>android.support</groupId>
-			  <artifactId>compatibility-v4</artifactId>
-			  <version>${android.support.version}</version>
-			</dependency>
-			<dependency>
-			  <groupId>com.google.android.gms</groupId>
-			  <artifactId>google-play-services</artifactId>
-			  <version>7</version>
-			  <type>apklib</type>
-			</dependency>
-			<dependency>
-			  <groupId>com.google.android.gms</groupId>
-			  <artifactId>google-play-services</artifactId>
-			  <version>7</version>
-			  <type>jar</type>
-			</dependency>
+            <dependency>
+                <groupId>android.support</groupId>
+                <artifactId>compatibility-v4</artifactId>
+                <version>${android.support.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.android.gms</groupId>
+                <artifactId>google-play-services</artifactId>
+                <version>7</version>
+                <type>apklib</type>
+            </dependency>
+            <dependency>
+                <groupId>com.google.android.gms</groupId>
+                <artifactId>google-play-services</artifactId>
+                <version>7</version>
+                <type>jar</type>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-	<repositories>
-		<!-- Building repo, for everyone -->
-		<repository>
-			<id>public-maven-mobivery-repo</id>
-			<url>http://maven-repo.mobivery.com.s3.amazonaws.com/release</url>
-		</repository>
-		<!-- Deployment repos -->
-		<repository>
-			<id>maven-s3-mobivery-repo</id>
-			<name>S3 Mobivery Repository</name>
-			<url>s3://maven-repo.mobivery.com/release</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>maven-s3-mobivery-snapshot-repo</id>
-			<name>S3 Mobivery Snapshot Repository</name>
-			<url>s3://maven-repo.mobivery.com/snapshot</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>maven-s3-mobivery-repo</id>
-			<name>S3 Mobivery Repository</name>
-			<url>s3://maven-repo.mobivery.com/release</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>maven-s3-mobivery-snapshot-repo</id>
-			<name>S3 Mobivery Snapshot Repository</name>
-			<url>s3://maven-repo.mobivery.com/snapshot</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
-	<distributionManagement>
-		<repository>
-			<id>maven-s3-mobivery-repo</id>
-			<name>S3 Mobivery Repository</name>
-			<url>s3://maven-repo.mobivery.com/release</url>
-		</repository>
-		<snapshotRepository>
-			<id>maven-s3-mobivery-snapshot-repo</id>
-			<name>S3 Mobivery Snapshot Repository</name>
-			<url>s3://maven-repo.mobivery.com/snapshot</url>
-		</snapshotRepository>
-	</distributionManagement>
+    <repositories>
+        <!-- Building repo, for everyone -->
+        <repository>
+            <id>public-maven-mobivery-repo</id>
+            <url>http://maven-repo.mobivery.com.s3.amazonaws.com/release</url>
+        </repository>
+        <!-- Deployment repos -->
+        <repository>
+            <id>maven-s3-mobivery-repo</id>
+            <name>S3 Mobivery Repository</name>
+            <url>s3://maven-repo.mobivery.com/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>maven-s3-mobivery-snapshot-repo</id>
+            <name>S3 Mobivery Snapshot Repository</name>
+            <url>s3://maven-repo.mobivery.com/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-s3-mobivery-repo</id>
+            <name>S3 Mobivery Repository</name>
+            <url>s3://maven-repo.mobivery.com/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>maven-s3-mobivery-snapshot-repo</id>
+            <name>S3 Mobivery Snapshot Repository</name>
+            <url>s3://maven-repo.mobivery.com/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>maven-s3-mobivery-repo</id>
+            <name>S3 Mobivery Repository</name>
+            <url>s3://maven-repo.mobivery.com/release</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-s3-mobivery-snapshot-repo</id>
+            <name>S3 Mobivery Snapshot Repository</name>
+            <url>s3://maven-repo.mobivery.com/snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <pluginManagement>
@@ -183,12 +188,12 @@
                 </configuration>
             </plugin>
         </plugins>
-		<extensions>
-			<extension>
-				<groupId>org.springframework.build.aws</groupId>
-				<artifactId>org.springframework.build.aws.maven</artifactId>
-				<version>3.0.0.RELEASE</version>
-			</extension>
-		</extensions>
+        <extensions>
+            <extension>
+                <groupId>org.springframework.build.aws</groupId>
+                <artifactId>org.springframework.build.aws.maven</artifactId>
+                <version>3.0.0.RELEASE</version>
+            </extension>
+        </extensions>
     </build>
 </project>

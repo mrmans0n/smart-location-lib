@@ -7,7 +7,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 /**
- * Created by MVY11 on 17/06/13.
+ * Created by Nacho L. on 17/06/13.
  */
 public class SmartLocation {
 

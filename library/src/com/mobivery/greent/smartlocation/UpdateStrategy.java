@@ -3,7 +3,7 @@ package com.mobivery.greent.smartlocation;
 import com.google.android.gms.location.LocationRequest;
 
 /**
- * Created by mrm on 17/07/13.
+ * Created by Nacho L. on 17/07/13.
  */
 public enum UpdateStrategy {
     /**

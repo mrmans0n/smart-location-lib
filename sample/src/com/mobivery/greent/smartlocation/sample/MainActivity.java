@@ -74,7 +74,7 @@ public class MainActivity extends Activity {
         SmartLocationOptions options = new SmartLocationOptions();
         options.setPackageName(PACKAGE_NAME);
         options.setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT);
-        options.setOnLocationUpdatedNewStrategy(new SmartLocationOptions.OnLocationUpdated() {
+        options.setOnActivityRecognizerUpdatedNewStrategy(new SmartLocationOptions.OnActivityRecognizerUpdated() {
             @Override
             public UpdateStrategy getUpdateStrategyForActivity(int detectedActivity) {
                 switch (detectedActivity) {

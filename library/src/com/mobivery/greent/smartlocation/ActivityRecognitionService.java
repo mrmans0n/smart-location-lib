@@ -4,11 +4,12 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
 /**
- * Created by MVY11 on 12/06/13.
+ * Created by Nacho L. on 12/06/13.
  */
 public class ActivityRecognitionService extends IntentService {
 

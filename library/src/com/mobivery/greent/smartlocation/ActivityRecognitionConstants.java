@@ -1,7 +1,7 @@
 package com.mobivery.greent.smartlocation;
 
 /**
- * Created by MVY11 on 12/06/13.
+ * Created by Nacho L. on 12/06/13.
  */
 public class ActivityRecognitionConstants {
 

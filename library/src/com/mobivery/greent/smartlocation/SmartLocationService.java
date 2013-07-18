@@ -19,7 +19,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 
 /**
- * Created by mrm on 13/06/13.
+ * Created by Nacho L. on 13/06/13.
  */
 public class SmartLocationService extends Service implements LocationListener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 
@@ -154,7 +154,7 @@ public class SmartLocationService extends Service implements LocationListener, G
                 processLocation(lastLocation);
             }
 
-            UpdateStrategy strategy = options.getOnLocationUpdatedNewStrategy().getUpdateStrategyForActivity(activityType);
+            UpdateStrategy strategy = options.getOnActivityRecognizerUpdatedNewStrategy().getUpdateStrategyForActivity(activityType);
             setLocationRequestValues(strategy);
         }
     };
