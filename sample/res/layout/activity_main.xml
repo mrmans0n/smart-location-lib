@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-	android:gravity="center"
-    android:orientation="horizontal" >
-    <TextView android:id="@+id/hello_msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello Hola Konnichiwa!" />
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center"
+              android:orientation="vertical" >
+    <TextView android:id="@+id/location_text"
+              android:layout_width="match_parent"
+              android:layout_height="0dp"
+              android:text="Hello Hola Konnichiwa!"
+              android:layout_weight="1"
+              android:gravity="center"/>
+
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            style="@android:style/ButtonBar">
+
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Start Location!"
+                android:id="@+id/start_location"
+                android:layout_weight="1"/>
+
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Stop Location!"
+                android:id="@+id/stop_location"
+                android:layout_weight="1"/>
+    </LinearLayout>
+
 </LinearLayout>
