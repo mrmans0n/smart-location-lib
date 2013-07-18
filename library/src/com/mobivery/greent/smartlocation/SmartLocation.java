@@ -64,7 +64,11 @@ public class SmartLocation {
      */
     public void start(Context context, SmartLocationOptions options) {
         setOptions(options);
-        bindService(context);
+        if (isServiceBound) {
+            boundService.startLocation(smartLocationOptions);
+        } else {
+            bindService(context);
+        }
     }
 
     /**
@@ -116,6 +120,7 @@ public class SmartLocation {
         if (isServiceBound) {
             try {
                 context.unbindService(serviceConnection);
+                isServiceBound = false;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -139,10 +144,6 @@ public class SmartLocation {
         boundService = ((SmartLocationService.LocalBinder) iBinder).getService();
         isServiceConnected = (boundService != null);
 
-        String packageName = null;
-        if (smartLocationOptions != null) {
-            packageName = smartLocationOptions.getPackageName();
-        }
         if (boundService != null) {
             boundService.startLocation(smartLocationOptions);
         }

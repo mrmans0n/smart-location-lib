@@ -168,7 +168,7 @@ public class SmartLocationService extends Service implements LocationListener, G
 
     private void processLocation(Location location) {
         String intentName = getLocationUpdatedIntentName();
-        Log.i(getClass().getSimpleName(), "Broadcasting new location intent " + intentName);
+        Log.i(getClass().getSimpleName(), "[LOCATION] Broadcasting new location intent " + intentName);
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(intentName);
         broadcastIntent.putExtra(SmartLocation.DETECTED_ACTIVITY_KEY, currentActivity);
