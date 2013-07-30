@@ -152,6 +152,15 @@ For example, we will set a typical strategy for a navigation app (for both cars 
         SmartLocation.getInstance().start(context, options);
 ````
 
+Contributing
+------------
+Forks, patches and other feedback are welcome.
+
+Creators
+--------
+
+Nacho López @mrmans0n
+
 License
 -------
 
