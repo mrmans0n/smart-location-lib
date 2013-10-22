@@ -19,7 +19,7 @@ You should add this dependency.
 <dependency>
 	<groupId>com.mobivery.greent.smartlocation</groupId>
 	<artifactId>library</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 </dependency>
 ````
 
@@ -28,7 +28,7 @@ And you should add Mobivery's repository to the pom.xml <repositories> tag also.
 ````xml
 <repository>
 	<id>mobivery-repository</id>
-    <url>http://maven-repo.mobivery.com.s3.amazonaws.com/snapshot</url>
+    <url>http://maven-repo.mobivery.com.s3.amazonaws.com/release</url>
 </repository>
 ````
 
