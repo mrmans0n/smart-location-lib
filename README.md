@@ -30,6 +30,7 @@ You should add this dependency.
 	<groupId>com.mobivery.greent.smartlocation</groupId>
 	<artifactId>library</artifactId>
 	<version>1.0.1</version>
+	<type>apklib</type>
 </dependency>
 ````
 
