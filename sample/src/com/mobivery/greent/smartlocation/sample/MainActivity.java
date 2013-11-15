@@ -89,9 +89,17 @@ public class MainActivity extends Activity {
 
         SmartLocation.getInstance().start(context, options);
 
+        Location tryLastLocation = SmartLocation.getInstance().getLastKnownLocation(this);
+        DetectedActivity tryLastActivity = SmartLocation.getInstance().getLastKnownActivity(this);
+
         captureIntent();
         isCapturingLocation = true;
-        locationText.setText("Location started! Getting the first fix...");
+        if (tryLastLocation != null && tryLastActivity != null) {
+            showLocation(tryLastLocation, tryLastActivity.getType());
+            locationText.setText(locationText.getText()+"\n (from cache)");
+        } else {
+            locationText.setText("Location started! Getting the first fix...");
+        }
     }
 
     private void stopLocation(Context context) {

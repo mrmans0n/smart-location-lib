@@ -8,7 +8,7 @@ The principle behind it is detecting the activity the user is doing (moving in a
 
 All this is done to be more battery efficient than the usual location strategies.
 
-**Supported Android versions**: Android 2.2+
+**Supported Android versions**: Android 2.3+
 
 Context
 -------
@@ -29,7 +29,7 @@ You should add this dependency.
 <dependency>
 	<groupId>com.mobivery.greent.smartlocation</groupId>
 	<artifactId>library</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 </dependency>
 ````
 
@@ -126,7 +126,7 @@ Here goes an example of how to capture the intent and do things with it.
     }
 ````
 
-Call the captureIntent method when you want to receive your updates, and call the releaseIntent when you want to stop receiving them. 
+Call the captureIntent method when you want to receive your updates, and call the releaseIntent when you want to stop receiving them.
 
 Customizing to your needs
 -------------------------
