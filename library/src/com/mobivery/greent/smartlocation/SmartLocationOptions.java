@@ -5,8 +5,12 @@ package com.mobivery.greent.smartlocation;
  */
 public class SmartLocationOptions {
 
+    private static final long ONE_HOUR_IN_MILLISECONDS = 60*60*1000;
+
     private String packageName = SmartLocation.DEFAULT_PACKAGE;
     private UpdateStrategy defaultUpdateStrategy = UpdateStrategy.BEST_EFFORT;
+    private long locationCacheValidity = ONE_HOUR_IN_MILLISECONDS;
+    private long activityCacheValidity = ONE_HOUR_IN_MILLISECONDS;
     private OnActivityRecognizerUpdated onActivityRecognizerUpdatedNewStrategy;
 
     public SmartLocationOptions() {
@@ -80,6 +84,38 @@ public class SmartLocationOptions {
      */
     public void setOnActivityRecognizerUpdatedNewStrategy(OnActivityRecognizerUpdated onActivityRecognizerUpdatedNewStrategy) {
         this.onActivityRecognizerUpdatedNewStrategy = onActivityRecognizerUpdatedNewStrategy;
+    }
+
+    /**
+     * Obtain the location cache validity in milliseconds
+     * @return
+     */
+    public long getLocationCacheValidity() {
+        return locationCacheValidity;
+    }
+
+    /**
+     * Set a new location cache validity in milliseconds
+     * @param locationCacheValidity
+     */
+    public void setLocationCacheValidity(long locationCacheValidity) {
+        this.locationCacheValidity = locationCacheValidity;
+    }
+
+    /**
+     * Obtain the activity cache validity in milliseconds
+     * @return
+     */
+    public long getActivityCacheValidity() {
+        return activityCacheValidity;
+    }
+
+    /**
+     * Set a new activity cache validity in milliseconds
+     * @param activityCacheValidity
+     */
+    public void setActivityCacheValidity(long activityCacheValidity) {
+        this.activityCacheValidity = activityCacheValidity;
     }
 
     public interface OnActivityRecognizerUpdated {

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Binder;
 import android.os.Bundle;
@@ -23,7 +24,14 @@ import com.google.android.gms.location.LocationRequest;
  */
 public class SmartLocationService extends Service implements LocationListener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 
+    public static final String PREFERENCES_FILE = "SMART_LOCATION_CACHE_PREFERENCES";
+    public static final String LAST_LOCATION_LATITUDE_KEY = "LAST_LOCATION_LATITUDE";
+    public static final String LAST_LOCATION_LONGITUDE_KEY = "LAST_LOCATION_LONGITUDE";
+    public static final String LAST_LOCATION_UPDATED_AT_KEY = "LAST_LOCATION_UPDATED_AT";
+
     private final IBinder mBinder = new LocalBinder();
+
+    private SharedPreferences sharedPreferences;
 
     private String callerPackage;
     private int currentActivity = DetectedActivity.UNKNOWN;
@@ -174,6 +182,8 @@ public class SmartLocationService extends Service implements LocationListener, G
         broadcastIntent.putExtra(SmartLocation.DETECTED_ACTIVITY_KEY, currentActivity);
         broadcastIntent.putExtra(SmartLocation.DETECTED_LOCATION_KEY, location);
         getApplicationContext().sendBroadcast(broadcastIntent);
+
+        storeLastLocation(location);
     }
 
 
@@ -193,6 +203,17 @@ public class SmartLocationService extends Service implements LocationListener, G
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.v(getClass().getSimpleName(), "[LOCATION] connectionFailed");
+    }
+
+    private void storeLastLocation(Location location) {
+        if (sharedPreferences == null) {
+            sharedPreferences = getApplicationContext().getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+        }
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(LAST_LOCATION_LATITUDE_KEY, Utils.getInt1E6FromDouble(location.getLatitude()));
+        editor.putInt(LAST_LOCATION_LONGITUDE_KEY, Utils.getInt1E6FromDouble(location.getLongitude()));
+        editor.putLong(LAST_LOCATION_UPDATED_AT_KEY, System.currentTimeMillis());
+        editor.commit();
     }
 
 }

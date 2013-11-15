@@ -4,7 +4,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.IBinder;
+
+import com.google.android.gms.location.DetectedActivity;
 
 /**
  * Created by Nacho L. on 17/06/13.
@@ -18,7 +22,6 @@ public class SmartLocation {
     public static final String LOCATION_BROADCAST_INTENT_TRAIL = ".LOCATION_UPDATED";
 
     public static final String DEFAULT_PACKAGE = "com.mobivery.smartlocation.greent";
-
 
     /**
      * Detected location key for the intent bundle. Returns a Location object.
@@ -38,6 +41,9 @@ public class SmartLocation {
     // Singleton stuff
 
     private SmartLocation() {
+        if (smartLocationOptions == null) {
+            smartLocationOptions = new SmartLocationOptions();
+        }
     }
 
     private static class SmartLocationHolder {
@@ -152,6 +158,57 @@ public class SmartLocation {
     private void destroyServiceConnection() {
         boundService.stopLocation();
         isServiceConnected = false;
+    }
+
+    /**
+     * Returns the last known location if it is in the validity period. If there is none or is not valid, returns null.
+     *
+     * @param context
+     * @return
+     */
+    public Location getLastKnownLocation(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(SmartLocationService.PREFERENCES_FILE, Context.MODE_PRIVATE);
+        int latitude1E6 = preferences.getInt(SmartLocationService.LAST_LOCATION_LATITUDE_KEY, 0);
+        int longitude1E6 = preferences.getInt(SmartLocationService.LAST_LOCATION_LONGITUDE_KEY, 0);
+        long lastUpdated = preferences.getLong(SmartLocationService.LAST_LOCATION_UPDATED_AT_KEY, 0);
+
+        if (latitude1E6 == 0 && longitude1E6 == 0) {
+            return null;
+        }
+
+        long now = System.currentTimeMillis();
+        if (lastUpdated + smartLocationOptions.getLocationCacheValidity() < now) {
+            return null;
+        }
+
+        Location location = new Location("Cached");
+        location.setLatitude(Utils.getDoubleFrom1E6(latitude1E6));
+        location.setLongitude(Utils.getDoubleFrom1E6(longitude1E6));
+        return location;
+    }
+
+    /**
+     * Returns the last known activity if it is in the validity period. If there is none or is not valid, returns null.
+     *
+     * @param context
+     * @return
+     */
+    public DetectedActivity getLastKnownActivity(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(ActivityRecognitionService.PREFERENCES_FILE, Context.MODE_PRIVATE);
+        long lastUpdated = preferences.getLong(ActivityRecognitionService.LAST_ACTIVITY_UPDATED_AT_KEY, 0);
+        int lastActivity = preferences.getInt(ActivityRecognitionService.LAST_ACTIVITY_KEY, DetectedActivity.UNKNOWN);
+        int lastConfidence = preferences.getInt(ActivityRecognitionService.LAST_ACTIVITY_CONFIDENCE_KEY, 0);
+
+        long now = System.currentTimeMillis();
+        if (lastUpdated + smartLocationOptions.getActivityCacheValidity() < now) {
+            return null;
+        }
+
+        if (lastConfidence < ActivityRecognitionConstants.MINIMUM_ACTIVITY_CONFIDENCY) {
+            return null;
+        }
+
+        return new DetectedActivity(lastActivity, lastConfidence);
     }
 
 }

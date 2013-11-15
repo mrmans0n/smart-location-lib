@@ -13,8 +13,10 @@ import com.google.android.gms.location.DetectedActivity;
  */
 public class ActivityRecognitionService extends IntentService {
 
-    private static final String PREFERENCES_FILE = "ACTIVITY_RECOGNITION_PREFERENCES";
-    private static final String LAST_ACTIVITY_KEY = "LAST_ACTIVITY";
+    public static final String PREFERENCES_FILE = "SMART_LOCATION_ACTIVITY_RECOGNITION_PREFERENCES";
+    public static final String LAST_ACTIVITY_KEY = "LAST_ACTIVITY";
+    public static final String LAST_ACTIVITY_CONFIDENCE_KEY = "LAST_ACTIVITY_CONFIDENCE";
+    public static final String LAST_ACTIVITY_UPDATED_AT_KEY = "LAST_ACTIVITY_UPDATED_AT";
 
     private SharedPreferences sharedPreferences;
 
@@ -33,7 +35,7 @@ public class ActivityRecognitionService extends IntentService {
 
             if (getLastActivityType() != activityType && confidence >= ActivityRecognitionConstants.MINIMUM_ACTIVITY_CONFIDENCY) {
                 broadcastNewActivity(activityType);
-                storeLastActivityType(activityType);
+                storeLastActivityType(mostProbableActivity);
             }
 
         }
@@ -53,9 +55,11 @@ public class ActivityRecognitionService extends IntentService {
         return sharedPreferences.getInt(LAST_ACTIVITY_KEY, DetectedActivity.UNKNOWN);
     }
 
-    private void storeLastActivityType(int activityType) {
+    private void storeLastActivityType(DetectedActivity activity) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(LAST_ACTIVITY_KEY, activityType);
+        editor.putInt(LAST_ACTIVITY_KEY, activity.getType());
+        editor.putInt(LAST_ACTIVITY_CONFIDENCE_KEY, activity.getConfidence());
+        editor.putLong(LAST_ACTIVITY_UPDATED_AT_KEY, System.currentTimeMillis());
         editor.commit();
     }
 }

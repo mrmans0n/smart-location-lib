@@ -13,7 +13,7 @@
     <parent>
         <groupId>com.mobivery.greent.smartlocation</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.mobivery.greent.smartlocation</groupId>
             <artifactId>library</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
             <type>apklib</type>
         </dependency>
     </dependencies>

@@ -8,9 +8,9 @@ public class ActivityRecognitionConstants {
     public static final String ACTIVITY_CHANGED_INTENT = "com.mobivery.greent.smartlocation.ACTIVITY_CHANGED";
     public static final String ACTIVITY_KEY = "ACTIVITY";
 
-    // Intervalo de deteccion entre actividades
+    // Detection interval between activities
     public static final int ACTIVITY_DETECTION_INTERVAL = 2000;
 
-    // El % de confianza minima que usamos como umbral para validar una nueva actividad
+    // The percentage of confidence as threshold for a new activity detected
     public static final int MINIMUM_ACTIVITY_CONFIDENCY = 50;
 }
