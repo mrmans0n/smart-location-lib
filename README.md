@@ -28,7 +28,7 @@ Getting started
 You should add this to your dependencys:
 
 ```groovy
-    compile 'com.mobivery.greent.smartlocation:library:1.0.2'
+    compile 'com.mobivery.greent.smartlocation:library:1.0.3'
 ```
 
 And you should add Mobivery's repository to your repositories:
@@ -52,7 +52,7 @@ You should add this dependency.
 <dependency>
 	<groupId>com.mobivery.greent.smartlocation</groupId>
 	<artifactId>library</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 </dependency>
 ````
 
@@ -93,10 +93,17 @@ Internally, the ActivityRecognitionService will provide with the user's activity
 Usage
 -----
 
-For starting the location service, you must perform just one call.
+For starting the location service, you can perform just one call with a listener.
 
 ````java
-SmartLocation.getInstance().start(context);
+SmartLocation.getInstance().start(
+    context,
+    new SmartLocation.OnLocationUpdatedListener() {
+        @Override
+        public void onLocationUpdated(Location location, DetectedActivity detectedActivity) {
+            showLocation(location, detectedActivity);
+        }
+    });
 ````
 
 For stopping the location (but with a chance to restarting it) you should use the stop method.
@@ -117,37 +124,9 @@ The best practices for using these methods would be:
 * Adding the **stop** call on the onPause method of the Activity.
 * Adding the **cleanup** call on the onDestroy method of the Activity.
 
-The Service will send the information of user's location and current activity via intents.
+The Service will also send the information of user's location and current activity via intents.
 
-The default intent that will be broadcasted will be `com.mobivery.smartlocation.LOCATION_UPDATED`. You can configure the package by passing a SmartLocationOptions object to the start method but more on that later.
-
-Here goes an example of how to capture the intent and do things with it.
-
-````java
-    private void captureIntent() {
-        IntentFilter locationUpdatesIntentFilter = new IntentFilter(LOCATION_UPDATED_INTENT);
-        registerReceiver(locationUpdatesReceiver, locationUpdatesIntentFilter);
-    }
-
-    private void releaseIntent() {
-        unregisterReceiver(locationUpdatesReceiver);
-    }
-
-    private BroadcastReceiver locationUpdatesReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Location location = intent.getParcelableExtra(SmartLocation.DETECTED_LOCATION_KEY);
-            int activity = intent.getIntExtra(SmartLocation.DETECTED_ACTIVITY_KEY, DetectedActivity.UNKNOWN);
-            showLocation(location, activity);
-        }
-    };
-
-    private void showLocation(Location location, int activityType) {
-        // Do your thing here!
-    }
-````
-
-Call the captureIntent method when you want to receive your updates, and call the releaseIntent when you want to stop receiving them.
+The default intent that will be broadcasted will be `com.mobivery.smartlocation.LOCATION_UPDATED`. You can configure the package by passing a SmartLocationOptions object to the start method but more on that later. You can capture it if you want, but the listener should be enough.
 
 Customizing to your needs
 -------------------------

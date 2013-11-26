@@ -8,7 +8,7 @@
     <groupId>com.mobivery.greent.smartlocation</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 
     <name>SmartLocation</name>
     <description>Android library project that intends to use the minimum battery drain possible in
