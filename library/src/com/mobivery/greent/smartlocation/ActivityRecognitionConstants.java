@@ -7,6 +7,7 @@ public class ActivityRecognitionConstants {
 
     public static final String ACTIVITY_CHANGED_INTENT = "com.mobivery.greent.smartlocation.ACTIVITY_CHANGED";
     public static final String ACTIVITY_KEY = "ACTIVITY";
+    public static final String ACTIVITY_CONFIDENCE_KEY = "ACTIVITY_CONFIDENCE";
 
     // Detection interval between activities
     public static final int ACTIVITY_DETECTION_INTERVAL = 2000;

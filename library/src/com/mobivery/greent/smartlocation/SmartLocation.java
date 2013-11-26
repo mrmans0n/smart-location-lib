@@ -1,8 +1,10 @@
 package com.mobivery.greent.smartlocation;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -21,6 +23,9 @@ public class SmartLocation {
      */
     public static final String LOCATION_BROADCAST_INTENT_TRAIL = ".LOCATION_UPDATED";
 
+    /**
+     * Default package which will be sending the location updates.
+     */
     public static final String DEFAULT_PACKAGE = "com.mobivery.smartlocation.greent";
 
     /**
@@ -33,10 +38,16 @@ public class SmartLocation {
      */
     public static final String DETECTED_ACTIVITY_KEY = "ACTIVITY";
 
+    /**
+     * Detected activity confidence. Used to build the full DetectedActivity object.
+     */
+    public static final String DETECTED_ACTIVITY_CONFIDENCE_KEY = "ACTIVITY_CONFIDENCE";
+
     private boolean isServiceBound = false;
     private boolean isServiceConnected = false;
     private SmartLocationService boundService;
     private SmartLocationOptions smartLocationOptions;
+    private OnLocationUpdatedListener onLocationUpdatedListener;
 
     // Singleton stuff
 
@@ -70,6 +81,7 @@ public class SmartLocation {
      */
     public void start(Context context, SmartLocationOptions options) {
         setOptions(options);
+        captureIntent(context);
         if (isServiceBound && boundService != null) {
             boundService.startLocation(smartLocationOptions);
         } else {
@@ -84,6 +96,7 @@ public class SmartLocation {
      * @param context
      */
     public void stop(Context context) {
+        releaseIntent(context);
         if (isServiceConnected && boundService != null) {
             boundService.stopLocation();
         }
@@ -161,6 +174,39 @@ public class SmartLocation {
         isServiceConnected = false;
     }
 
+    private void captureIntent(Context context) {
+        try {
+            IntentFilter locationUpdatesIntentFilter = new IntentFilter(smartLocationOptions.getIntentActionString());
+            context.registerReceiver(locationUpdatesReceiver, locationUpdatesIntentFilter);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void releaseIntent(Context context) {
+        try {
+            context.unregisterReceiver(locationUpdatesReceiver);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private BroadcastReceiver locationUpdatesReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (onLocationUpdatedListener != null) {
+                Location location = intent.getParcelableExtra(SmartLocation.DETECTED_LOCATION_KEY);
+
+                int activity = intent.getIntExtra(SmartLocation.DETECTED_ACTIVITY_KEY, DetectedActivity.UNKNOWN);
+                int confidence = intent.getIntExtra(SmartLocation.DETECTED_ACTIVITY_CONFIDENCE_KEY, 0);
+                DetectedActivity detectedActivity = new DetectedActivity(activity, confidence);
+
+                onLocationUpdatedListener.onLocationUpdated(location, detectedActivity);
+            }
+
+        }
+    };
+
     /**
      * Returns the last known location if it is in the validity period. If there is none or is not valid, returns null.
      *
@@ -212,4 +258,28 @@ public class SmartLocation {
         return new DetectedActivity(lastActivity, lastConfidence);
     }
 
+    /**
+     * Gets the current listener for location updates
+     *
+     * @return
+     */
+    public OnLocationUpdatedListener getOnLocationUpdatedListener() {
+        return onLocationUpdatedListener;
+    }
+
+    /**
+     * Sets the current listener for location updates
+     *
+     * @param onLocationUpdatedListener
+     */
+    public void setOnLocationUpdatedListener(OnLocationUpdatedListener onLocationUpdatedListener) {
+        this.onLocationUpdatedListener = onLocationUpdatedListener;
+    }
+
+    /**
+     * Listener for activity and location updates
+     */
+    public interface OnLocationUpdatedListener {
+        public void onLocationUpdated(Location location, DetectedActivity detectedActivity);
+    }
 }

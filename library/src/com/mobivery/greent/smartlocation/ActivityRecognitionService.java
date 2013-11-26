@@ -34,17 +34,18 @@ public class ActivityRecognitionService extends IntentService {
             int activityType = mostProbableActivity.getType();
 
             if (getLastActivityType() != activityType && confidence >= ActivityRecognitionConstants.MINIMUM_ACTIVITY_CONFIDENCY) {
-                broadcastNewActivity(activityType);
+                broadcastNewActivity(mostProbableActivity);
                 storeLastActivityType(mostProbableActivity);
             }
 
         }
     }
 
-    private void broadcastNewActivity(int activityType) {
+    private void broadcastNewActivity(DetectedActivity activity) {
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(ActivityRecognitionConstants.ACTIVITY_CHANGED_INTENT);
-        broadcastIntent.putExtra(ActivityRecognitionConstants.ACTIVITY_KEY, activityType);
+        broadcastIntent.putExtra(ActivityRecognitionConstants.ACTIVITY_KEY, activity);
+        broadcastIntent.putExtra(ActivityRecognitionConstants.ACTIVITY_CONFIDENCE_KEY, activity.getConfidence());
         getApplicationContext().sendBroadcast(broadcastIntent);
     }
 

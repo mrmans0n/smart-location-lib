@@ -34,7 +34,7 @@ public class SmartLocationService extends Service implements LocationListener, G
     private SharedPreferences sharedPreferences;
 
     private String callerPackage;
-    private int currentActivity = DetectedActivity.UNKNOWN;
+    private DetectedActivity currentActivity = new DetectedActivity(DetectedActivity.UNKNOWN, 0);
     private SmartLocationOptions options;
 
     private Location lastLocation;
@@ -124,7 +124,7 @@ public class SmartLocationService extends Service implements LocationListener, G
     }
 
     private void continueStartLocation() {
-        Log.i(getClass().getSimpleName(), "[LOCATION] continueStartLocation");
+        Log.v(getClass().getSimpleName(), "[LOCATION] continueStartLocation");
         locationClient.requestLocationUpdates(locationRequest, this);
         IntentFilter intentFilterActivityUpdates = new IntentFilter(ActivityRecognitionConstants.ACTIVITY_CHANGED_INTENT);
         registerReceiver(activityUpdatesReceiver, intentFilterActivityUpdates);
@@ -155,8 +155,10 @@ public class SmartLocationService extends Service implements LocationListener, G
         @Override
         public void onReceive(Context context, Intent intent) {
             int activityType = intent.getIntExtra(ActivityRecognitionConstants.ACTIVITY_KEY, DetectedActivity.UNKNOWN);
-            Log.i(getClass().getSimpleName(), "[ACTIVITY] new activity detected = " + activityType);
-            currentActivity = activityType;
+            int confidence = intent.getIntExtra(ActivityRecognitionConstants.ACTIVITY_CONFIDENCE_KEY, 0);
+            Log.v(getClass().getSimpleName(), "[ACTIVITY] new activity detected = " + activityType + " with confidence of " + confidence + "%");
+            currentActivity = new DetectedActivity(activityType, confidence);
+
 
             if (lastLocation != null) {
                 processLocation(lastLocation);
@@ -176,10 +178,11 @@ public class SmartLocationService extends Service implements LocationListener, G
 
     private void processLocation(Location location) {
         String intentName = getLocationUpdatedIntentName();
-        Log.i(getClass().getSimpleName(), "[LOCATION] Broadcasting new location intent " + intentName);
+        Log.v(getClass().getSimpleName(), "[LOCATION] Broadcasting new location intent " + intentName);
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(intentName);
         broadcastIntent.putExtra(SmartLocation.DETECTED_ACTIVITY_KEY, currentActivity);
+        broadcastIntent.putExtra(SmartLocation.DETECTED_ACTIVITY_CONFIDENCE_KEY, currentActivity.getConfidence());
         broadcastIntent.putExtra(SmartLocation.DETECTED_LOCATION_KEY, location);
         getApplicationContext().sendBroadcast(broadcastIntent);
 
