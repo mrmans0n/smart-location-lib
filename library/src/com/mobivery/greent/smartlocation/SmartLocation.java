@@ -66,22 +66,47 @@ public class SmartLocation {
     }
 
     /**
-     * Initializes the smart location
+     * Deprecated. Use {@link #start(android.content.Context, com.mobivery.greent.smartlocation.SmartLocation.OnLocationUpdatedListener)} instead.
      *
      * @param context
      */
+    @Deprecated
     public void start(Context context) {
         start(context, new SmartLocationOptions());
     }
 
     /**
-     * Initializes the smart location with custom options
+     * Deprecated. Use {@link #start(android.content.Context, SmartLocationOptions, com.mobivery.greent.smartlocation.SmartLocation.OnLocationUpdatedListener)} instead.
      *
      * @param context
      */
+    @Deprecated
     public void start(Context context, SmartLocationOptions options) {
+        start(context, options, null);
+    }
+
+    /**
+     * Initializes the location process with default options
+     *
+     * @param context
+     * @param listener
+     */
+    public void start(Context context, OnLocationUpdatedListener listener) {
+        start(context, new SmartLocationOptions(), listener);
+    }
+
+    /**
+     * Initializes the location process with custom options
+     *
+     * @param context
+     * @param options
+     * @param listener
+     */
+    public void start(Context context, SmartLocationOptions options, OnLocationUpdatedListener listener) {
         setOptions(options);
         captureIntent(context);
+        setOnLocationUpdatedListener(listener);
+        
         if (isServiceBound && boundService != null) {
             boundService.startLocation(smartLocationOptions);
         } else {
