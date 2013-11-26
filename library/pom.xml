@@ -5,15 +5,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.mobivery.greent.smartlocation</groupId>
     <artifactId>library</artifactId>
     <name>SmartLocation Library</name>
-    <packaging>apklib</packaging>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>com.mobivery.greent.smartlocation</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -27,6 +26,7 @@
             <groupId>android.support</groupId>
             <artifactId>compatibility-v4</artifactId>
             <version>13</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.android.gms</groupId>

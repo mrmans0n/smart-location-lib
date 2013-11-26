@@ -70,9 +70,10 @@ public class SmartLocation {
      */
     public void start(Context context, SmartLocationOptions options) {
         setOptions(options);
-        if (isServiceBound) {
+        if (isServiceBound && boundService != null) {
             boundService.startLocation(smartLocationOptions);
         } else {
+            isServiceBound = false;
             bindService(context);
         }
     }
@@ -83,7 +84,7 @@ public class SmartLocation {
      * @param context
      */
     public void stop(Context context) {
-        if (isServiceConnected) {
+        if (isServiceConnected && boundService != null) {
             boundService.stopLocation();
         }
     }
@@ -108,7 +109,7 @@ public class SmartLocation {
             throw new IllegalArgumentException("options value can't be null");
 
         smartLocationOptions = options;
-        if (isServiceConnected) {
+        if (isServiceConnected && boundService != null) {
             boundService.setOptions(options);
         }
     }
