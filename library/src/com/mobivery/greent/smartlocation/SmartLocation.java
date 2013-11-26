@@ -106,7 +106,7 @@ public class SmartLocation {
         setOptions(options);
         captureIntent(context);
         setOnLocationUpdatedListener(listener);
-        
+
         if (isServiceBound && boundService != null) {
             boundService.startLocation(smartLocationOptions);
         } else {

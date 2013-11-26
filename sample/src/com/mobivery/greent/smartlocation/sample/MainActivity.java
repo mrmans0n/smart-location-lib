@@ -1,13 +1,10 @@
 package com.mobivery.greent.smartlocation.sample;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -31,12 +28,13 @@ public class MainActivity extends Activity {
         super.onCreate(bundle);
         setContentView(R.layout.activity_main);
 
+        // Bind event clicks
         Button startLocation = (Button) findViewById(R.id.start_location);
         startLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 userWantsLocation = true;
-                startLocation(MainActivity.this);
+                startLocation();
             }
         });
 
@@ -45,11 +43,15 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 userWantsLocation = false;
-                stopLocation(MainActivity.this);
+                stopLocation();
             }
         });
 
+        // bind textviews
         locationText = (TextView) findViewById(R.id.location_text);
+
+        // Keep the screen always on
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
@@ -57,7 +59,7 @@ public class MainActivity extends Activity {
         super.onResume();
 
         if (userWantsLocation && !isCapturingLocation) {
-            startLocation(this);
+            startLocation();
         }
 
     }
@@ -66,11 +68,13 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         if (isCapturingLocation) {
-            stopLocation(this);
+            stopLocation();
         }
     }
 
-    private void startLocation(Context context) {
+    private void startLocation() {
+
+        // Create some custom options for our class. This is not needed unless we want some extra control.
         SmartLocationOptions options = new SmartLocationOptions();
         options.setPackageName(PACKAGE_NAME);
         options.setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT);
@@ -87,53 +91,41 @@ public class MainActivity extends Activity {
             }
         });
 
-        SmartLocation.getInstance().start(context, options);
+        // Init the location with custom options
+        SmartLocation.getInstance().start(this, options, new SmartLocation.OnLocationUpdatedListener() {
+            @Override
+            public void onLocationUpdated(Location location, DetectedActivity detectedActivity) {
+                showLocation(location, detectedActivity);
+            }
+        });
 
+        // Try to restore the cached values, in case the first location takes long
         Location tryLastLocation = SmartLocation.getInstance().getLastKnownLocation(this);
         DetectedActivity tryLastActivity = SmartLocation.getInstance().getLastKnownActivity(this);
 
-        captureIntent();
         isCapturingLocation = true;
         if (tryLastLocation != null && tryLastActivity != null) {
-            showLocation(tryLastLocation, tryLastActivity.getType());
-            locationText.setText(locationText.getText()+"\n (from cache)");
+            showLocation(tryLastLocation, tryLastActivity);
+            locationText.setText(locationText.getText() + "\n (from cache)");
         } else {
             locationText.setText("Location started! Getting the first fix...");
         }
     }
 
-    private void stopLocation(Context context) {
+    private void stopLocation() {
         isCapturingLocation = false;
-        releaseIntent();
-        SmartLocation.getInstance().stop(context);
-        SmartLocation.getInstance().cleanup(context);
+
+        // Stop the location capture
+        SmartLocation.getInstance().stop(this);
+
+        // Cleanup so we know we don't want extra activation/deactivation of the locator for the time being.
+        SmartLocation.getInstance().cleanup(this);
+
         locationText.setText("Location stopped!");
     }
 
-    private void captureIntent() {
-        IntentFilter locationUpdatesIntentFilter = new IntentFilter(LOCATION_UPDATED_INTENT);
-        registerReceiver(locationUpdatesReceiver, locationUpdatesIntentFilter);
-    }
-
-    private void releaseIntent() {
-        try {
-            unregisterReceiver(locationUpdatesReceiver);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private BroadcastReceiver locationUpdatesReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Location location = intent.getParcelableExtra(SmartLocation.DETECTED_LOCATION_KEY);
-            int activity = intent.getIntExtra(SmartLocation.DETECTED_ACTIVITY_KEY, DetectedActivity.UNKNOWN);
-            showLocation(location, activity);
-        }
-    };
-
-    private void showLocation(Location location, int activityType) {
-        String activityName = getNameFromType(activityType) + " (" + activityType + ")";
+    private void showLocation(Location location, DetectedActivity activity) {
+        String activityName = getNameFromType(activity.getType()) + " (" + activity.getType() + ") with " + activity.getConfidence() + "% confidence. ";
         if (location != null) {
             locationText.setText(
                     String.format("Latitude %.6f, Longitude %.6f, Activity %s",

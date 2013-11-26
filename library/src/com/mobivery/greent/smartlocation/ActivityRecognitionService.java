@@ -44,7 +44,7 @@ public class ActivityRecognitionService extends IntentService {
     private void broadcastNewActivity(DetectedActivity activity) {
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(ActivityRecognitionConstants.ACTIVITY_CHANGED_INTENT);
-        broadcastIntent.putExtra(ActivityRecognitionConstants.ACTIVITY_KEY, activity);
+        broadcastIntent.putExtra(ActivityRecognitionConstants.ACTIVITY_KEY, activity.getType());
         broadcastIntent.putExtra(ActivityRecognitionConstants.ACTIVITY_CONFIDENCE_KEY, activity.getConfidence());
         getApplicationContext().sendBroadcast(broadcastIntent);
     }
