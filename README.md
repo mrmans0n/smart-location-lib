@@ -23,14 +23,36 @@ Under the umbrella of the Green-T project, Mobivery has invested in the developi
 Getting started
 ---------------
 
+### Gradle
+
+You should add this to your dependencys:
+
+```groovy
+    compile 'com.mobivery.greent.smartlocation:library:1.0.2'
+```
+
+And you should add Mobivery's repository to your repositories:
+
+```groovy
+repositories {
+
+    // ... blah blah the rest of your repositories ...
+
+    maven {
+        url 'http://maven-repo.mobivery.com.s3.amazonaws.com/release'
+    }
+}
+```
+
+### Maven
+
 You should add this dependency.
 
 ````xml
 <dependency>
 	<groupId>com.mobivery.greent.smartlocation</groupId>
 	<artifactId>library</artifactId>
-	<version>1.0.1</version>
-	<type>apklib</type>
+	<version>1.0.2</version>
 </dependency>
 ````
 
@@ -42,8 +64,6 @@ And you should add Mobivery's repository to the pom.xml <repositories> tag also.
     <url>http://maven-repo.mobivery.com.s3.amazonaws.com/release</url>
 </repository>
 ````
-
-When the time is right (ie, we consider this is stable enough), we will switch to the release repository.
 
 Permissions
 -----------

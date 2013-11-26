@@ -33,7 +33,6 @@
             <groupId>com.mobivery.greent.smartlocation</groupId>
             <artifactId>library</artifactId>
             <version>1.0.2</version>
-            <type>apklib</type>
         </dependency>
     </dependencies>
 
