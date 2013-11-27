@@ -101,9 +101,7 @@ SmartLocation.getInstance().start(
     new SmartLocation.OnLocationUpdatedListener() {
         @Override
         public void onLocationUpdated(Location location, DetectedActivity detectedActivity) {
-			
             // In here you have the location and the activity. Do whatever you want with them!
-			
         }
     });
 ````
