@@ -121,8 +121,8 @@ public class SmartLocation {
      * @param context
      */
     public void stop(Context context) {
-        releaseIntent(context);
         if (isServiceConnected && boundService != null) {
+            releaseIntent(context);
             boundService.stopLocation();
         }
     }
