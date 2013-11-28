@@ -35,7 +35,7 @@ public class SmartLocationService extends Service implements LocationListener, G
 
     private String callerPackage;
     private DetectedActivity currentActivity = new DetectedActivity(DetectedActivity.UNKNOWN, 0);
-    private SmartLocationOptions options;
+    private SmartLocationOptions smartLocationOptions;
 
     private Location lastLocation;
 
@@ -95,7 +95,7 @@ public class SmartLocationService extends Service implements LocationListener, G
      * @param options caller options
      */
     public void startLocation(SmartLocationOptions options) {
-        this.options = options;
+        this.smartLocationOptions = options;
         if (options.getPackageName() != null) {
             callerPackage = options.getPackageName();
         }
@@ -112,7 +112,7 @@ public class SmartLocationService extends Service implements LocationListener, G
      * @param options
      */
     public void setOptions(SmartLocationOptions options) {
-        this.options = options;
+        this.smartLocationOptions = options;
         setLocationRequestValues(options.getDefaultUpdateStrategy());
     }
 
@@ -124,7 +124,9 @@ public class SmartLocationService extends Service implements LocationListener, G
     }
 
     private void continueStartLocation() {
-        Log.v(getClass().getSimpleName(), "[LOCATION] continueStartLocation");
+    	if(smartLocationOptions.getDebugging()) {
+    		Log.v(getClass().getSimpleName(), "[LOCATION] continueStartLocation");
+    	}
         locationClient.requestLocationUpdates(locationRequest, this);
         IntentFilter intentFilterActivityUpdates = new IntentFilter(ActivityRecognitionConstants.ACTIVITY_CHANGED_INTENT);
         registerReceiver(activityUpdatesReceiver, intentFilterActivityUpdates);
@@ -156,7 +158,9 @@ public class SmartLocationService extends Service implements LocationListener, G
         public void onReceive(Context context, Intent intent) {
             int activityType = intent.getIntExtra(ActivityRecognitionConstants.ACTIVITY_KEY, DetectedActivity.UNKNOWN);
             int confidence = intent.getIntExtra(ActivityRecognitionConstants.ACTIVITY_CONFIDENCE_KEY, 0);
-            Log.v(getClass().getSimpleName(), "[ACTIVITY] new activity detected = " + activityType + " with confidence of " + confidence + "%");
+            if(smartLocationOptions.getDebugging()) { 
+            	Log.v(getClass().getSimpleName(), "[ACTIVITY] new activity detected = " + activityType + " with confidence of " + confidence + "%");
+            }
             currentActivity = new DetectedActivity(activityType, confidence);
 
 
@@ -164,7 +168,7 @@ public class SmartLocationService extends Service implements LocationListener, G
                 processLocation(lastLocation);
             }
 
-            UpdateStrategy strategy = options.getOnActivityRecognizerUpdatedNewStrategy().getUpdateStrategyForActivity(activityType);
+            UpdateStrategy strategy = smartLocationOptions.getOnActivityRecognizerUpdatedNewStrategy().getUpdateStrategyForActivity(activityType);
             setLocationRequestValues(strategy);
         }
     };
@@ -173,12 +177,14 @@ public class SmartLocationService extends Service implements LocationListener, G
     public void onLocationChanged(Location location) {
         lastLocation = location;
         processLocation(location);
-
     }
 
     private void processLocation(Location location) {
         String intentName = getLocationUpdatedIntentName();
-        Log.v(getClass().getSimpleName(), "[LOCATION] Broadcasting new location intent " + intentName);
+        if(smartLocationOptions.getDebugging()) {
+        	Log.v(getClass().getSimpleName(), "[LOCATION] Broadcasting new location intent " + intentName);
+        }
+        
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(intentName);
         broadcastIntent.putExtra(SmartLocation.DETECTED_ACTIVITY_KEY, currentActivity.getType());
@@ -192,20 +198,24 @@ public class SmartLocationService extends Service implements LocationListener, G
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.v(getClass().getSimpleName(), "[LOCATION] connected");
-
+    	if(smartLocationOptions.getDebugging()) {
+    		Log.v(getClass().getSimpleName(), "[LOCATION] connected");
+    	}
         continueStartLocation();
     }
 
     @Override
     public void onDisconnected() {
-        Log.v(getClass().getSimpleName(), "[LOCATION] disconnected");
-
+    	if(smartLocationOptions.getDebugging()) {
+    		Log.v(getClass().getSimpleName(), "[LOCATION] disconnected");
+    	}
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.v(getClass().getSimpleName(), "[LOCATION] connectionFailed");
+        if(smartLocationOptions.getDebugging()) {
+        	Log.v(getClass().getSimpleName(), "[LOCATION] connectionFailed");
+        }
     }
 
     private void storeLastLocation(Location location) {
@@ -218,5 +228,4 @@ public class SmartLocationService extends Service implements LocationListener, G
         editor.putLong(LAST_LOCATION_UPDATED_AT_KEY, System.currentTimeMillis());
         editor.commit();
     }
-
 }
