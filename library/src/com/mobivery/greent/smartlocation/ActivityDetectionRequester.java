@@ -76,18 +76,17 @@ public class ActivityDetectionRequester implements GooglePlayServicesClient.Conn
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i(getClass().getSimpleName(), "connected");
+    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "connected");
         continueRequestActivityUpdates();
     }
 
     @Override
     public void onDisconnected() {
-        Log.i(getClass().getSimpleName(), "disconnected");
+    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "disconnected");
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.i(getClass().getSimpleName(), "connection failed");
-
+    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "connection failed");
     }
 }

@@ -13,6 +13,8 @@ public class SmartLocationOptions {
     private long activityCacheValidity = ONE_HOUR_IN_MILLISECONDS;
     private OnActivityRecognizerUpdated onActivityRecognizerUpdatedNewStrategy;
 
+	private static boolean showDebugging = true;
+
     public SmartLocationOptions() {
         onActivityRecognizerUpdatedNewStrategy = new OnActivityRecognizerUpdated() {
             @Override
@@ -120,5 +122,13 @@ public class SmartLocationOptions {
 
     public interface OnActivityRecognizerUpdated {
         public UpdateStrategy getUpdateStrategyForActivity(int detectedActivity);
+    }
+    
+    public void setDebugging(boolean b) {
+    	SmartLocationOptions.showDebugging = b;
+    }
+    
+    public static boolean getDebugging() {
+    	return showDebugging;
     }
 }

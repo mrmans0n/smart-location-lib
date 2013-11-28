@@ -57,20 +57,18 @@ public class ActivityDetectionRemover implements GooglePlayServicesClient.Connec
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i(getClass().getSimpleName(), "connected");
+    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "connected");
         continueRemoveUpdates();
     }
 
     @Override
     public void onDisconnected() {
-        Log.i(getClass().getSimpleName(), "disconnected");
+    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "disconnected");
         setActivityRecognitionClient(null);
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.i(getClass().getSimpleName(), "connection failed");
-
+    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "connection failed");
     }
-
 }
