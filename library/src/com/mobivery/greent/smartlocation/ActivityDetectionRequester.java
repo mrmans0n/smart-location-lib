@@ -18,10 +18,15 @@ public class ActivityDetectionRequester implements GooglePlayServicesClient.Conn
     private Context context;
     private PendingIntent pendingIntent;
     private ActivityRecognitionClient activityRecognitionClient;
+    
+    private SmartLocationOptions smartLocationOptions;
 
     public ActivityDetectionRequester(Context context) {
         this.context = context;
 
+        if (smartLocationOptions == null) {
+            smartLocationOptions = new SmartLocationOptions();
+        }
         activityRecognitionClient = null;
         pendingIntent = null;
     }
@@ -76,17 +81,23 @@ public class ActivityDetectionRequester implements GooglePlayServicesClient.Conn
 
     @Override
     public void onConnected(Bundle bundle) {
-    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "connected");
+    	if(smartLocationOptions.getDebugging()) {
+    		Log.i(getClass().getSimpleName(), "connected");
+    	}
         continueRequestActivityUpdates();
     }
 
     @Override
     public void onDisconnected() {
-    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "disconnected");
+    	if(smartLocationOptions.getDebugging()) {
+    		Log.i(getClass().getSimpleName(), "disconnected");
+    	}
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "connection failed");
+    	if(smartLocationOptions.getDebugging()) {
+    		Log.i(getClass().getSimpleName(), "connection failed");
+    	}
     }
 }

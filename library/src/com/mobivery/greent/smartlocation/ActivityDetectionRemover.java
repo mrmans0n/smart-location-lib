@@ -17,10 +17,15 @@ public class ActivityDetectionRemover implements GooglePlayServicesClient.Connec
     private Context context;
     private PendingIntent pendingIntent;
     private ActivityRecognitionClient activityRecognitionClient;
+    
+    private SmartLocationOptions smartLocationOptions;
 
     public ActivityDetectionRemover(Context context) {
         this.context = context;
 
+        if (smartLocationOptions == null) {
+            smartLocationOptions = new SmartLocationOptions();
+        }
         activityRecognitionClient = null;
     }
 
@@ -57,18 +62,24 @@ public class ActivityDetectionRemover implements GooglePlayServicesClient.Connec
 
     @Override
     public void onConnected(Bundle bundle) {
-    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "connected");
+    	if(smartLocationOptions.getDebugging()) {
+    		Log.i(getClass().getSimpleName(), "connected");
+    	}
         continueRemoveUpdates();
     }
 
     @Override
     public void onDisconnected() {
-    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "disconnected");
+    	if(smartLocationOptions.getDebugging()) {
+    		Log.i(getClass().getSimpleName(), "disconnected");
+    	}
         setActivityRecognitionClient(null);
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-    	if(SmartLocationOptions.getDebugging()) Log.i(getClass().getSimpleName(), "connection failed");
+    	if(smartLocationOptions.getDebugging()) {
+    		Log.i(getClass().getSimpleName(), "connection failed");
+    	}
     }
 }
