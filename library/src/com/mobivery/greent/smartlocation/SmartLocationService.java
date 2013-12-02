@@ -124,9 +124,9 @@ public class SmartLocationService extends Service implements LocationListener, G
     }
 
     private void continueStartLocation() {
-    	if(smartLocationOptions.getDebugging()) {
-    		Log.v(getClass().getSimpleName(), "[LOCATION] continueStartLocation");
-    	}
+        if (smartLocationOptions.isDebugging()) {
+            Log.v(getClass().getSimpleName(), "[LOCATION] continueStartLocation");
+        }
         locationClient.requestLocationUpdates(locationRequest, this);
         IntentFilter intentFilterActivityUpdates = new IntentFilter(ActivityRecognitionConstants.ACTIVITY_CHANGED_INTENT);
         registerReceiver(activityUpdatesReceiver, intentFilterActivityUpdates);
@@ -158,8 +158,8 @@ public class SmartLocationService extends Service implements LocationListener, G
         public void onReceive(Context context, Intent intent) {
             int activityType = intent.getIntExtra(ActivityRecognitionConstants.ACTIVITY_KEY, DetectedActivity.UNKNOWN);
             int confidence = intent.getIntExtra(ActivityRecognitionConstants.ACTIVITY_CONFIDENCE_KEY, 0);
-            if(smartLocationOptions.getDebugging()) { 
-            	Log.v(getClass().getSimpleName(), "[ACTIVITY] new activity detected = " + activityType + " with confidence of " + confidence + "%");
+            if (smartLocationOptions.isDebugging()) {
+                Log.v(getClass().getSimpleName(), "[ACTIVITY] new activity detected = " + activityType + " with confidence of " + confidence + "%");
             }
             currentActivity = new DetectedActivity(activityType, confidence);
 
@@ -168,7 +168,7 @@ public class SmartLocationService extends Service implements LocationListener, G
                 processLocation(lastLocation);
             }
 
-            UpdateStrategy strategy = smartLocationOptions.getOnActivityRecognizerUpdatedNewStrategy().getUpdateStrategyForActivity(activityType);
+            UpdateStrategy strategy = smartLocationOptions.getOnActivityRecognizerUpdatedNewStrategy().getUpdateStrategyForActivity(currentActivity);
             setLocationRequestValues(strategy);
         }
     };
@@ -176,15 +176,18 @@ public class SmartLocationService extends Service implements LocationListener, G
     @Override
     public void onLocationChanged(Location location) {
         lastLocation = location;
+        if (smartLocationOptions.isDebugging()) {
+            Log.v(getClass().getSimpleName(), "[LOCATION] Received location " + location);
+        }
         processLocation(location);
     }
 
     private void processLocation(Location location) {
         String intentName = getLocationUpdatedIntentName();
-        if(smartLocationOptions.getDebugging()) {
-        	Log.v(getClass().getSimpleName(), "[LOCATION] Broadcasting new location intent " + intentName);
+        if (smartLocationOptions.isDebugging()) {
+            Log.v(getClass().getSimpleName(), "[LOCATION] Broadcasting new location intent " + intentName);
         }
-        
+
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(intentName);
         broadcastIntent.putExtra(SmartLocation.DETECTED_ACTIVITY_KEY, currentActivity.getType());
@@ -198,23 +201,23 @@ public class SmartLocationService extends Service implements LocationListener, G
 
     @Override
     public void onConnected(Bundle bundle) {
-    	if(smartLocationOptions.getDebugging()) {
-    		Log.v(getClass().getSimpleName(), "[LOCATION] connected");
-    	}
+        if (smartLocationOptions.isDebugging()) {
+            Log.v(getClass().getSimpleName(), "[LOCATION] connected");
+        }
         continueStartLocation();
     }
 
     @Override
     public void onDisconnected() {
-    	if(smartLocationOptions.getDebugging()) {
-    		Log.v(getClass().getSimpleName(), "[LOCATION] disconnected");
-    	}
+        if (smartLocationOptions.isDebugging()) {
+            Log.v(getClass().getSimpleName(), "[LOCATION] disconnected");
+        }
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        if(smartLocationOptions.getDebugging()) {
-        	Log.v(getClass().getSimpleName(), "[LOCATION] connectionFailed");
+        if (smartLocationOptions.isDebugging()) {
+            Log.v(getClass().getSimpleName(), "[LOCATION] connectionFailed");
         }
     }
 

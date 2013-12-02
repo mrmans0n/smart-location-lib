@@ -149,8 +149,8 @@ For example, we will set a typical strategy for a navigation app (for both cars 
         options.setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT);
         options.setOnLocationUpdatedNewStrategy(new SmartLocationOptions.OnLocationUpdated() {
             @Override
-            public UpdateStrategy getUpdateStrategyForActivity(int detectedActivity) {
-                switch (detectedActivity) {
+            public UpdateStrategy getUpdateStrategyForActivity(DetectedActivity detectedActivity) {
+                switch (detectedActivity.getType()) {
                     case DetectedActivity.IN_VEHICLE:
                     case DetectedActivity.ON_BICYCLE:
                         return UpdateStrategy.NAVIGATION;

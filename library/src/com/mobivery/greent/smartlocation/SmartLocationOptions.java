@@ -1,11 +1,13 @@
 package com.mobivery.greent.smartlocation;
 
+import com.google.android.gms.location.DetectedActivity;
+
 /**
  * Created by Nacho L. on 17/06/13.
  */
 public class SmartLocationOptions {
 
-    private static final long ONE_HOUR_IN_MILLISECONDS = 60*60*1000;
+    private static final long ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 
     private String packageName = SmartLocation.DEFAULT_PACKAGE;
     private UpdateStrategy defaultUpdateStrategy = UpdateStrategy.BEST_EFFORT;
@@ -13,12 +15,12 @@ public class SmartLocationOptions {
     private long activityCacheValidity = ONE_HOUR_IN_MILLISECONDS;
     private OnActivityRecognizerUpdated onActivityRecognizerUpdatedNewStrategy;
 
-	private boolean showDebugging = true;
+    private boolean showDebugging = true;
 
     public SmartLocationOptions() {
         onActivityRecognizerUpdatedNewStrategy = new OnActivityRecognizerUpdated() {
             @Override
-            public UpdateStrategy getUpdateStrategyForActivity(int detectedActivity) {
+            public UpdateStrategy getUpdateStrategyForActivity(DetectedActivity detectedActivity) {
                 // Default behavior: ignore the activity recognition
                 return UpdateStrategy.BEST_EFFORT;
             }
@@ -90,6 +92,7 @@ public class SmartLocationOptions {
 
     /**
      * Obtain the location cache validity in milliseconds
+     *
      * @return
      */
     public long getLocationCacheValidity() {
@@ -98,6 +101,7 @@ public class SmartLocationOptions {
 
     /**
      * Set a new location cache validity in milliseconds
+     *
      * @param locationCacheValidity
      */
     public void setLocationCacheValidity(long locationCacheValidity) {
@@ -106,6 +110,7 @@ public class SmartLocationOptions {
 
     /**
      * Obtain the activity cache validity in milliseconds
+     *
      * @return
      */
     public long getActivityCacheValidity() {
@@ -114,21 +119,36 @@ public class SmartLocationOptions {
 
     /**
      * Set a new activity cache validity in milliseconds
+     *
      * @param activityCacheValidity
      */
     public void setActivityCacheValidity(long activityCacheValidity) {
         this.activityCacheValidity = activityCacheValidity;
     }
 
+    /**
+     * Activate or deactivate the debugging flag
+     *
+     * @param showDebugging
+     */
+    public void setDebugging(boolean showDebugging) {
+        this.showDebugging = showDebugging;
+    }
+
+    /**
+     * Get the current status of the showDebugging flag
+     *
+     * @return
+     */
+    public boolean isDebugging() {
+        return showDebugging;
+    }
+
+    /**
+     * Interface for setting the current strategy based on the detected activity
+     */
     public interface OnActivityRecognizerUpdated {
-        public UpdateStrategy getUpdateStrategyForActivity(int detectedActivity);
+        public UpdateStrategy getUpdateStrategyForActivity(DetectedActivity detectedActivity);
     }
-    
-    public void setDebugging(boolean b) {
-    	this.showDebugging = b;
-    }
-    
-    public boolean getDebugging() {
-    	return showDebugging;
-    }
+
 }
