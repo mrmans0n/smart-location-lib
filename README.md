@@ -28,7 +28,7 @@ Getting started
 You should add this to your dependencys:
 
 ```groovy
-    compile 'com.mobivery.greent.smartlocation:library:1.0.4'
+    compile 'com.mobivery.greent.smartlocation:library:1.0.5'
 ```
 
 And you should add Mobivery's repository to your repositories:
@@ -52,7 +52,7 @@ You should add this dependency.
 <dependency>
 	<groupId>com.mobivery.greent.smartlocation</groupId>
 	<artifactId>library</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 </dependency>
 ````
 
