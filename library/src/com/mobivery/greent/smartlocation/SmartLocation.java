@@ -48,6 +48,7 @@ public class SmartLocation {
     private SmartLocationService boundService;
     private SmartLocationOptions smartLocationOptions;
     private OnLocationUpdatedListener onLocationUpdatedListener;
+    private OnSmartLocationStatusChangedListener onSmartLocationStatusChangedListener;
 
     // Singleton stuff
 
@@ -143,8 +144,9 @@ public class SmartLocation {
      */
     public void setOptions(SmartLocationOptions options) {
 
-        if (options == null)
+        if (options == null) {
             throw new IllegalArgumentException("options value can't be null");
+        }
 
         smartLocationOptions = options;
         if (isServiceConnected && boundService != null) {
@@ -157,7 +159,9 @@ public class SmartLocation {
             Intent serviceIntent = new Intent(context, SmartLocationService.class);
             isServiceBound = context.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         }
-
+        if (onSmartLocationStatusChangedListener != null) {
+            onSmartLocationStatusChangedListener.onServiceBoundFinished(isServiceBound);
+        }
         return isServiceBound;
     }
 
@@ -166,6 +170,9 @@ public class SmartLocation {
             try {
                 context.unbindService(serviceConnection);
                 isServiceBound = false;
+                if (onSmartLocationStatusChangedListener != null) {
+                    onSmartLocationStatusChangedListener.onServiceUnbounded();
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -177,11 +184,18 @@ public class SmartLocation {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             createServiceConnection(iBinder);
+            if (onSmartLocationStatusChangedListener != null) {
+                onSmartLocationStatusChangedListener.onServiceConnected();
+            }
+
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             destroyServiceConnection();
+            if (onSmartLocationStatusChangedListener != null) {
+                onSmartLocationStatusChangedListener.onServiceDisconnected();
+            }
         }
     };
 
@@ -302,9 +316,40 @@ public class SmartLocation {
     }
 
     /**
+     * Gets the current listener for status changes
+     *
+     * @return
+     */
+    public OnSmartLocationStatusChangedListener getOnSmartLocationStatusChangedListener() {
+        return onSmartLocationStatusChangedListener;
+    }
+
+    /**
+     * Sets the current listener for status changes
+     *
+     * @param onSmartLocationStatusChangedListener
+     */
+    public void setOnSmartLocationStatusChangedListener(OnSmartLocationStatusChangedListener onSmartLocationStatusChangedListener) {
+        this.onSmartLocationStatusChangedListener = onSmartLocationStatusChangedListener;
+    }
+
+    /**
      * Listener for activity and location updates
      */
     public interface OnLocationUpdatedListener {
         public void onLocationUpdated(Location location, DetectedActivity detectedActivity);
+    }
+
+    /**
+     * Listener for status changes
+     */
+    public interface OnSmartLocationStatusChangedListener {
+        public void onServiceBoundFinished(boolean result);
+
+        public void onServiceConnected();
+
+        public void onServiceDisconnected();
+
+        public void onServiceUnbounded();
     }
 }
