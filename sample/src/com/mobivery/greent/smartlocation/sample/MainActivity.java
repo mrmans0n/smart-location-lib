@@ -79,8 +79,8 @@ public class MainActivity extends Activity {
         options.setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT);
         options.setOnActivityRecognizerUpdatedNewStrategy(new SmartLocationOptions.OnActivityRecognizerUpdated() {
             @Override
-            public UpdateStrategy getUpdateStrategyForActivity(int detectedActivity) {
-                switch (detectedActivity) {
+            public UpdateStrategy getUpdateStrategyForActivity(DetectedActivity detectedActivity) {
+                switch (detectedActivity.getType()) {
                     case DetectedActivity.IN_VEHICLE:
                     case DetectedActivity.ON_BICYCLE:
                         return UpdateStrategy.NAVIGATION;
@@ -124,7 +124,7 @@ public class MainActivity extends Activity {
     }
 
     private void showLocation(Location location, DetectedActivity activity) {
-        String activityName = getNameFromType(activity.getType()) + " (" + activity.getType() + ") with " + activity.getConfidence() + "% confidence. ";
+        String activityName = getNameFromType(activity) + " (" + activity.getType() + ") with " + activity.getConfidence() + "% confidence. ";
         if (location != null) {
             locationText.setText(
                     String.format("Latitude %.6f, Longitude %.6f, Activity %s",
@@ -137,8 +137,8 @@ public class MainActivity extends Activity {
         }
     }
 
-    private String getNameFromType(int activityType) {
-        switch (activityType) {
+    private String getNameFromType(DetectedActivity activityType) {
+        switch (activityType.getType()) {
             case DetectedActivity.IN_VEHICLE:
                 return "in_vehicle";
             case DetectedActivity.ON_BICYCLE:
