@@ -76,6 +76,7 @@ public class MainActivity extends Activity {
         // Create some custom options for our class. This is not needed unless we want some extra control.
         SmartLocationOptions options = new SmartLocationOptions();
         options.setPackageName(PACKAGE_NAME);
+        options.setDebugging(true);
         options.setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT);
         options.setOnActivityRecognizerUpdatedNewStrategy(new SmartLocationOptions.OnActivityRecognizerUpdated() {
             @Override
