@@ -96,6 +96,14 @@
 
     <repositories>
         <repository>
+            <id>nlopez-repo</id>
+            <url>http://maven.nlopez.io:8081/artifactory/repo</url>
+        </repository>
+        <repository>
+            <id>maven-mobivery-release-repo</id>
+            <url>http://dev.mobivery.com/artifactory/ext-release-local</url>
+        </repository>
+        <repository>
             <id>maven-mobivery-release-repo</id>
             <url>http://dev.mobivery.com/artifactory/ext-release-local</url>
             <releases>
