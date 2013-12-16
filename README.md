@@ -36,11 +36,10 @@ And you should add Mobivery's repository to your repositories:
 ```groovy
 repositories {
 
+    mavenCentral()
     // ... blah blah the rest of your repositories ...
 
-    maven {
-        url 'http://dev.mobivery.com/artifactory/repo'
-    }
+    maven { url 'http://dev.mobivery.com/artifactory/repo' }
 }
 ```
 
