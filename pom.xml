@@ -83,17 +83,21 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <repositories>
-        <!-- Building repo, for everyone -->
+    <distributionManagement>
         <repository>
-            <id>public-maven-mobivery-repo</id>
-            <url>http://maven-repo.mobivery.com.s3.amazonaws.com/release</url>
+            <id>maven-mobivery-release-repo</id>
+            <url>http://dev.mobivery.com/artifactory/ext-release-local</url>
         </repository>
-        <!-- Deployment repos -->
+        <snapshotRepository>
+            <id>maven-mobivery-snapshot-repo</id>
+            <url>http://dev.mobivery.com/artifactory/ext-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
         <repository>
-            <id>maven-s3-mobivery-repo</id>
-            <name>S3 Mobivery Repository</name>
-            <url>s3://maven-repo.mobivery.com/release</url>
+            <id>maven-mobivery-release-repo</id>
+            <url>http://dev.mobivery.com/artifactory/ext-release-local</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -102,9 +106,8 @@
             </snapshots>
         </repository>
         <repository>
-            <id>maven-s3-mobivery-snapshot-repo</id>
-            <name>S3 Mobivery Snapshot Repository</name>
-            <url>s3://maven-repo.mobivery.com/snapshot</url>
+            <id>maven-mobivery-snapshot-repo</id>
+            <url>http://dev.mobivery.com/artifactory/ext-snapshot-local</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -113,42 +116,6 @@
             </snapshots>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>maven-s3-mobivery-repo</id>
-            <name>S3 Mobivery Repository</name>
-            <url>s3://maven-repo.mobivery.com/release</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>maven-s3-mobivery-snapshot-repo</id>
-            <name>S3 Mobivery Snapshot Repository</name>
-            <url>s3://maven-repo.mobivery.com/snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-    <distributionManagement>
-        <repository>
-            <id>maven-s3-mobivery-repo</id>
-            <name>S3 Mobivery Repository</name>
-            <url>s3://maven-repo.mobivery.com/release</url>
-        </repository>
-        <snapshotRepository>
-            <id>maven-s3-mobivery-snapshot-repo</id>
-            <name>S3 Mobivery Snapshot Repository</name>
-            <url>s3://maven-repo.mobivery.com/snapshot</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <build>
         <pluginManagement>
@@ -187,13 +154,11 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.1</version>
+            </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>org.springframework.build.aws</groupId>
-                <artifactId>org.springframework.build.aws.maven</artifactId>
-                <version>3.0.0.RELEASE</version>
-            </extension>
-        </extensions>
     </build>
 </project>

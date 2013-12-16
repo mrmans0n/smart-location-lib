@@ -39,7 +39,7 @@ repositories {
     // ... blah blah the rest of your repositories ...
 
     maven {
-        url 'http://maven-repo.mobivery.com.s3.amazonaws.com/release'
+        url 'http://dev.mobivery.com/artifactory/repo'
     }
 }
 ```
@@ -61,7 +61,7 @@ And you should add Mobivery's repository to the pom.xml <repositories> tag also.
 ````xml
 <repository>
 	<id>mobivery-repository</id>
-    <url>http://maven-repo.mobivery.com.s3.amazonaws.com/release</url>
+    <url>http://dev.mobivery.com/artifactory/repo</url>
 </repository>
 ````
 
