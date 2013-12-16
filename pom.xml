@@ -102,10 +102,6 @@
         <repository>
             <id>maven-mobivery-release-repo</id>
             <url>http://dev.mobivery.com/artifactory/ext-release-local</url>
-        </repository>
-        <repository>
-            <id>maven-mobivery-release-repo</id>
-            <url>http://dev.mobivery.com/artifactory/ext-release-local</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
