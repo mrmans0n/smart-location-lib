@@ -67,21 +67,19 @@ public class SmartLocation {
     }
 
     /**
-     * Deprecated. Use {@link #start(android.content.Context, com.mobivery.greent.smartlocation.SmartLocation.OnLocationUpdatedListener)} instead.
+     * Initializes the location process with default options. You have to set up your receiver or your {@link com.mobivery.greent.smartlocation.SmartLocation.OnLocationUpdatedListener} by hand.
      *
      * @param context
      */
-    @Deprecated
     public void start(Context context) {
         start(context, new SmartLocationOptions());
     }
 
     /**
-     * Deprecated. Use {@link #start(android.content.Context, SmartLocationOptions, com.mobivery.greent.smartlocation.SmartLocation.OnLocationUpdatedListener)} instead.
+     * Initializes the location process with custom options. You have to set up your receiver or your {@link com.mobivery.greent.smartlocation.SmartLocation.OnLocationUpdatedListener} by hand.
      *
      * @param context
      */
-    @Deprecated
     public void start(Context context, SmartLocationOptions options) {
         start(context, options, null);
     }

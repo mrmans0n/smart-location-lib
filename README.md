@@ -28,7 +28,7 @@ Getting started
 You should add this to your dependencys:
 
 ```groovy
-    compile 'com.mobivery.greent.smartlocation:library:1.0.6'
+    compile 'com.mobivery.greent.smartlocation:library:1.0.7'
 ```
 
 And you should add Mobivery's repository to your repositories:
@@ -51,7 +51,7 @@ You should add this dependency.
 <dependency>
 	<groupId>com.mobivery.greent.smartlocation</groupId>
 	<artifactId>library</artifactId>
-	<version>1.0.6</version>
+	<version>1.0.7</version>
 </dependency>
 ````
 
@@ -92,6 +92,8 @@ Internally, the ActivityRecognitionService will provide with the user's activity
 Usage
 -----
 
+### Starting location
+
 For starting the location service, you can perform just one call with a listener.
 
 ````java
@@ -105,17 +107,27 @@ SmartLocation.getInstance().start(
     });
 ````
 
+You have some different methods to be able to do this in different ways.
+
+This one above is the simplest one, because it would do all the boilerplate stuff for you. But you could also intercept an intent that is launched everytime the location is updated (see below).
+
+### Stopping location
+
 For stopping the location (but with a chance to restarting it) you should use the stop method.
 
 ````java
 SmartLocation.getInstance().stop(context);
 ````
 
+### Cleanup location
+
 For stopping it for good and avoid service leaks, you must call the cleanup method this way.
 
 ````java
 SmartLocation.getInstance().cleanup(context);
 ````
+
+### Where you should do the calls
 
 The best practices for using these methods would be:
 
@@ -125,7 +137,7 @@ The best practices for using these methods would be:
 
 The Service will also send the information of user's location and current activity via intents.
 
-The default intent that will be broadcasted will be `com.mobivery.smartlocation.LOCATION_UPDATED`. You can configure the package by passing a SmartLocationOptions object to the start method but more on that later. You can capture it if you want, but the listener should be enough.
+The default intent that will be broadcasted will be `com.mobivery.greent.smartlocation.LOCATION_UPDATED`. You can configure the package by passing a SmartLocationOptions object to the start method but more on that later. You can capture it if you want, but the listener should be enough.
 
 Customizing to your needs
 -------------------------
@@ -175,7 +187,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2013 Mobivery
+Copyright (c) 2013-2014 Mobivery
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
