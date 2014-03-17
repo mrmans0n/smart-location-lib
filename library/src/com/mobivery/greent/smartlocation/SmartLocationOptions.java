@@ -8,11 +8,13 @@ import com.google.android.gms.location.DetectedActivity;
 public class SmartLocationOptions {
 
     private static final long ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
+    private static final int DEFAULT_SECONDS_UNTIL_FALLBACK = 10;
 
     private String packageName = SmartLocation.DEFAULT_PACKAGE;
     private UpdateStrategy defaultUpdateStrategy = UpdateStrategy.BEST_EFFORT;
     private long locationCacheValidity = ONE_HOUR_IN_MILLISECONDS;
     private long activityCacheValidity = ONE_HOUR_IN_MILLISECONDS;
+    private int secondsUntilFallback = DEFAULT_SECONDS_UNTIL_FALLBACK;
     private OnActivityRecognizerUpdated onActivityRecognizerUpdatedNewStrategy;
 
     private boolean showDebugging = true;
@@ -142,6 +144,24 @@ public class SmartLocationOptions {
      */
     public boolean isDebugging() {
         return showDebugging;
+    }
+
+    /**
+     * Gets the number of seconds to wait for the Fused Location Provider
+     *
+     * @return
+     */
+    public int getSecondsUntilFallback() {
+        return secondsUntilFallback;
+    }
+
+    /**
+     * Sets the number of seconds to wait for the Fused Location Provider
+     *
+     * @param secondsUntilFallback
+     */
+    public void setSecondsUntilFallback(int secondsUntilFallback) {
+        this.secondsUntilFallback = secondsUntilFallback;
     }
 
     /**
