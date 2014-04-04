@@ -32,7 +32,7 @@ You should add this to your dependencies:
 Permissions
 -----------
 
-You must add these permissions to your AndroidManifest.xml.
+These permissions will be automatically merged into your AndroidManifest.xml by gradle. There is **NO NEED** to add them to your app, though I'm leaving them here so you know.
 
 ````xml
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -43,11 +43,11 @@ You must add these permissions to your AndroidManifest.xml.
 
 ````
 
-You also have to add two services to your application node in the manifest.
+The same happens with these services.
 
 ````xml
-<service android:name="com.mobivery.greent.smartlocation.ActivityRecognitionService"/>
-<service android:name="com.mobivery.greent.smartlocation.SmartLocationService"/>
+<service android:name="io.nlopez.smartlocation.ActivityRecognitionService"/>
+<service android:name="io.nlopez.smartlocation.SmartLocationService"/>
 ````
 
 Check out the sample project for seeing how it should be in a real situation.
@@ -102,7 +102,7 @@ The best practices for using these methods would be:
 
 The Service will also send the information of user's location and current activity via intents.
 
-The default intent that will be broadcasted will be `com.mobivery.greent.smartlocation.LOCATION_UPDATED`. You can configure the package by passing a SmartLocationOptions object to the start method but more on that later. You can capture it if you want, but the listener should be enough.
+The default intent that will be broadcasted will be `io.nlopez.smartlocation.LOCATION_UPDATED`. You can configure the package by passing a SmartLocationOptions object to the start method but more on that later. You can capture it if you want, but the listener should be enough.
 
 Customizing to your needs
 -------------------------
