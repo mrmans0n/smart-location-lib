@@ -1,4 +1,4 @@
-package com.mobivery.greent.smartlocation;
+package io.nlopez.smartlocation;
 
 /**
  * Created by Nacho L. on 15/11/13.

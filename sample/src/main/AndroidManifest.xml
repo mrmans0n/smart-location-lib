@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.mobivery.smartlocation.sample"
+          package="io.nlopez.smartlocation.sample"
           android:versionCode="1"
           android:versionName="1.0">
 
     <uses-sdk
-            android:minSdkVersion="8"
-            android:targetSdkVersion="17"/>
+            android:minSdkVersion="9"
+            android:targetSdkVersion="19"/>
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -19,7 +19,7 @@
             android:icon="@drawable/ic_launcher">
 
         <activity
-                android:name="com.mobivery.greent.smartlocation.sample.MainActivity"
+                android:name="io.nlopez.smartlocation.sample.MainActivity"
                 android:label="SmartLocation Sample"
                 android:screenOrientation="portrait">
 
@@ -29,7 +29,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.mobivery.greent.smartlocation.ActivityRecognitionService"/>
-        <service android:name="com.mobivery.greent.smartlocation.SmartLocationService"/>
+        <service android:name="io.nlopez.smartlocation.ActivityRecognitionService"/>
+        <service android:name="io.nlopez.smartlocation.SmartLocationService"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     </application>
 </manifest>

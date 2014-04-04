@@ -1,11 +1,11 @@
-package com.mobivery.greent.smartlocation;
+package io.nlopez.smartlocation;
 
 /**
  * Created by Nacho L. on 12/06/13.
  */
 public class ActivityRecognitionConstants {
 
-    public static final String ACTIVITY_CHANGED_INTENT = "com.mobivery.greent.smartlocation.ACTIVITY_CHANGED";
+    public static final String ACTIVITY_CHANGED_INTENT = "io.nlopez.smartlocation.ACTIVITY_CHANGED";
     public static final String ACTIVITY_KEY = "ACTIVITY";
     public static final String ACTIVITY_CONFIDENCE_KEY = "ACTIVITY_CONFIDENCE";
 

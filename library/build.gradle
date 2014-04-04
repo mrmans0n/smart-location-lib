@@ -1,0 +1,129 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.9.+'
+    }
+}
+
+apply plugin: 'android-library'
+apply plugin: 'maven-publish'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+
+version '2.0.0'
+group 'io.nlopez.smartlocation'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.0"
+
+    buildTypes {
+        defaultConfig {
+            minSdkVersion 9
+            targetSdkVersion 19
+            versionCode 20000
+            versionName "2.0.0"
+        }
+    }
+}
+
+android.libraryVariants
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact 'build/libs/SmartLocation-2.0.0.aar'
+            artifactId 'library'
+        }
+    }
+}
+
+def isReleaseBuild() {
+    return version.contains("SNAPSHOT") == false
+}
+
+configurations {
+    archives {
+        extendsFrom configurations.default
+    }
+}
+
+signing {
+    required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+    configuration = configurations.archives
+    repositories.mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+        repository(url: sonatypeRepo) {
+            authentication(userName: sonatypeUsername,
+                    password: sonatypePassword)
+        }
+        snapshotRepository(url: sonatypeSnapshotRepo) {
+            authentication(userName: sonatypeUsername,
+                    password: sonatypePassword)
+        }
+
+        pom.project {
+            name 'Smart Location Library'
+            packaging 'aar'
+            description 'This library handles all the boilerplate and repetitive code used when playing with Locations in Android projects.'
+            url 'https://github.com/mrmans0n/smart-location-lib'
+            artifactId 'library'
+
+            scm {
+                url 'scm:git@github.com:mrmans0n/smart-location-lib.git'
+                connection 'scm:git@github.com:mrmans0n/smart-location-lib.git'
+                developerConnection 'scm:git@github.com:mrmans0n/smart-location-lib.git'
+            }
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+
+            developers {
+                developer {
+                    id 'npomepuy'
+                    name 'Nicolas POMEPUY'
+                    email 'nicolas.pomepuy@gmail.com'
+                }
+            }
+        }
+    }
+
+    task androidJavadocs(type: Javadoc) {
+        source = android.sourceSets.main.allJava
+    }
+
+    task androidJavadocsJar(type: Jar) {
+        classifier = 'javadoc'
+        //basename = artifact_id
+        from androidJavadocs.destinationDir
+    }
+
+    task androidSourcesJar(type: Jar) {
+        classifier = 'sources'
+        //basename = artifact_id
+        from android.sourceSets.main.allSource
+    }
+
+    artifacts {
+        //archives packageReleaseJar
+        archives androidSourcesJar
+        archives androidJavadocsJar
+    }
+}
+
+
+dependencies {
+    compile 'com.google.android.gms:play-services:4.+'
+}
