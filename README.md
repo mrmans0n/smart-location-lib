@@ -3,7 +3,7 @@ Smart Location Library
 
 Android library project that intends to use the minimum battery drain possible when used in navigation apps.
 
-It allows any Android project to smartly control the location sensors usage when using it to access user's location data, using it as a replacement to the system Location APIs. 
+It allows any Android project to smartly control the location sensors usage when using it to access user's location data, using it as a replacement to the system Location APIs.
 The principle behind it is detecting the activity the user is doing (moving in a vehicle, riding a bicycle, walking, running, being still) and based on those results, changing the accuracy for the detection and the sensors used. In our case, we will detect if we are moving in a vehicle.
 
 All this is done to be more battery efficient than the usual location strategies.
@@ -23,51 +23,16 @@ Under the umbrella of the Green-T project, Mobivery has invested in the developi
 Getting started
 ---------------
 
-### Gradle
-
-You should add this to your dependencys:
+You should add this to your dependencies:
 
 ```groovy
-    compile 'com.mobivery.greent.smartlocation:library:1.0.8'
+    compile 'io.nlopez.smartlocation:library:2.+'
 ```
-
-And you should add Mobivery's repository to your repositories:
-
-```groovy
-repositories {
-
-    mavenCentral()
-    // ... blah blah the rest of your repositories ...
-
-    maven { url 'http://dev.mobivery.com/artifactory/repo' }
-}
-```
-
-### Maven
-
-You should add this dependency.
-
-````xml
-<dependency>
-	<groupId>com.mobivery.greent.smartlocation</groupId>
-	<artifactId>library</artifactId>
-	<version>1.0.8</version>
-</dependency>
-````
-
-And you should add Mobivery's repository to the pom.xml <repositories> tag also.
-
-````xml
-<repository>
-	<id>mobivery-repository</id>
-    <url>http://dev.mobivery.com/artifactory/repo</url>
-</repository>
-````
 
 Permissions
 -----------
 
-You must add these permissions to your AndroidManifest.xml. 
+These permissions will be automatically merged into your AndroidManifest.xml by gradle. There is **NO NEED** to add them to your app, though I'm leaving them here so you know.
 
 ````xml
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -78,11 +43,11 @@ You must add these permissions to your AndroidManifest.xml.
 
 ````
 
-You also have to add two services to your application node in the manifest.
+The same happens with these services.
 
 ````xml
-<service android:name="com.mobivery.greent.smartlocation.ActivityRecognitionService"/>
-<service android:name="com.mobivery.greent.smartlocation.SmartLocationService"/>
+<service android:name="io.nlopez.smartlocation.ActivityRecognitionService"/>
+<service android:name="io.nlopez.smartlocation.SmartLocationService"/>
 ````
 
 Check out the sample project for seeing how it should be in a real situation.
@@ -137,7 +102,7 @@ The best practices for using these methods would be:
 
 The Service will also send the information of user's location and current activity via intents.
 
-The default intent that will be broadcasted will be `com.mobivery.greent.smartlocation.LOCATION_UPDATED`. You can configure the package by passing a SmartLocationOptions object to the start method but more on that later. You can capture it if you want, but the listener should be enough.
+The default intent that will be broadcasted will be `io.nlopez.smartlocation.LOCATION_UPDATED`. You can configure the package by passing a SmartLocationOptions object to the start method but more on that later. You can capture it if you want, but the listener should be enough.
 
 Customizing to your needs
 -------------------------

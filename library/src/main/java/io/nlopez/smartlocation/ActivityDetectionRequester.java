@@ -1,4 +1,4 @@
-package com.mobivery.greent.smartlocation;
+package io.nlopez.smartlocation;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -18,7 +18,7 @@ public class ActivityDetectionRequester implements GooglePlayServicesClient.Conn
     private Context context;
     private PendingIntent pendingIntent;
     private ActivityRecognitionClient activityRecognitionClient;
-    
+
     private SmartLocationOptions smartLocationOptions;
 
     public ActivityDetectionRequester(Context context) {

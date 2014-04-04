@@ -1,4 +1,4 @@
-package com.mobivery.greent.smartlocation;
+package io.nlopez.smartlocation;
 
 import com.google.android.gms.location.DetectedActivity;
 

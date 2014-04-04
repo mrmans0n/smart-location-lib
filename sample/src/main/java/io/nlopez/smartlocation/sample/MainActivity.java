@@ -1,4 +1,4 @@
-package com.mobivery.greent.smartlocation.sample;
+package io.nlopez.smartlocation.sample;
 
 import android.app.Activity;
 import android.location.Location;
@@ -9,14 +9,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.location.DetectedActivity;
-import com.mobivery.greent.smartlocation.SmartLocation;
-import com.mobivery.greent.smartlocation.SmartLocationOptions;
-import com.mobivery.greent.smartlocation.UpdateStrategy;
-import com.mobivery.smartlocation.sample.R;
+import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.SmartLocationOptions;
+import io.nlopez.smartlocation.UpdateStrategy;
+import io.nlopez.smartlocation.sample.R;
 
 public class MainActivity extends Activity {
 
-    private static final String PACKAGE_NAME = "com.mobivery.smartlocation.greent.sample";
+    private static final String PACKAGE_NAME = "io.nlopez.smartlocation.sample";
 
     private TextView locationText;
     private boolean isCapturingLocation = false;

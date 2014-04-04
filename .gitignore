@@ -37,3 +37,9 @@ out/
 
 # Apple crap
 .DS_Store
+
+.gradle
+*lint-results.*
+build/
+
+gradle.properties

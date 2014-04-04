@@ -1,4 +1,4 @@
-package com.mobivery.greent.smartlocation;
+package io.nlopez.smartlocation;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
