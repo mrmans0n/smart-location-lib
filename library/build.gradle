@@ -13,8 +13,12 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '2.0.2-SNAPSHOT'
+version '2.0.2'
 group 'io.nlopez.smartlocation'
+
+dependencies {
+    compile 'com.google.android.gms:play-services:4.+'
+}
 
 android {
     compileSdkVersion 19
@@ -42,12 +46,6 @@ publishing {
 
 def isReleaseBuild() {
     return version.contains("SNAPSHOT") == false
-}
-
-configurations {
-    archives {
-        extendsFrom configurations.default
-    }
 }
 
 signing {
@@ -106,24 +104,17 @@ uploadArchives {
 
     task androidJavadocsJar(type: Jar) {
         classifier = 'javadoc'
-        //basename = artifact_id
         from androidJavadocs.destinationDir
     }
 
     task androidSourcesJar(type: Jar) {
         classifier = 'sources'
-        //basename = artifact_id
         from android.sourceSets.main.allSource
     }
 
     artifacts {
-        //archives packageReleaseJar
         archives androidSourcesJar
         archives androidJavadocsJar
     }
 }
 
-
-dependencies {
-    compile 'com.google.android.gms:play-services:4.+'
-}
