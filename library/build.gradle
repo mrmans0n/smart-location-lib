@@ -13,19 +13,19 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '2.0.1'
+version '2.0.2-SNAPSHOT'
 group 'io.nlopez.smartlocation'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    buildToolsVersion "19.0.2"
 
     buildTypes {
         defaultConfig {
             minSdkVersion 9
             targetSdkVersion 19
-            versionCode 20001
-            versionName "2.0.1"
+            versionCode 20002
+            versionName "2.0.2"
         }
     }
 }
@@ -34,7 +34,7 @@ android.libraryVariants
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact 'build/libs/SmartLocation-2.0.1.aar'
+            artifact 'build/libs/SmartLocation-2.0.2.aar'
             artifactId 'library'
         }
     }
