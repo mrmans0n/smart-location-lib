@@ -1,0 +1,9 @@
+# Fill up this file with the correct values and rename to gradle.properties
+sonatypeUsername=
+sonatypePassword=
+sonatypeRepo=https\://oss.sonatype.org/service/local/staging/deploy/maven2
+sonatypeSnapshotRepo=https\://oss.sonatype.org/content/repositories/snapshots
+signing.keyId=
+signing.password=
+signing.secretKeyRingFile=
+sdk.dir=
