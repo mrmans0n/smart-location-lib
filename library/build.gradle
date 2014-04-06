@@ -82,8 +82,8 @@ uploadArchives {
 
             licenses {
                 license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    name 'MIT license'
+                    url 'http://www.opensource.org/licenses/mit-license.php'
                     distribution 'repo'
                 }
             }
@@ -117,4 +117,3 @@ uploadArchives {
         archives androidJavadocsJar
     }
 }
-
