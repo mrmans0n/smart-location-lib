@@ -32,7 +32,7 @@ You should add this to your dependencies:
 Permissions
 -----------
 
-These permissions will be automatically merged into your AndroidManifest.xml by gradle. There is **NO NEED** to add them to your app, though I'm leaving them here so you know.
+These permissions **will be automatically merged into your AndroidManifest.xml** by gradle. There is **NO NEED for you to add them** to your app, though I'm leaving them here so you know what's happening behind closed doors.
 
 ````xml
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
