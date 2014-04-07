@@ -40,7 +40,6 @@ These permissions **will be automatically merged into your AndroidManifest.xml**
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
 <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-
 ````
 
 The same happens with these services.
