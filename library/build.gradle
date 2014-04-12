@@ -13,7 +13,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '2.0.2'
+version '2.0.3-SNAPSHOT'
 group 'io.nlopez.smartlocation'
 
 dependencies {
@@ -22,14 +22,14 @@ dependencies {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.2"
+    buildToolsVersion "19.0.3"
 
     buildTypes {
         defaultConfig {
             minSdkVersion 9
             targetSdkVersion 19
             versionCode 20002
-            versionName "2.0.2"
+            versionName version
         }
     }
 }
