@@ -116,6 +116,9 @@ public class SmartLocationService extends Service implements LocationListener, a
                 handler.postDelayed(runOldSchoolLocation, options.getSecondsUntilFallback() * 1000);
             }
         } else {
+            if (locationClient.isConnected()) {
+                locationClient.disconnect();
+            }
             startOldSchoolLocation();
         }
         if (smartLocationOptions.isActivityRecognizer()) {

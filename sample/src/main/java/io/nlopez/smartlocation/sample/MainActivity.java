@@ -77,7 +77,7 @@ public class MainActivity extends Activity {
         SmartLocationOptions options = new SmartLocationOptions();
         options.setPackageName(PACKAGE_NAME)
                 .setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT)
-                .setActivityRecognizer(false)
+                .setActivityRecognizer(true)
                 .setFusedProvider(false);
 
         // Init the location with custom options
