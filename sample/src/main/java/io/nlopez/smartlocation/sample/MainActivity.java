@@ -9,10 +9,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.location.DetectedActivity;
+
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.SmartLocationOptions;
 import io.nlopez.smartlocation.UpdateStrategy;
-import io.nlopez.smartlocation.sample.R;
 
 public class MainActivity extends Activity {
 
@@ -75,20 +75,20 @@ public class MainActivity extends Activity {
 
         // Create some custom options for our class. This is not needed unless we want some extra control.
         SmartLocationOptions options = new SmartLocationOptions();
-        options.setPackageName(PACKAGE_NAME);
-        options.setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT);
-        options.setOnActivityRecognizerUpdatedNewStrategy(new SmartLocationOptions.OnActivityRecognizerUpdated() {
-            @Override
-            public UpdateStrategy getUpdateStrategyForActivity(DetectedActivity detectedActivity) {
-                switch (detectedActivity.getType()) {
-                    case DetectedActivity.IN_VEHICLE:
-                    case DetectedActivity.ON_BICYCLE:
-                        return UpdateStrategy.NAVIGATION;
-                    default:
-                        return UpdateStrategy.BEST_EFFORT;
-                }
-            }
-        });
+        options.setPackageName(PACKAGE_NAME)
+                .setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT)
+                .setOnActivityRecognizerUpdatedNewStrategy(new SmartLocationOptions.OnActivityRecognizerUpdated() {
+                    @Override
+                    public UpdateStrategy getUpdateStrategyForActivity(DetectedActivity detectedActivity) {
+                        switch (detectedActivity.getType()) {
+                            case DetectedActivity.IN_VEHICLE:
+                            case DetectedActivity.ON_BICYCLE:
+                                return UpdateStrategy.NAVIGATION;
+                            default:
+                                return UpdateStrategy.BEST_EFFORT;
+                        }
+                    }
+                });
 
         // Init the location with custom options
         SmartLocation.getInstance().start(this, options, new SmartLocation.OnLocationUpdatedListener() {

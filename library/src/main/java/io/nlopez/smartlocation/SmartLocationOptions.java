@@ -42,9 +42,11 @@ public class SmartLocationOptions {
      * Establish a new package name to work as prefix to the library intents
      *
      * @param packageName
+     * @return
      */
-    public void setPackageName(String packageName) {
+    public SmartLocationOptions setPackageName(String packageName) {
         this.packageName = packageName;
+        return this;
     }
 
     /**
@@ -69,9 +71,11 @@ public class SmartLocationOptions {
      * Change the strategy to follow for obtaining the location fixes
      *
      * @param defaultUpdateStrategy
+     * @return
      */
-    public void setDefaultUpdateStrategy(UpdateStrategy defaultUpdateStrategy) {
+    public SmartLocationOptions setDefaultUpdateStrategy(UpdateStrategy defaultUpdateStrategy) {
         this.defaultUpdateStrategy = defaultUpdateStrategy;
+        return this;
     }
 
     /**
@@ -87,9 +91,11 @@ public class SmartLocationOptions {
      * Set a new callback that will be executed on each activity update
      *
      * @param onActivityRecognizerUpdatedNewStrategy
+     * @return
      */
-    public void setOnActivityRecognizerUpdatedNewStrategy(OnActivityRecognizerUpdated onActivityRecognizerUpdatedNewStrategy) {
+    public SmartLocationOptions setOnActivityRecognizerUpdatedNewStrategy(OnActivityRecognizerUpdated onActivityRecognizerUpdatedNewStrategy) {
         this.onActivityRecognizerUpdatedNewStrategy = onActivityRecognizerUpdatedNewStrategy;
+        return this;
     }
 
     /**
@@ -105,9 +111,11 @@ public class SmartLocationOptions {
      * Set a new location cache validity in milliseconds
      *
      * @param locationCacheValidity
+     * @return
      */
-    public void setLocationCacheValidity(long locationCacheValidity) {
+    public SmartLocationOptions setLocationCacheValidity(long locationCacheValidity) {
         this.locationCacheValidity = locationCacheValidity;
+        return this;
     }
 
     /**
@@ -123,18 +131,22 @@ public class SmartLocationOptions {
      * Set a new activity cache validity in milliseconds
      *
      * @param activityCacheValidity
+     * @return
      */
-    public void setActivityCacheValidity(long activityCacheValidity) {
+    public SmartLocationOptions setActivityCacheValidity(long activityCacheValidity) {
         this.activityCacheValidity = activityCacheValidity;
+        return this;
     }
 
     /**
      * Activate or deactivate the debugging flag
      *
      * @param showDebugging
+     * @return
      */
-    public void setDebugging(boolean showDebugging) {
+    public SmartLocationOptions setDebugging(boolean showDebugging) {
         this.showDebugging = showDebugging;
+        return this;
     }
 
     /**
@@ -159,9 +171,11 @@ public class SmartLocationOptions {
      * Sets the number of seconds to wait for the Fused Location Provider
      *
      * @param secondsUntilFallback
+     * @return
      */
-    public void setSecondsUntilFallback(int secondsUntilFallback) {
+    public SmartLocationOptions setSecondsUntilFallback(int secondsUntilFallback) {
         this.secondsUntilFallback = secondsUntilFallback;
+        return this;
     }
 
     /**
