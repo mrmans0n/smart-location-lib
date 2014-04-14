@@ -8,7 +8,7 @@ import com.google.android.gms.location.DetectedActivity;
 public class SmartLocationOptions {
 
     private static final long ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
-    private static final int DEFAULT_SECONDS_UNTIL_FALLBACK = 10;
+    private static final int DEFAULT_SECONDS_UNTIL_FALLBACK = 20;
 
     private String packageName = SmartLocation.DEFAULT_PACKAGE;
     private UpdateStrategy defaultUpdateStrategy = UpdateStrategy.BEST_EFFORT;
@@ -16,6 +16,8 @@ public class SmartLocationOptions {
     private long activityCacheValidity = ONE_HOUR_IN_MILLISECONDS;
     private int secondsUntilFallback = DEFAULT_SECONDS_UNTIL_FALLBACK;
     private OnActivityRecognizerUpdated onActivityRecognizerUpdatedNewStrategy;
+    private boolean activityRecognizer = true;
+    private boolean fusedProvider = true;
 
     private boolean showDebugging = true;
 
@@ -175,6 +177,44 @@ public class SmartLocationOptions {
      */
     public SmartLocationOptions setSecondsUntilFallback(int secondsUntilFallback) {
         this.secondsUntilFallback = secondsUntilFallback;
+        return this;
+    }
+
+    /**
+     * Checks if the fused location provider setting is active
+     * @return
+     */
+    public boolean isFusedProvider() {
+        return fusedProvider;
+    }
+
+    /**
+     * Sets the fused location provider setting. If false, the
+     * library will use the old location strategy.
+     *
+     * @param fusedProvider set to true by default
+     * @return
+     */
+    public SmartLocationOptions setFusedProvider(boolean fusedProvider) {
+        this.fusedProvider = fusedProvider;
+        return this;
+    }
+
+    /**
+     * Checks if the activity recognizer setting is active
+     * @return
+     */
+    public boolean isActivityRecognizer() {
+        return activityRecognizer;
+    }
+
+    /**
+     * Sets the activity recognizer setting, that controls whether activate the recognizer or not.
+     * @param activityRecognizer set to true by default
+     * @return
+     */
+    public SmartLocationOptions setActivityRecognizer(boolean activityRecognizer) {
+        this.activityRecognizer = activityRecognizer;
         return this;
     }
 
