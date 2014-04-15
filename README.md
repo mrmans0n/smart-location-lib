@@ -105,17 +105,9 @@ The default intent that will be broadcasted will be `io.nlopez.smartlocation.LOC
 
 Customizing to your needs
 -------------------------
-In the following example you can see how to setup a new package for the LOCATION_UPDATED intent.
 
-````java
-        SmartLocationOptions options = new SmartLocationOptions();
-        options.setPackageName("com.mypackage.name");
-        SmartLocation.getInstance().start(context, options);
-````
 
-With this call, the intent you will want to watch for is `com.mypackage.name.LOCATION_UPDATED`.
-
-We can also customize the update strategy in the options class, both the default behavior and the behavior derived from the activity recognizer. Check out the comments of the UpdateStrategy class for more info. By default, it is set to **BEST_EFFORT** location, which will perform the best location accuracy without the battery drainage of only GPS location strategies.
+We can customize the update strategy in the options class, both the default behavior and the behavior derived from the activity recognizer. Check out the comments of the UpdateStrategy class for more info. By default, it is set to **BEST_EFFORT** location, which will perform the best location accuracy without the battery drainage of pure-GPS location strategies.
 
 For example, we will set a typical strategy for a navigation app (for both cars and bicycles) in this code.
 
@@ -136,6 +128,33 @@ For example, we will set a typical strategy for a navigation app (for both cars 
         });
         SmartLocation.getInstance().start(context, options);
 ````
+
+We can force the deactivation of the fused location provider strategies (using LocationManager instead) and the Activity Recognizer with some settings. We would want to do this if we wanted to get the speed value from the GPS and we don't care about the activity the user is performing. 
+
+```java
+    SmartLocationOptions options = new SmartLocationOptions()
+                                    .setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT)
+                                    .setFusedProvider(false)
+                                    .setActivityRecognizer(false);
+```
+
+Of course, they both exist on their own and it is possible to use the Activity Recognizer with a LocationManager based strategy if we wanted to.
+
+Please note that it is allowed to interact with the options object in a fluid fashion.
+
+And we can enable or disable the debug mode. In the debug mode, we would have some feedback in logcat about how it is going with the localization stuff. It is recommended the value is false always for production builds. You could use something like this line.
+
+```java
+    options.setDebugging(BuildConfig.DEBUG);
+```
+
+If we want to interact with the intents being fired by the service, instead of using the interface provided, you can do it. You can either use the default intent action, `io.nlopez.smartlocation.LOCATION_UPDATED`, or set up your own.
+
+````java
+    options.setPackageName("com.mypackage.name");
+````
+
+With this call, the intent you will want to watch for is `com.mypackage.name.LOCATION_UPDATED`.
 
 Contributing
 ------------
