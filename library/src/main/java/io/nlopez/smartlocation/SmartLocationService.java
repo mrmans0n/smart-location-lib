@@ -137,7 +137,9 @@ public class SmartLocationService extends Service implements LocationListener, a
     };
 
     private void startOldSchoolLocation() {
-        locationManager = (LocationManager) SmartLocationService.this.getSystemService(LOCATION_SERVICE);
+        if (locationManager == null) {
+            locationManager = (LocationManager) SmartLocationService.this.getSystemService(LOCATION_SERVICE);
+        }
 
         UpdateStrategy updateStrategy = smartLocationOptions.getDefaultUpdateStrategy();
         String provider = updateStrategy.getProvider();
