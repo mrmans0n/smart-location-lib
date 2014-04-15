@@ -77,8 +77,18 @@ public class MainActivity extends Activity {
         SmartLocationOptions options = new SmartLocationOptions();
         options.setPackageName(PACKAGE_NAME)
                 .setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT)
-                .setActivityRecognizer(true)
-                .setFusedProvider(false);
+                .setOnActivityRecognizerUpdatedNewStrategy(new SmartLocationOptions.OnActivityRecognizerUpdated() {
+                    @Override
+                    public UpdateStrategy getUpdateStrategyForActivity(DetectedActivity detectedActivity) {
+                        switch (detectedActivity.getType()) {
+                            case DetectedActivity.IN_VEHICLE:
+                            case DetectedActivity.ON_BICYCLE:
+                                return UpdateStrategy.NAVIGATION;
+                            default:
+                                return UpdateStrategy.BEST_EFFORT;
+                        }
+                    }
+                });
 
         // Init the location with custom options
         SmartLocation.getInstance().start(this, options, new SmartLocation.OnLocationUpdatedListener() {
