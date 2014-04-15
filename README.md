@@ -129,11 +129,11 @@ For example, we will set a typical strategy for a navigation app (for both cars 
         SmartLocation.getInstance().start(context, options);
 ````
 
-We can force the deactivation of the fused location provider strategies (using LocationManager instead) and the Activity Recognizer with some settings. We would want to do this if we wanted to get the speed value from the GPS and we don't care about the activity the user is performing. 
+We can force the deactivation of the fused location provider strategies (using LocationManager instead) and the Activity Recognizer with some settings. We would want to do this if we wanted to get the speed value from the GPS (thus, using NAVIGATION as UpdateStrategy) and we don't care about the activity the user is performing. 
 
 ```java
     SmartLocationOptions options = new SmartLocationOptions()
-                                    .setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT)
+                                    .setDefaultUpdateStrategy(UpdateStrategy.NAVIGATION)
                                     .setFusedProvider(false)
                                     .setActivityRecognizer(false);
 ```
