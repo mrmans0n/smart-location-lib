@@ -9,7 +9,10 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.IBinder;
+import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.DetectedActivity;
 
 /**
@@ -67,7 +70,7 @@ public class SmartLocation {
     }
 
     /**
-     * Initializes the location process with default options. You have to set up your receiver or your {@link com.mobivery.greent.smartlocation.SmartLocation.OnLocationUpdatedListener} by hand.
+     * Initializes the location process with default options. You have to set up your receiver or your {@link io.nlopez.smartlocation.SmartLocation.OnLocationUpdatedListener} by hand.
      *
      * @param context
      */
@@ -76,7 +79,7 @@ public class SmartLocation {
     }
 
     /**
-     * Initializes the location process with custom options. You have to set up your receiver or your {@link com.mobivery.greent.smartlocation.SmartLocation.OnLocationUpdatedListener} by hand.
+     * Initializes the location process with custom options. You have to set up your receiver or your {@link io.nlopez.smartlocation.SmartLocation.OnLocationUpdatedListener} by hand.
      *
      * @param context
      */
@@ -102,6 +105,7 @@ public class SmartLocation {
      * @param listener
      */
     public void start(Context context, SmartLocationOptions options, OnLocationUpdatedListener listener) {
+        adjustOptions(context, options);
         setOptions(options);
         captureIntent(context);
         setOnLocationUpdatedListener(listener);
@@ -111,6 +115,16 @@ public class SmartLocation {
         } else {
             isServiceBound = false;
             bindService(context);
+        }
+    }
+
+    private void adjustOptions(Context context, SmartLocationOptions options) {
+        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(context) != ConnectionResult.SUCCESS) {
+            if (options.isDebugging()) {
+                Log.e(SmartLocationOptions.class.getSimpleName(), "GMS not found or there were errors connecting. Disabling fused providers and activity recognizers to avoid app-breaking exceptions");
+            }
+            options.setFusedProvider(false);
+            options.setActivityRecognizer(false);
         }
     }
 
