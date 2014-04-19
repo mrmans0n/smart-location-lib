@@ -13,7 +13,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '2.0.4-SNAPSHOT'
+version '2.0.4'
 group 'io.nlopez.smartlocation'
 
 dependencies {
