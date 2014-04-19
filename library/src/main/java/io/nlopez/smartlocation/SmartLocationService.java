@@ -151,7 +151,7 @@ public class SmartLocationService extends Service implements LocationListener, a
             locationManager.requestLocationUpdates(
                     provider,
                     updateStrategy.getFastestInterval(),
-                    updateStrategy.getMinDistance(),
+                    updateStrategy.getSmallestDisplacement(),
                     this);
             if (locationClient != null && locationClient.isConnected()) {
                 locationClient.removeLocationUpdates(this);
@@ -167,21 +167,34 @@ public class SmartLocationService extends Service implements LocationListener, a
     public void setOptions(SmartLocationOptions options) {
         stopLocation();
         startLocation(options);
-        setLocationRequestValues(options.getDefaultUpdateStrategy());
+        setLocationRequestValues(options, null);
     }
 
-    private void setLocationRequestValues(UpdateStrategy strategy) {
+    private void setLocationRequestValues(SmartLocationOptions options, UpdateStrategy strategyOverride) {
+
+        UpdateStrategy strategy = (strategyOverride == null) ? options.getDefaultUpdateStrategy() : strategyOverride;
+
+        int minDistance = (options.getSmallestDisplacement() == -1) ?
+                strategy.getSmallestDisplacement() : options.getSmallestDisplacement();
+
+        long updateInterval = (options.getInterval() == -1) ?
+                strategy.getInterval() : options.getInterval();
+
+        long fastestInterval = (options.getFastestInterval() == -1) ?
+                strategy.getFastestInterval() : options.getFastestInterval();
+
         if (smartLocationOptions.isFusedProvider()) {
             locationRequest
                     .setPriority(strategy.getLocationRequestPriority())
-                    .setInterval(strategy.getUpdateInterval())
-                    .setFastestInterval(strategy.getFastestInterval());
+                    .setInterval(updateInterval)
+                    .setSmallestDisplacement(minDistance)
+                    .setFastestInterval(fastestInterval);
         } else {
             locationManager.removeUpdates(this);
             locationManager.requestLocationUpdates(
                     strategy.getProvider(),
-                    strategy.getFastestInterval(),
-                    strategy.getMinDistance(),
+                    updateInterval,
+                    minDistance,
                     this);
         }
     }
@@ -240,7 +253,7 @@ public class SmartLocationService extends Service implements LocationListener, a
             }
 
             UpdateStrategy strategy = smartLocationOptions.getOnActivityRecognizerUpdatedNewStrategy().getUpdateStrategyForActivity(currentActivity);
-            setLocationRequestValues(strategy);
+            setLocationRequestValues(smartLocationOptions, strategy);
 
         }
     };

@@ -1,24 +1,13 @@
 Smart Location Library
 ======================
 
-Android library project that intends to use the minimum battery drain possible when used in navigation apps.
+Android library project that intends to simplify the usage of location providers with a twist: you can modify the location strategy based in your activity.
 
-It allows any Android project to smartly control the location sensors usage when using it to access user's location data, using it as a replacement to the system Location APIs.
-The principle behind it is detecting the activity the user is doing (moving in a vehicle, riding a bicycle, walking, running, being still) and based on those results, changing the accuracy for the detection and the sensors used. In our case, we will detect if we are moving in a vehicle.
+The principle behind it is detecting the activity the user is doing (moving in a vehicle, riding a bicycle, walking, running, being still) and based on those results, changing the accuracy for the detection and the sensors used.
 
-All this is done to be more battery efficient than the usual location strategies.
+All this is aimed to be more battery efficient than the usual location strategies.
 
 **Supported Android versions**: Android 2.3+
-
-Context
--------
-
-Under the umbrella of the Green-T project, Mobivery has invested in the developing the present software library having two main purposes in mind:
-
-* Contribute to preservation of battery life, *within the scope of Green-T*
-* Encapsulate and simplify the use of common resources for geolocation to be reusable and extensible
-
-![Green-T](http://greent.av.it.pt/images/logo.png)
 
 Getting started
 ---------------
