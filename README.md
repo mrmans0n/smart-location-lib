@@ -18,30 +18,6 @@ You should add this to your dependencies:
 compile 'io.nlopez.smartlocation:library:2.+'
 ```
 
-Permissions
------------
-
-These permissions **will be automatically merged into your AndroidManifest.xml** by gradle. There is **NO NEED for you to add them** to your app, though I'm leaving them here so you know what's happening behind closed doors.
-
-````xml
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-<uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
-<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-````
-
-The same happens with these services.
-
-````xml
-<service android:name="io.nlopez.smartlocation.ActivityRecognitionService"/>
-<service android:name="io.nlopez.smartlocation.SmartLocationService"/>
-````
-
-Check out the sample project for seeing how it should be in a real situation.
-
-Internally, the ActivityRecognitionService will provide with the user's activity information to the SmartLocationService, which will be the one deciding on the best settings for the location usage at any time.
-
 Usage
 -----
 
@@ -144,6 +120,19 @@ If we want to interact with the intents being fired by the service, instead of u
 ````
 
 With this call, the intent you will want to watch for is `com.mypackage.name.LOCATION_UPDATED`.
+
+Permissions that will be added to your app
+------------------------------------------
+
+These permissions **will be automatically merged into your AndroidManifest.xml** by gradle. There is **NO NEED for you to add them** to your app, though I'm leaving them here so you know what's happening behind closed doors in your application.
+
+````xml
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+<uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
+<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+````
 
 Contributing
 ------------
