@@ -21,10 +21,14 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 
+import java.util.List;
+
 /**
  * Created by Nacho L. on 13/06/13.
  */
 public class SmartLocationService extends Service implements LocationListener, android.location.LocationListener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
+
+    private static final String TAG = SmartLocationService.class.getSimpleName();
 
     public static final String PREFERENCES_FILE = "SMART_LOCATION_CACHE_PREFERENCES";
     public static final String LAST_LOCATION_LATITUDE_KEY = "LAST_LOCATION_LATITUDE";
@@ -110,7 +114,7 @@ public class SmartLocationService extends Service implements LocationListener, a
         if (options.isFusedProvider()) {
             if (!locationClient.isConnected()) {
                 if (smartLocationOptions.isDebugging()) {
-                    Log.v(SmartLocationService.class.getSimpleName(), "Connecting to fused provider");
+                    Log.v(TAG, "Connecting to fused provider");
                 }
                 locationClient.connect();
                 handler.postDelayed(runOldSchoolLocation, options.getSecondsUntilFallback() * 1000);
@@ -130,7 +134,7 @@ public class SmartLocationService extends Service implements LocationListener, a
         @Override
         public void run() {
             if (smartLocationOptions.isDebugging()) {
-                Log.v(SmartLocationService.class.getSimpleName(), "fallback - runOldSchoolLocation");
+                Log.v(TAG, "fallback - runOldSchoolLocation");
             }
             startOldSchoolLocation();
         }
@@ -144,15 +148,30 @@ public class SmartLocationService extends Service implements LocationListener, a
         UpdateStrategy updateStrategy = smartLocationOptions.getDefaultUpdateStrategy();
         String provider = updateStrategy.getProvider();
         if (smartLocationOptions.isDebugging()) {
-            Log.v(SmartLocationService.class.getSimpleName(), "old - Trying with " + provider);
+            Log.v(TAG, "old - Trying with " + provider);
         }
 
         if (provider != null) {
-            locationManager.requestLocationUpdates(
-                    provider,
-                    updateStrategy.getFastestInterval(),
-                    updateStrategy.getSmallestDisplacement(),
-                    this);
+            if (locationManager.isProviderEnabled(provider)) {
+                locationManager.requestLocationUpdates(
+                        provider,
+                        updateStrategy.getFastestInterval(),
+                        updateStrategy.getSmallestDisplacement(),
+                        this);
+            } else {
+                Log.e(TAG, "provider " + provider + " not found, trying to get another one");
+                List<String> allProviders = locationManager.getAllProviders();
+                if (allProviders.size()>0) {
+                    String otherProvider = allProviders.get(0);
+                    locationManager.requestLocationUpdates(
+                            otherProvider,
+                            updateStrategy.getFastestInterval(),
+                            updateStrategy.getSmallestDisplacement(),
+                            this);
+                } else {
+                    Log.e(TAG, "there are no providers available");
+                }
+            }
             if (locationClient != null && locationClient.isConnected()) {
                 locationClient.removeLocationUpdates(this);
             }
@@ -191,17 +210,33 @@ public class SmartLocationService extends Service implements LocationListener, a
                     .setFastestInterval(fastestInterval);
         } else {
             locationManager.removeUpdates(this);
-            locationManager.requestLocationUpdates(
-                    strategy.getProvider(),
-                    updateInterval,
-                    minDistance,
-                    this);
+            if (locationManager.isProviderEnabled(strategy.getProvider())) {
+                locationManager.requestLocationUpdates(
+                        strategy.getProvider(),
+                        updateInterval,
+                        minDistance,
+                        this);
+            } else {
+                Log.e(TAG, "provider " + strategy.getProvider() + " not found, trying to get another one");
+                List<String> allProviders = locationManager.getAllProviders();
+                if (allProviders.size()>0) {
+                    String otherProvider = allProviders.get(0);
+                    locationManager.requestLocationUpdates(
+                            otherProvider,
+                            updateInterval,
+                            minDistance,
+                            this);
+                } else {
+                    Log.e(TAG, "there are no providers available");
+                }
+            }
+
         }
     }
 
     private void continueStartLocation() {
         if (smartLocationOptions.isDebugging()) {
-            Log.v(SmartLocationService.class.getSimpleName(), "fused - continueStartLocation");
+            Log.v(TAG, "fused - continueStartLocation");
         }
         if (locationClient.isConnected()) {
             locationClient.requestLocationUpdates(locationRequest, this);
@@ -243,7 +278,7 @@ public class SmartLocationService extends Service implements LocationListener, a
             int activityType = intent.getIntExtra(ActivityRecognitionConstants.ACTIVITY_KEY, DetectedActivity.UNKNOWN);
             int confidence = intent.getIntExtra(ActivityRecognitionConstants.ACTIVITY_CONFIDENCE_KEY, 0);
             if (smartLocationOptions.isDebugging()) {
-                Log.v(SmartLocationService.class.getSimpleName(), "new activity detected = " + activityType + " with confidence of " + confidence + "%");
+                Log.v(TAG, "new activity detected = " + activityType + " with confidence of " + confidence + "%");
             }
             currentActivity = new DetectedActivity(activityType, confidence);
 
@@ -264,7 +299,7 @@ public class SmartLocationService extends Service implements LocationListener, a
 
         lastLocation = location;
         if (smartLocationOptions.isDebugging()) {
-            Log.v(SmartLocationService.class.getSimpleName(), "Received location " + location);
+            Log.v(TAG, "Received location " + location);
         }
         processLocation(location);
     }
@@ -273,9 +308,9 @@ public class SmartLocationService extends Service implements LocationListener, a
         String intentName = getLocationUpdatedIntentName();
         if (smartLocationOptions.isDebugging()) {
             if (locationManager == null) {
-                Log.v(SmartLocationService.class.getSimpleName(), "Broadcasting new location intent " + intentName + " (fused)");
+                Log.v(TAG, "Broadcasting new location intent " + intentName + " (fused)");
             } else {
-                Log.v(SmartLocationService.class.getSimpleName(), "Broadcasting new location intent " + intentName + " (LocationManager)");
+                Log.v(TAG, "Broadcasting new location intent " + intentName + " (LocationManager)");
             }
         }
 
@@ -295,7 +330,7 @@ public class SmartLocationService extends Service implements LocationListener, a
     @Override
     public void onConnected(Bundle bundle) {
         if (smartLocationOptions.isDebugging()) {
-            Log.v(SmartLocationService.class.getSimpleName(), "fused - connected");
+            Log.v(TAG, "fused - connected");
         }
         continueStartLocation();
     }
@@ -303,35 +338,35 @@ public class SmartLocationService extends Service implements LocationListener, a
     @Override
     public void onDisconnected() {
         if (smartLocationOptions.isDebugging()) {
-            Log.v(SmartLocationService.class.getSimpleName(), "fused - disconnected");
+            Log.v(TAG, "fused - disconnected");
         }
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         if (smartLocationOptions.isDebugging()) {
-            Log.v(SmartLocationService.class.getSimpleName(), "fused - connectionFailed");
+            Log.v(TAG, "fused - connectionFailed");
         }
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle bundle) {
         if (smartLocationOptions.isDebugging()) {
-            Log.v(SmartLocationService.class.getSimpleName(), "old - onStatusChanged " + provider + " (" + status + ")");
+            Log.v(TAG, "old - onStatusChanged " + provider + " (" + status + ")");
         }
     }
 
     @Override
     public void onProviderEnabled(String provider) {
         if (smartLocationOptions.isDebugging()) {
-            Log.v(SmartLocationService.class.getSimpleName(), "old - onProviderEnabled " + provider);
+            Log.v(TAG, "old - onProviderEnabled " + provider);
         }
     }
 
     @Override
     public void onProviderDisabled(String provider) {
         if (smartLocationOptions.isDebugging()) {
-            Log.v(SmartLocationService.class.getSimpleName(), "old - onProviderDisabled " + provider);
+            Log.v(TAG, "old - onProviderDisabled " + provider);
         }
     }
 
