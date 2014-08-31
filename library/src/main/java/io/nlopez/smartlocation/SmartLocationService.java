@@ -21,8 +21,6 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 
-import java.util.List;
-
 /**
  * Created by Nacho L. on 13/06/13.
  */
@@ -147,6 +145,7 @@ public class SmartLocationService extends Service implements LocationListener, a
 
         UpdateStrategy updateStrategy = smartLocationOptions.getDefaultUpdateStrategy();
         String provider = updateStrategy.getProvider();
+        String providerFallback = updateStrategy.getProviderFallback();
         if (smartLocationOptions.isDebugging()) {
             Log.v(TAG, "old - Trying with " + provider);
         }
@@ -159,12 +158,9 @@ public class SmartLocationService extends Service implements LocationListener, a
                         updateStrategy.getSmallestDisplacement(),
                         this);
             } else {
-                Log.e(TAG, "provider " + provider + " not found, trying to get another one");
-                List<String> allProviders = locationManager.getAllProviders();
-                if (allProviders.size()>0) {
-                    String otherProvider = allProviders.get(0);
+                if (locationManager.isProviderEnabled(providerFallback)) {
                     locationManager.requestLocationUpdates(
-                            otherProvider,
+                            providerFallback,
                             updateStrategy.getFastestInterval(),
                             updateStrategy.getSmallestDisplacement(),
                             this);
@@ -183,6 +179,7 @@ public class SmartLocationService extends Service implements LocationListener, a
      *
      * @param options
      */
+
     public void setOptions(SmartLocationOptions options) {
         stopLocation();
         startLocation(options);
@@ -217,12 +214,9 @@ public class SmartLocationService extends Service implements LocationListener, a
                         minDistance,
                         this);
             } else {
-                Log.e(TAG, "provider " + strategy.getProvider() + " not found, trying to get another one");
-                List<String> allProviders = locationManager.getAllProviders();
-                if (allProviders.size()>0) {
-                    String otherProvider = allProviders.get(0);
+                if (strategy.getProviderFallback() != null && locationManager.isProviderEnabled(strategy.getProviderFallback())) {
                     locationManager.requestLocationUpdates(
-                            otherProvider,
+                            strategy.getProvider(),
                             updateInterval,
                             minDistance,
                             this);
@@ -230,7 +224,6 @@ public class SmartLocationService extends Service implements LocationListener, a
                     Log.e(TAG, "there are no providers available");
                 }
             }
-
         }
     }
 

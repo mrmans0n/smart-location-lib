@@ -11,29 +11,31 @@ public enum UpdateStrategy {
     /**
      * Update strategy best for navigation, with fast paced accurate fixes. Fallback: GPS_PROVIDER
      */
-    NAVIGATION(500, 100, LocationRequest.PRIORITY_HIGH_ACCURACY, LocationManager.GPS_PROVIDER, 0),
+    NAVIGATION(500, 100, LocationRequest.PRIORITY_HIGH_ACCURACY, LocationManager.GPS_PROVIDER, null, 0),
     /**
      * Update strategy best for most situations, with relatively fast updates and using the best
      * available method for location, WiFi - network - satellite. Fallback: NETWORK_PROVIDER
      */
-    BEST_EFFORT(2500, 5000, LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY, LocationManager.NETWORK_PROVIDER, 150),
+    BEST_EFFORT(2500, 5000, LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY, LocationManager.NETWORK_PROVIDER, LocationManager.GPS_PROVIDER, 150),
     /**
      * Update strategy for the minimum battery consumption, it will piggyback to other application
      * requests. Fallback: PASSIVE_PROVIDER
      */
-    LAZY(30000, 30000, LocationRequest.PRIORITY_NO_POWER, LocationManager.PASSIVE_PROVIDER, 500);
+    LAZY(30000, 30000, LocationRequest.PRIORITY_NO_POWER, LocationManager.PASSIVE_PROVIDER, null, 500);
 
     private final long interval;
     private final long fastestInterval;
     private final int locationRequestPriority;
     private final String provider;
+    private final String providerFallback;
     private final int smallestDisplacement;
 
-    UpdateStrategy(long interval, long fastestInterval, int locationRequestPriority, String provider, int minDistance) {
+    UpdateStrategy(long interval, long fastestInterval, int locationRequestPriority, String provider, String providerFallback, int minDistance) {
         this.interval = interval;
         this.fastestInterval = fastestInterval;
         this.locationRequestPriority = locationRequestPriority;
         this.provider = provider;
+        this.providerFallback = providerFallback;
         this.smallestDisplacement = minDistance;
     }
 
@@ -51,6 +53,10 @@ public enum UpdateStrategy {
 
     public String getProvider() {
         return provider;
+    }
+
+    public String getProviderFallback() {
+        return providerFallback;
     }
 
     public int getSmallestDisplacement() {
