@@ -17,7 +17,7 @@ version '2.0.7-SNAPSHOT'
 group 'io.nlopez.smartlocation'
 
 dependencies {
-    compile 'com.google.android.gms:play-services:5.+'
+    compile 'com.google.android.gms:play-services:5.0.+'
 }
 
 android {
