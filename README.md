@@ -79,7 +79,7 @@ For example, we will set a typical strategy for a navigation app (for both cars 
 ````java
         SmartLocationOptions options = new SmartLocationOptions();
         options.setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT);
-        options.setOnLocationUpdatedNewStrategy(new SmartLocationOptions.OnLocationUpdated() {
+        options.setOnLocationUpdatedNewStrategy(new SmartLocationOptions.OnActivityRecognizerUpdated() {
             @Override
             public UpdateStrategy getUpdateStrategyForActivity(DetectedActivity detectedActivity) {
                 switch (detectedActivity.getType()) {
