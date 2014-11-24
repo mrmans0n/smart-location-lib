@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.2'
+        classpath 'com.android.tools.build:gradle:0.14.4'
     }
 }
 
@@ -13,21 +13,21 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '2.0.7'
+version '2.0.8-SNAPSHOT'
 group 'io.nlopez.smartlocation'
 
 dependencies {
-    compile 'com.google.android.gms:play-services:5.0.+'
+    compile 'com.google.android.gms:play-services:6.1.+'
 }
 
 android {
-    compileSdkVersion 20
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.1.0'
 
     buildTypes {
         defaultConfig {
             minSdkVersion 9
-            targetSdkVersion 20
+            targetSdkVersion 21
             versionCode 20005
             versionName version
         }
