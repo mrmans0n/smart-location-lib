@@ -1,4 +1,4 @@
-package io.nlopez.smartlocation.location;
+package io.nlopez.smartlocation.location.providers;
 
 import android.content.Context;
 import android.location.Location;
@@ -12,8 +12,9 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import io.nlopez.smartlocation.LocationAccuracy;
 import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.location.LocationAccuracy;
+import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**

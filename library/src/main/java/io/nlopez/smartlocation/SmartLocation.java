@@ -5,8 +5,9 @@ import android.location.Location;
 
 import com.google.android.gms.location.DetectedActivity;
 
-import io.nlopez.smartlocation.location.GooglePlayServicesLocationProvider;
+import io.nlopez.smartlocation.location.LocationAccuracy;
 import io.nlopez.smartlocation.location.LocationProvider;
+import io.nlopez.smartlocation.location.providers.GooglePlayServicesLocationProvider;
 import io.nlopez.smartlocation.utils.Blah;
 import io.nlopez.smartlocation.utils.Logger;
 
@@ -18,8 +19,6 @@ public class SmartLocation {
     private Context context;
     private Logger logger;
     private OnActivityUpdatedListener activityUpdatedListener;
-
-    // Singleton stuff
 
     private SmartLocation(Context context, Blah logger) {
         this.context = context;

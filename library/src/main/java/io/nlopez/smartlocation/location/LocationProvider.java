@@ -3,7 +3,6 @@ package io.nlopez.smartlocation.location;
 import android.content.Context;
 import android.location.Location;
 
-import io.nlopez.smartlocation.LocationAccuracy;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.utils.Logger;
 
