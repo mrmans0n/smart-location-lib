@@ -13,11 +13,11 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '2.0.8'
+version '3.0.0-SNAPSHOT'
 group 'io.nlopez.smartlocation'
 
 dependencies {
-    compile 'com.google.android.gms:play-services:6.1.71'
+    compile 'com.google.android.gms:play-services-location:6.5.87'
 }
 
 android {

@@ -11,16 +11,16 @@ import android.widget.TextView;
 import com.google.android.gms.location.DetectedActivity;
 
 import io.nlopez.smartlocation.SmartLocation;
-import io.nlopez.smartlocation.SmartLocationOptions;
-import io.nlopez.smartlocation.UpdateStrategy;
+import io.nlopez.smartlocation.location.LocationProvider;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements SmartLocation.OnLocationUpdatedListener, SmartLocation.OnActivityUpdatedListener {
 
     private static final String PACKAGE_NAME = "io.nlopez.smartlocation.sample";
 
     private TextView locationText;
     private boolean isCapturingLocation = false;
     private boolean userWantsLocation = false;
+    private SmartLocation.LocationControl locationControl;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -73,52 +73,19 @@ public class MainActivity extends Activity {
 
     private void startLocation() {
 
-        // Create some custom options for our class. This is not needed unless we want some extra control.
-        SmartLocationOptions options = new SmartLocationOptions();
-        options.setPackageName(PACKAGE_NAME)
-                .setDefaultUpdateStrategy(UpdateStrategy.BEST_EFFORT)
-                .setOnActivityRecognizerUpdatedNewStrategy(new SmartLocationOptions.OnActivityRecognizerUpdated() {
-                    @Override
-                    public UpdateStrategy getUpdateStrategyForActivity(DetectedActivity detectedActivity) {
-                        switch (detectedActivity.getType()) {
-                            case DetectedActivity.IN_VEHICLE:
-                            case DetectedActivity.ON_BICYCLE:
-                                return UpdateStrategy.NAVIGATION;
-                            default:
-                                return UpdateStrategy.BEST_EFFORT;
-                        }
-                    }
-                });
+        locationControl = SmartLocation.with(this).location(this).recurrence(LocationProvider.LocationRecurrence.ONCE).start();
 
-        // Init the location with custom options
-        SmartLocation.getInstance().start(this, options, new SmartLocation.OnLocationUpdatedListener() {
-            @Override
-            public void onLocationUpdated(Location location, DetectedActivity detectedActivity) {
-                showLocation(location, detectedActivity);
-            }
-        });
-
-        // Try to restore the cached values, in case the first location takes long
-        Location tryLastLocation = SmartLocation.getInstance().getLastKnownLocation(this);
-        DetectedActivity tryLastActivity = SmartLocation.getInstance().getLastKnownActivity(this);
-
-        isCapturingLocation = true;
-        if (tryLastLocation != null && tryLastActivity != null) {
-            showLocation(tryLastLocation, tryLastActivity);
-            locationText.setText(locationText.getText() + "\n (from cache)");
-        } else {
-            locationText.setText("Location started! Getting the first fix...");
-        }
     }
 
     private void stopLocation() {
         isCapturingLocation = false;
 
+        locationControl.stop();
         // Stop the location capture
-        SmartLocation.getInstance().stop(this);
+        //SmartLocation.getInstance().stopUpdates(this);
 
         // Cleanup so we know we don't want extra activation/deactivation of the locator for the time being.
-        SmartLocation.getInstance().cleanup(this);
+        //SmartLocation.getInstance().cleanup(this);
 
         locationText.setText("Location stopped!");
     }
@@ -152,5 +119,15 @@ public class MainActivity extends Activity {
             default:
                 return "unknown";
         }
+    }
+
+    @Override
+    public void onLocationUpdated(Location location) {
+        showLocation(location, new DetectedActivity(DetectedActivity.UNKNOWN, 100));
+    }
+
+    @Override
+    public void onActivityUpdated(DetectedActivity activity) {
+
     }
 }
