@@ -57,21 +57,21 @@ public class SmartLocation {
 
         private final SmartLocation smartLocation;
         private final OnLocationUpdatedListener listener;
-        private LocationProvider.LocationStrategy strategy;
+        private LocationAccuracy accuracy;
         private LocationProvider provider;
         private boolean oneFix;
 
         public LocationControl(SmartLocation smartLocation, OnLocationUpdatedListener listener) {
             // Default values
             this.provider = new GooglePlayServicesLocationProvider();
-            this.strategy = LocationProvider.LocationStrategy.BEST_EFFORT;
+            this.accuracy = LocationAccuracy.MEDIUM;
             this.oneFix = false;
             this.listener = listener;
             this.smartLocation = smartLocation;
         }
 
-        public LocationControl strategy(LocationProvider.LocationStrategy type) {
-            this.strategy = type;
+        public LocationControl accuracy(LocationAccuracy accuracy) {
+            this.accuracy = accuracy;
             return this;
         }
 
@@ -100,7 +100,7 @@ public class SmartLocation {
         }
 
         public void start() {
-            provider.init(smartLocation.context, listener, oneFix, strategy, smartLocation.logger);
+            provider.init(smartLocation.context, listener, oneFix, accuracy, smartLocation.logger);
             provider.start();
         }
 

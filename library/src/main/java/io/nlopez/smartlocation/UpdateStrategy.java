@@ -9,16 +9,16 @@ import com.google.android.gms.location.LocationRequest;
  */
 public enum UpdateStrategy {
     /**
-     * Update strategy best for navigation, with fast paced accurate fixes. Fallback: GPS_PROVIDER
+     * Update accuracy best for navigation, with fast paced accurate fixes. Fallback: GPS_PROVIDER
      */
     NAVIGATION(500, 100, LocationRequest.PRIORITY_HIGH_ACCURACY, LocationManager.GPS_PROVIDER, null, 0),
     /**
-     * Update strategy best for most situations, with relatively fast updates and using the best
+     * Update accuracy best for most situations, with relatively fast updates and using the best
      * available method for location, WiFi - network - satellite. Fallback: NETWORK_PROVIDER
      */
     BEST_EFFORT(2500, 5000, LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY, LocationManager.NETWORK_PROVIDER, LocationManager.GPS_PROVIDER, 150),
     /**
-     * Update strategy for the minimum battery consumption, it will piggyback to other application
+     * Update accuracy for the minimum battery consumption, it will piggyback to other application
      * requests. Fallback: PASSIVE_PROVIDER
      */
     LAZY(30000, 30000, LocationRequest.PRIORITY_NO_POWER, LocationManager.PASSIVE_PROVIDER, null, 500);

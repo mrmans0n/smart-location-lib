@@ -3,6 +3,7 @@ package io.nlopez.smartlocation.location;
 import android.content.Context;
 import android.location.Location;
 
+import io.nlopez.smartlocation.LocationAccuracy;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.utils.Logger;
 
@@ -12,7 +13,7 @@ import io.nlopez.smartlocation.utils.Logger;
 public interface LocationProvider {
     enum LocationStrategy {NAVIGATION, BEST_EFFORT, LAZY}
 
-    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, boolean oneFix, LocationStrategy strategy, Logger loggingEnabled);
+    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, boolean oneFix, LocationAccuracy accuracy, Logger loggingEnabled);
 
     public void start();
 

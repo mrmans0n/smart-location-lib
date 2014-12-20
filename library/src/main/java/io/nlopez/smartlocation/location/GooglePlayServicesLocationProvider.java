@@ -12,6 +12,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import io.nlopez.smartlocation.LocationAccuracy;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.utils.Logger;
 
@@ -28,7 +29,7 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
     private boolean oneFix = false;
 
     @Override
-    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, boolean oneFix, LocationStrategy strategy, Logger logger) {
+    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, boolean oneFix, LocationAccuracy accuracy, Logger logger) {
         if (!started) {
             this.client = new GoogleApiClient.Builder(context)
                     .addApi(LocationServices.API)
@@ -39,6 +40,7 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
             client.connect();
             this.listener = listener;
 
+            // TODO handle accuracy
             this.locationRequest = LocationRequest.create()
                     .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
