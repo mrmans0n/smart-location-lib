@@ -15,7 +15,7 @@ Getting started
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:2.0.7'
+compile 'io.nlopez.smartlocation:library:2.0.8'
 ```
 
 Usage
