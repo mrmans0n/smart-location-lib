@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.google.android.gms.location.DetectedActivity;
 
 import io.nlopez.smartlocation.SmartLocation;
-import io.nlopez.smartlocation.location.LocationProvider;
 
 public class MainActivity extends Activity implements SmartLocation.OnLocationUpdatedListener, SmartLocation.OnActivityUpdatedListener {
 
@@ -73,7 +72,10 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
 
     private void startLocation() {
 
-        locationControl = SmartLocation.with(this).location(this).recurrence(LocationProvider.LocationRecurrence.ONCE).start();
+        SmartLocation smartLocation = new SmartLocation.Builder(this).logging(true).build();
+
+        locationControl = smartLocation.location(this).oneFix().get();
+        locationControl.start();
 
     }
 

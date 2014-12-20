@@ -3,7 +3,6 @@ package io.nlopez.smartlocation.location;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -14,82 +13,108 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.utils.Logger;
 
 /**
  * Created by mrm on 20/12/14.
  */
 public class GooglePlayServicesLocationProvider implements LocationProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
 
-    private static final String TAG = GooglePlayServicesLocationProvider.class.getSimpleName();
     private GoogleApiClient client;
     private LocationRequest locationRequest;
-    private boolean loggingEnabled;
+    private Logger logger;
     private SmartLocation.OnLocationUpdatedListener listener;
-    private LocationProviderCallback callback;
+    private boolean started = false;
+    private boolean oneFix = false;
 
     @Override
-    public void init(Context context, LocationProviderCallback callback, SmartLocation.OnLocationUpdatedListener listener, LocationStrategy strategy, boolean loggingEnabled) {
-        this.client = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, boolean oneFix, LocationStrategy strategy, Logger logger) {
+        if (!started) {
+            this.client = new GoogleApiClient.Builder(context)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
 
-        this.listener = listener;
-        this.callback = callback;
+            client.connect();
+            this.listener = listener;
 
-        this.locationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            this.locationRequest = LocationRequest.create()
+                    .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        this.loggingEnabled = loggingEnabled;
+            this.logger = logger;
+            this.oneFix = oneFix;
+        } else {
+            logger.d("already started");
+        }
     }
 
     @Override
-    public void startForRecurrence(LocationRecurrence recurrence) {
+    public void start() {
+        logger.d("start oneFix=" + oneFix);
+        if (client.isConnected()) {
+            startUpdating();
+        } else {
+            started = true;
+        }
+    }
+
+    private void startUpdating() {
         LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this).setResultCallback(this);
     }
 
     @Override
     public void stopUpdates() {
+        logger.d("stopUpdates");
         if (client.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
+            client.disconnect();
         }
+        started = false;
     }
 
     @Override
     public Location getLastLocation() {
-        return LocationServices.FusedLocationApi.getLastLocation(client);
+        return client.isConnected() ? LocationServices.FusedLocationApi.getLastLocation(client) : null;
     }
 
     @Override
     public void onConnected(Bundle bundle) {
         // ??
+        logger.d("onConnected");
+        if (started) {
+            startUpdating();
+        }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        callback.onProviderError();
+        logger.d("onConnectionSuspended " + i);
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        callback.onProviderError();
+        logger.d("onConnectionFailed");
+
     }
 
     @Override
     public void onLocationChanged(Location location) {
         listener.onLocationUpdated(location);
+        if (client.isConnected() && oneFix) {
+            logger.d("disconnecting because recurrence = once");
+            client.disconnect();
+        }
     }
 
     @Override
     public void onResult(Status status) {
         if (status.isSuccess()) {
-            Log.d(TAG, "Google Api Client connection successful");
-            callback.onProviderReady();
+            logger.d("Locations update request successful");
+
         } else if (status.hasResolution()) {
-            callback.onProviderError();
             // TODO this
-            Log.e(TAG, "Unable to register, but we can solve this");
+            logger.d("Unable to register, but we can solve this");
             /*
             status.startResolutionForResult(
                     context,     // your current activity used to receive the result
@@ -98,8 +123,7 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
             */
         } else {
             // No recovery. Weep softly or inform the user.
-            Log.e(TAG, "Registering failed: " + status.getStatusMessage());
-            callback.onProviderError();
+            logger.e("Registering failed: " + status.getStatusMessage());
         }
     }
 }
