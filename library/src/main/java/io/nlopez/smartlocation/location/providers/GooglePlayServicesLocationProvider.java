@@ -3,7 +3,6 @@ package io.nlopez.smartlocation.location.providers;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -11,7 +10,6 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.LocationAccuracy;
 import io.nlopez.smartlocation.location.LocationProvider;
@@ -26,12 +24,12 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
     private LocationRequest locationRequest;
     private Logger logger;
     private SmartLocation.OnLocationUpdatedListener listener;
-    private boolean started = false;
-    private boolean oneFix = false;
+    private boolean shouldStart = false;
 
     @Override
-    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, boolean oneFix, LocationAccuracy accuracy, Logger logger) {
-        if (!started) {
+    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, boolean oneFix,
+                     LocationAccuracy accuracy, Logger logger) {
+        if (!shouldStart) {
             this.client = new GoogleApiClient.Builder(context)
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(this)
@@ -45,8 +43,11 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
             this.locationRequest = LocationRequest.create()
                     .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
+            if (oneFix) {
+                this.locationRequest.setNumUpdates(1);
+            }
+
             this.logger = logger;
-            this.oneFix = oneFix;
         } else {
             logger.d("already started");
         }
@@ -54,11 +55,11 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
 
     @Override
     public void start() {
-        logger.d("start oneFix=" + oneFix);
         if (client.isConnected()) {
             startUpdating();
         } else {
-            started = true;
+            shouldStart = true;
+            logger.d("still not connected - scheduled start when connection is ok");
         }
     }
 
@@ -73,7 +74,7 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
             client.disconnect();
         }
-        started = false;
+        shouldStart = false;
     }
 
     @Override
@@ -85,7 +86,7 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
     public void onConnected(Bundle bundle) {
         // ??
         logger.d("onConnected");
-        if (started) {
+        if (shouldStart) {
             startUpdating();
         }
     }
@@ -104,10 +105,6 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
     @Override
     public void onLocationChanged(Location location) {
         listener.onLocationUpdated(location);
-        if (client.isConnected() && oneFix) {
-            logger.d("disconnecting because recurrence = once");
-            client.disconnect();
-        }
     }
 
     @Override
