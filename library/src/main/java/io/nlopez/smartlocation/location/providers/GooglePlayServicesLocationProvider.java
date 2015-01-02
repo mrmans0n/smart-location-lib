@@ -3,6 +3,7 @@ package io.nlopez.smartlocation.location.providers;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -10,9 +11,10 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
 import io.nlopez.smartlocation.SmartLocation;
-import io.nlopez.smartlocation.location.LocationAccuracy;
 import io.nlopez.smartlocation.location.LocationProvider;
+import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**
@@ -27,8 +29,7 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
     private boolean shouldStart = false;
 
     @Override
-    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, boolean oneFix,
-                     LocationAccuracy accuracy, Logger logger) {
+    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate, Logger logger) {
         if (!shouldStart) {
             this.client = new GoogleApiClient.Builder(context)
                     .addApi(LocationServices.API)
@@ -38,19 +39,36 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
 
             client.connect();
             this.listener = listener;
-
-            // TODO handle accuracy
-            this.locationRequest = LocationRequest.create()
-                    .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-            if (oneFix) {
-                this.locationRequest.setNumUpdates(1);
-            }
-
+            this.locationRequest = createRequest(params, singleUpdate);
             this.logger = logger;
         } else {
             logger.d("already started");
         }
+    }
+
+    private LocationRequest createRequest(LocationParams params, boolean singleUpdate) {
+        LocationRequest request = LocationRequest.create()
+                .setFastestInterval(params.getInterval())
+                .setInterval(params.getInterval())
+                .setSmallestDisplacement(params.getDistance());
+
+        switch (params.getAccuracy()) {
+            case HIGH:
+                request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                break;
+            case MEDIUM:
+                request.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+                break;
+            case LOW:
+                request.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+                break;
+        }
+
+        if (singleUpdate) {
+            request.setNumUpdates(1);
+        }
+
+        return request;
     }
 
     @Override

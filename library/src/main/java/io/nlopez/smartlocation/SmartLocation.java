@@ -5,8 +5,8 @@ import android.location.Location;
 
 import com.google.android.gms.location.DetectedActivity;
 
-import io.nlopez.smartlocation.location.LocationAccuracy;
 import io.nlopez.smartlocation.location.LocationProvider;
+import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.location.providers.GooglePlayServicesLocationProvider;
 import io.nlopez.smartlocation.utils.Blah;
 import io.nlopez.smartlocation.utils.Logger;
@@ -56,21 +56,21 @@ public class SmartLocation {
 
         private final SmartLocation smartLocation;
         private final OnLocationUpdatedListener listener;
-        private LocationAccuracy accuracy;
+        private LocationParams params;
         private LocationProvider provider;
         private boolean oneFix;
 
         public LocationControl(SmartLocation smartLocation, OnLocationUpdatedListener listener) {
             // Default values
             this.provider = new GooglePlayServicesLocationProvider();
-            this.accuracy = LocationAccuracy.MEDIUM;
+            this.params = LocationParams.PRESET_MEDIUM;
             this.oneFix = false;
             this.listener = listener;
             this.smartLocation = smartLocation;
         }
 
-        public LocationControl accuracy(LocationAccuracy accuracy) {
-            this.accuracy = accuracy;
+        public LocationControl accuracy(LocationParams params) {
+            this.params = params;
             return this;
         }
 
@@ -99,7 +99,7 @@ public class SmartLocation {
         }
 
         public void start() {
-            provider.init(smartLocation.context, listener, oneFix, accuracy, smartLocation.logger);
+            provider.init(smartLocation.context, listener, params, oneFix, smartLocation.logger);
             provider.start();
         }
 

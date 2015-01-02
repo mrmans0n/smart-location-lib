@@ -4,15 +4,15 @@ import android.content.Context;
 import android.location.Location;
 
 import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.location.config.LocationAccuracy;
+import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**
  * Created by mrm on 20/12/14.
  */
 public interface LocationProvider {
-    enum LocationStrategy {NAVIGATION, BEST_EFFORT, LAZY}
-
-    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, boolean oneFix, LocationAccuracy accuracy, Logger loggingEnabled);
+    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate, Logger loggingEnabled);
 
     public void start();
 
