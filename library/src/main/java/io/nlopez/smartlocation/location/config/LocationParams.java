@@ -5,9 +5,9 @@ package io.nlopez.smartlocation.location.config;
  */
 public class LocationParams {
     // Defaults
-    public static final LocationParams PRESET_NAVIGATION = new Builder().setAccuracy(LocationAccuracy.HIGH).setDistance(50).setInterval(500).build();
-    public static final LocationParams PRESET_MEDIUM = new Builder().setAccuracy(LocationAccuracy.MEDIUM).setDistance(250).setInterval(2500).build();
-    public static final LocationParams PRESET_LOW = new Builder().setAccuracy(LocationAccuracy.LOW).setDistance(1000).setInterval(5000).build();
+    public static final LocationParams NAVIGATION = new Builder().setAccuracy(LocationAccuracy.HIGH).setDistance(0).setInterval(500).build();
+    public static final LocationParams BEST_EFFORT = new Builder().setAccuracy(LocationAccuracy.MEDIUM).setDistance(150).setInterval(2500).build();
+    public static final LocationParams LAZY = new Builder().setAccuracy(LocationAccuracy.LOW).setDistance(500).setInterval(5000).build();
 
     private long interval;
     private float distance;

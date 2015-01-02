@@ -63,13 +63,13 @@ public class SmartLocation {
         public LocationControl(SmartLocation smartLocation, OnLocationUpdatedListener listener) {
             // Default values
             this.provider = new GooglePlayServicesLocationProvider();
-            this.params = LocationParams.PRESET_MEDIUM;
+            this.params = LocationParams.BEST_EFFORT;
             this.oneFix = false;
             this.listener = listener;
             this.smartLocation = smartLocation;
         }
 
-        public LocationControl accuracy(LocationParams params) {
+        public LocationControl config(LocationParams params) {
             this.params = params;
             return this;
         }
