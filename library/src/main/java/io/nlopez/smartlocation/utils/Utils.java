@@ -38,7 +38,7 @@ public class Utils {
     }
 
     public static Location getLocationFromPreferences(SharedPreferences preferences, String prefix) {
-        if (preferences.contains(prefix + LATITUDE_ID) && preferences.contains(prefix + LONGITUDE_ID)) {
+        if (preferences != null && preferences.contains(prefix + LATITUDE_ID) && preferences.contains(prefix + LONGITUDE_ID)) {
             Location location = new Location("prefs");
             location.setLatitude(preferences.getFloat(prefix + LATITUDE_ID, 0));
             location.setLongitude(preferences.getFloat(prefix + prefix + LONGITUDE_ID, 0));

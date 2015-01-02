@@ -8,11 +8,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.location.DetectedActivity;
-
 import io.nlopez.smartlocation.SmartLocation;
 
-public class MainActivity extends Activity implements SmartLocation.OnLocationUpdatedListener, SmartLocation.OnActivityUpdatedListener {
+public class MainActivity extends Activity implements SmartLocation.OnLocationUpdatedListener {
 
     private static final String PACKAGE_NAME = "io.nlopez.smartlocation.sample";
 
@@ -56,6 +54,8 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
     protected void onResume() {
         super.onResume();
 
+        showLast();
+
         if (userWantsLocation && !isCapturingLocation) {
             startLocation();
         }
@@ -70,11 +70,22 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
         }
     }
 
-    private void startLocation() {
+    private void showLast() {
+        Location lastLocation = SmartLocation.with(this).location(null).getLastLocation();
+        if (lastLocation != null) {
+            locationText.setText(
+                    String.format("[Last Location] Latitude %.6f, Longitude %.6f",
+                            lastLocation.getLatitude(),
+                            lastLocation.getLongitude())
+            );
+        }
+    }
 
+    private void startLocation() {
+        isCapturingLocation = true;
         SmartLocation smartLocation = new SmartLocation.Builder(this).logging(true).build();
 
-        locationControl = smartLocation.location(this).oneFix().get();
+        locationControl = smartLocation.location(this).get();
         locationControl.start();
 
     }
@@ -92,44 +103,20 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
         locationText.setText("Location stopped!");
     }
 
-    private void showLocation(Location location, DetectedActivity activity) {
-        String activityName = getNameFromType(activity) + " (" + activity.getType() + ") with " + activity.getConfidence() + "% confidence. ";
+    private void showLocation(Location location) {
         if (location != null) {
             locationText.setText(
-                    String.format("Latitude %.6f, Longitude %.6f, Activity %s",
+                    String.format("Latitude %.6f, Longitude %.6f",
                             location.getLatitude(),
-                            location.getLongitude(),
-                            activityName)
+                            location.getLongitude())
             );
         } else {
-            locationText.setText("Null location, Activity " + activityName);
-        }
-    }
-
-    private String getNameFromType(DetectedActivity activityType) {
-        switch (activityType.getType()) {
-            case DetectedActivity.IN_VEHICLE:
-                return "in_vehicle";
-            case DetectedActivity.ON_BICYCLE:
-                return "on_bicycle";
-            case DetectedActivity.ON_FOOT:
-                return "on_foot";
-            case DetectedActivity.STILL:
-                return "still";
-            case DetectedActivity.TILTING:
-                return "tilting";
-            default:
-                return "unknown";
+            locationText.setText("Null location");
         }
     }
 
     @Override
     public void onLocationUpdated(Location location) {
-        showLocation(location, new DetectedActivity(DetectedActivity.UNKNOWN, 100));
-    }
-
-    @Override
-    public void onActivityUpdated(DetectedActivity activity) {
-
+        showLocation(location);
     }
 }

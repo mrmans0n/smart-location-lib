@@ -110,7 +110,7 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
             return location;
         }
 
-        return client.isConnected() ? LocationServices.FusedLocationApi.getLastLocation(client) : null;
+        return client != null && client.isConnected() ? LocationServices.FusedLocationApi.getLastLocation(client) : null;
     }
 
     @Override

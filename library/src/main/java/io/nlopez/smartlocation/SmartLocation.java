@@ -3,8 +3,6 @@ package io.nlopez.smartlocation;
 import android.content.Context;
 import android.location.Location;
 
-import com.google.android.gms.location.DetectedActivity;
-
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.location.providers.GooglePlayServicesLocationProvider;
@@ -18,7 +16,6 @@ public class SmartLocation {
 
     private Context context;
     private Logger logger;
-    private OnActivityUpdatedListener activityUpdatedListener;
 
     private SmartLocation(Context context, Blah logger) {
         this.context = context;
@@ -109,13 +106,5 @@ public class SmartLocation {
 
     public interface OnLocationUpdatedListener {
         public void onLocationUpdated(Location location);
-    }
-
-    public interface OnActivityUpdatedListener {
-        public void onActivityUpdated(DetectedActivity activity);
-    }
-
-    public interface OnLocationAndActivityUpdatedListener {
-        public void onLocationAndActivityUpdated(Location location, DetectedActivity activity);
     }
 }
