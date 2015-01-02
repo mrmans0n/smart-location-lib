@@ -1,6 +1,7 @@
 package io.nlopez.smartlocation.location.providers;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -13,26 +14,34 @@ import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationAccuracy;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.utils.Logger;
+import io.nlopez.smartlocation.utils.Utils;
 
 /**
  * Created by nacho on 12/23/14.
  */
 public class LocationManagerProvider implements LocationProvider, LocationListener {
+    private static final String PROVIDER_FILE = "LOCATIONMANAGERPROVIDER_PREFS";
+    private static final String LAST_ID = "last";
 
     private LocationManager locationManager;
     private Criteria criteria;
     private boolean oneFix;
     private LocationParams params;
     private SmartLocation.OnLocationUpdatedListener listener;
+    private SharedPreferences sharedPreferences;
+    private Logger logger;
 
     @Override
-    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate, Logger loggingEnabled) {
+    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate, Logger logger) {
         this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         this.params = params;
         this.criteria = getProvider(params);
         this.oneFix = singleUpdate;
         this.listener = listener;
+        this.logger = logger;
+
+        sharedPreferences = context.getSharedPreferences(PROVIDER_FILE, Context.MODE_PRIVATE);
     }
 
     @Override
@@ -51,6 +60,11 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
 
     @Override
     public Location getLastLocation() {
+        Location location = Utils.getLocationFromPreferences(sharedPreferences, LAST_ID);
+        if (location != null) {
+            return location;
+        }
+
         return locationManager.getLastKnownLocation(providerFromCriteria(criteria));
     }
 
@@ -86,7 +100,12 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
 
     @Override
     public void onLocationChanged(Location location) {
+        logger.d("onLocationChanged", location);
         listener.onLocationUpdated(location);
+        if (sharedPreferences != null) {
+            logger.d("Stored in SharedPreferences");
+            Utils.storeLocationInPreferences(sharedPreferences, location, LAST_ID);
+        }
     }
 
     @Override

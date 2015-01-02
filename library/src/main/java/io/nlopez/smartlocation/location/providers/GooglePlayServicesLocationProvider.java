@@ -1,6 +1,7 @@
 package io.nlopez.smartlocation.location.providers;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -16,17 +17,21 @@ import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.utils.Logger;
+import io.nlopez.smartlocation.utils.Utils;
 
 /**
  * Created by mrm on 20/12/14.
  */
 public class GooglePlayServicesLocationProvider implements LocationProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
+    private static final String PROVIDER_FILE = "GMSPROVIDER_PREFS";
+    private static final String LAST_ID = "last";
 
     private GoogleApiClient client;
     private LocationRequest locationRequest;
     private Logger logger;
     private SmartLocation.OnLocationUpdatedListener listener;
     private boolean shouldStart = false;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate, Logger logger) {
@@ -41,6 +46,9 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
             this.listener = listener;
             this.locationRequest = createRequest(params, singleUpdate);
             this.logger = logger;
+
+            sharedPreferences = context.getSharedPreferences(PROVIDER_FILE, Context.MODE_PRIVATE);
+
         } else {
             logger.d("already started");
         }
@@ -97,6 +105,11 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
 
     @Override
     public Location getLastLocation() {
+        Location location = Utils.getLocationFromPreferences(sharedPreferences, LAST_ID);
+        if (location != null) {
+            return location;
+        }
+
         return client.isConnected() ? LocationServices.FusedLocationApi.getLastLocation(client) : null;
     }
 
@@ -122,7 +135,13 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
 
     @Override
     public void onLocationChanged(Location location) {
+        logger.d("onLocationChanged", location);
+
         listener.onLocationUpdated(location);
+        if (sharedPreferences != null) {
+            logger.d("Stored in SharedPreferences");
+            Utils.storeLocationInPreferences(sharedPreferences, location, LAST_ID);
+        }
     }
 
     @Override

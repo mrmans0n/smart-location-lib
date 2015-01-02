@@ -90,7 +90,6 @@ public class SmartLocation {
         }
 
         public Location getLastLocation() {
-            // TODO change for a persistent cache?
             return provider.getLastLocation();
         }
 
