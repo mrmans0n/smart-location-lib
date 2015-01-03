@@ -5,66 +5,13 @@ import android.util.Log;
 /**
  * Created by mrm on 20/12/14.
  */
-public class Blah implements Logger {
+public class LoggerFactory {
 
-    private final Logger logger;
-
-    public Blah(boolean loggingEnabled) {
-        logger = loggingEnabled ? new Blabber() : new Sssht();
+    public static Logger buildLogger(boolean loggingEnabled) {
+        return loggingEnabled ? new Blabber() : new Sssht();
     }
 
-    @Override
-    public void v(String message, Object... args) {
-        logger.v(message, args);
-    }
-
-    @Override
-    public void v(Throwable t, String message, Object... args) {
-        logger.v(t, message, args);
-    }
-
-    @Override
-    public void d(String message, Object... args) {
-        logger.d(message, args);
-    }
-
-    @Override
-    public void d(Throwable t, String message, Object... args) {
-        logger.d(t, message, args);
-    }
-
-    @Override
-    public void i(String message, Object... args) {
-        logger.i(message, args);
-    }
-
-    @Override
-    public void i(Throwable t, String message, Object... args) {
-        logger.i(t, message, args);
-    }
-
-    @Override
-    public void w(String message, Object... args) {
-        logger.w(message, args);
-    }
-
-    @Override
-    public void w(Throwable t, String message, Object... args) {
-        logger.w(t, message, args);
-    }
-
-    @Override
-    public void e(String message, Object... args) {
-        logger.e(message, args);
-    }
-
-    @Override
-    public void e(Throwable t, String message, Object... args) {
-        logger.e(t, message, args);
-    }
-
-
-    private class Sssht implements Logger {
+    private static class Sssht implements Logger {
 
         @Override
         public void v(String message, Object... args) {
@@ -117,7 +64,7 @@ public class Blah implements Logger {
         }
     }
 
-    private class Blabber implements Logger {
+    private static class Blabber implements Logger {
 
         private String getTag() {
             return new Exception().getStackTrace()[3].getMethodName();

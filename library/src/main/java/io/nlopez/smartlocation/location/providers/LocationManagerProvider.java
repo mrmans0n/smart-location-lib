@@ -60,12 +60,20 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
 
     @Override
     public Location getLastLocation() {
+
+        if (locationManager != null) {
+            Location location = locationManager.getLastKnownLocation(providerFromCriteria(criteria));
+            if (location != null) {
+                return location;
+            }
+        }
+
         Location location = Utils.getLocationFromPreferences(sharedPreferences, LAST_ID);
         if (location != null) {
             return location;
         }
 
-        return locationManager.getLastKnownLocation(providerFromCriteria(criteria));
+        return null;
     }
 
     private Criteria getProvider(LocationParams params) {

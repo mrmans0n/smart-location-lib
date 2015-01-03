@@ -6,7 +6,7 @@ import android.location.Location;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.location.providers.GooglePlayServicesLocationProvider;
-import io.nlopez.smartlocation.utils.Blah;
+import io.nlopez.smartlocation.utils.LoggerFactory;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**
@@ -17,7 +17,7 @@ public class SmartLocation {
     private Context context;
     private Logger logger;
 
-    private SmartLocation(Context context, Blah logger) {
+    private SmartLocation(Context context, Logger logger) {
         this.context = context;
         this.logger = logger;
     }
@@ -44,7 +44,7 @@ public class SmartLocation {
         }
 
         public SmartLocation build() {
-            return new SmartLocation(context, new Blah(loggingEnabled));
+            return new SmartLocation(context, LoggerFactory.buildLogger(loggingEnabled));
         }
 
     }

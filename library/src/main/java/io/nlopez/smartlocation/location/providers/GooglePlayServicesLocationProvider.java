@@ -105,12 +105,14 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
 
     @Override
     public Location getLastLocation() {
+        if (client != null && client.isConnected()) {
+            return LocationServices.FusedLocationApi.getLastLocation(client);
+        }
         Location location = Utils.getLocationFromPreferences(sharedPreferences, LAST_ID);
         if (location != null) {
             return location;
         }
-
-        return client != null && client.isConnected() ? LocationServices.FusedLocationApi.getLastLocation(client) : null;
+        return null;
     }
 
     @Override
