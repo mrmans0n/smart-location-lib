@@ -6,8 +6,8 @@ import android.location.Location;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.location.providers.GooglePlayServicesLocationProvider;
-import io.nlopez.smartlocation.utils.LoggerFactory;
 import io.nlopez.smartlocation.utils.Logger;
+import io.nlopez.smartlocation.utils.LoggerFactory;
 
 /**
  * Created by Nacho L. on 17/06/13.
@@ -64,6 +64,8 @@ public class SmartLocation {
             this.oneFix = false;
             this.listener = listener;
             this.smartLocation = smartLocation;
+            provider.init(smartLocation.context, listener, smartLocation.logger);
+
         }
 
         public LocationControl config(LocationParams params) {
@@ -73,6 +75,7 @@ public class SmartLocation {
 
         public LocationControl provider(LocationProvider provider) {
             this.provider = provider;
+            provider.init(smartLocation.context, listener, smartLocation.logger);
             return this;
         }
 
@@ -95,12 +98,11 @@ public class SmartLocation {
         }
 
         public void start() {
-            provider.init(smartLocation.context, listener, params, oneFix, smartLocation.logger);
-            provider.start();
+            provider.start(params, oneFix);
         }
 
         public void stop() {
-            provider.stopUpdates();
+            provider.stop();
         }
     }
 

@@ -1,7 +1,6 @@
 package io.nlopez.smartlocation.location.providers;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,42 +10,37 @@ import android.os.Looper;
 
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.LocationProvider;
+import io.nlopez.smartlocation.location.LocationStore;
 import io.nlopez.smartlocation.location.config.LocationAccuracy;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.utils.Logger;
-import io.nlopez.smartlocation.utils.Utils;
 
 /**
  * Created by nacho on 12/23/14.
  */
 public class LocationManagerProvider implements LocationProvider, LocationListener {
-    private static final String PROVIDER_FILE = "LOCATIONMANAGERPROVIDER_PREFS";
-    private static final String LAST_ID = "last";
+    private static final String LOCATIONMANAGERPROVIDER_ID = "LMP";
 
     private LocationManager locationManager;
-    private Criteria criteria;
-    private boolean oneFix;
-    private LocationParams params;
     private SmartLocation.OnLocationUpdatedListener listener;
-    private SharedPreferences sharedPreferences;
+    private LocationStore locationStore;
     private Logger logger;
 
     @Override
-    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate, Logger logger) {
+    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, Logger logger) {
         this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-        this.params = params;
-        this.criteria = getProvider(params);
-        this.oneFix = singleUpdate;
         this.listener = listener;
         this.logger = logger;
 
-        sharedPreferences = context.getSharedPreferences(PROVIDER_FILE, Context.MODE_PRIVATE);
+        locationStore = new LocationStore(context);
     }
 
     @Override
-    public void start() {
-        if (oneFix) {
+    public void start(LocationParams params, boolean singleUpdate) {
+        Criteria criteria = getProvider(params);
+
+        if (singleUpdate) {
             locationManager.requestSingleUpdate(criteria, this, Looper.getMainLooper());
         } else {
             locationManager.requestLocationUpdates(params.getInterval(), params.getDistance(), criteria, this, Looper.getMainLooper());
@@ -54,7 +48,7 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
     }
 
     @Override
-    public void stopUpdates() {
+    public void stop() {
         locationManager.removeUpdates(this);
     }
 
@@ -62,13 +56,13 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
     public Location getLastLocation() {
 
         if (locationManager != null) {
-            Location location = locationManager.getLastKnownLocation(providerFromCriteria(criteria));
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (location != null) {
                 return location;
             }
         }
 
-        Location location = Utils.getLocationFromPreferences(sharedPreferences, LAST_ID);
+        Location location = locationStore.get(LOCATIONMANAGERPROVIDER_ID);
         if (location != null) {
             return location;
         }
@@ -110,9 +104,9 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
     public void onLocationChanged(Location location) {
         logger.d("onLocationChanged", location);
         listener.onLocationUpdated(location);
-        if (sharedPreferences != null) {
+        if (locationStore != null) {
             logger.d("Stored in SharedPreferences");
-            Utils.storeLocationInPreferences(sharedPreferences, location, LAST_ID);
+            locationStore.put(LOCATIONMANAGERPROVIDER_ID, location);
         }
     }
 

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.location.Location;
 
 import io.nlopez.smartlocation.SmartLocation;
-import io.nlopez.smartlocation.location.config.LocationAccuracy;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.utils.Logger;
 
@@ -12,11 +11,11 @@ import io.nlopez.smartlocation.utils.Logger;
  * Created by mrm on 20/12/14.
  */
 public interface LocationProvider {
-    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate, Logger logger);
+    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, Logger logger);
 
-    public void start();
+    public void start(LocationParams params, boolean singleUpdate);
 
-    public void stopUpdates();
+    public void stop();
 
     public Location getLastLocation();
 

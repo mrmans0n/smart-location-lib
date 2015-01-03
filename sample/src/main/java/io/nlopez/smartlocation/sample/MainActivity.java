@@ -95,7 +95,7 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
 
         locationControl.stop();
         // Stop the location capture
-        //SmartLocation.getInstance().stopUpdates(this);
+        //SmartLocation.getInstance().stop(this);
 
         // Cleanup so we know we don't want extra activation/deactivation of the locator for the time being.
         //SmartLocation.getInstance().cleanup(this);

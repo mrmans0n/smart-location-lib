@@ -1,7 +1,6 @@
 package io.nlopez.smartlocation.location.providers;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -15,26 +14,25 @@ import com.google.android.gms.location.LocationServices;
 
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.LocationProvider;
+import io.nlopez.smartlocation.location.LocationStore;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.utils.Logger;
-import io.nlopez.smartlocation.utils.Utils;
 
 /**
  * Created by mrm on 20/12/14.
  */
 public class GooglePlayServicesLocationProvider implements LocationProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
-    private static final String PROVIDER_FILE = "GMSPROVIDER_PREFS";
-    private static final String LAST_ID = "last";
+    private static final String GMS_ID = "GMS";
 
     private GoogleApiClient client;
-    private LocationRequest locationRequest;
     private Logger logger;
     private SmartLocation.OnLocationUpdatedListener listener;
     private boolean shouldStart = false;
-    private SharedPreferences sharedPreferences;
+    private LocationStore locationStore;
+    private LocationRequest locationRequest;
 
     @Override
-    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate, Logger logger) {
+    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, Logger logger) {
         if (!shouldStart) {
             this.client = new GoogleApiClient.Builder(context)
                     .addApi(LocationServices.API)
@@ -44,10 +42,9 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
 
             client.connect();
             this.listener = listener;
-            this.locationRequest = createRequest(params, singleUpdate);
             this.logger = logger;
 
-            sharedPreferences = context.getSharedPreferences(PROVIDER_FILE, Context.MODE_PRIVATE);
+            locationStore = new LocationStore(context);
 
         } else {
             logger.d("already started");
@@ -80,22 +77,23 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
     }
 
     @Override
-    public void start() {
+    public void start(LocationParams params, boolean singleUpdate) {
+        locationRequest = createRequest(params, singleUpdate);
         if (client.isConnected()) {
-            startUpdating();
+            startUpdating(locationRequest);
         } else {
             shouldStart = true;
             logger.d("still not connected - scheduled start when connection is ok");
         }
     }
 
-    private void startUpdating() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this).setResultCallback(this);
+    private void startUpdating(LocationRequest request) {
+        LocationServices.FusedLocationApi.requestLocationUpdates(client, request, this).setResultCallback(this);
     }
 
     @Override
-    public void stopUpdates() {
-        logger.d("stopUpdates");
+    public void stop() {
+        logger.d("stop");
         if (client.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
             client.disconnect();
@@ -108,9 +106,11 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
         if (client != null && client.isConnected()) {
             return LocationServices.FusedLocationApi.getLastLocation(client);
         }
-        Location location = Utils.getLocationFromPreferences(sharedPreferences, LAST_ID);
-        if (location != null) {
-            return location;
+        if (locationStore != null) {
+            Location location = locationStore.get(GMS_ID);
+            if (location != null) {
+                return location;
+            }
         }
         return null;
     }
@@ -120,7 +120,7 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
         // ??
         logger.d("onConnected");
         if (shouldStart) {
-            startUpdating();
+            startUpdating(locationRequest);
         }
     }
 
@@ -140,9 +140,9 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
         logger.d("onLocationChanged", location);
 
         listener.onLocationUpdated(location);
-        if (sharedPreferences != null) {
+        if (locationStore != null) {
             logger.d("Stored in SharedPreferences");
-            Utils.storeLocationInPreferences(sharedPreferences, location, LAST_ID);
+            locationStore.put(GMS_ID, location);
         }
     }
 
