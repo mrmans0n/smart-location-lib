@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.DetectedActivity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import io.nlopez.smartlocation.activity.ActivityProvider;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
 import io.nlopez.smartlocation.activity.providers.GooglePlayServicesActivityProvider;
@@ -62,17 +65,22 @@ public class SmartLocation {
 
     public static class LocationControl {
 
+        private static final Map<Context, LocationProvider> MAPPING = new HashMap<>();
+
         private final SmartLocation smartLocation;
         private LocationParams params;
         private LocationProvider provider;
         private boolean oneFix;
 
         public LocationControl(SmartLocation smartLocation) {
-            // Default values
-            this.provider = new GooglePlayServicesLocationProvider();
-            this.params = LocationParams.BEST_EFFORT;
-            this.oneFix = false;
             this.smartLocation = smartLocation;
+            params = LocationParams.BEST_EFFORT;
+            oneFix = false;
+
+            if (!MAPPING.containsKey(smartLocation.context)) {
+                MAPPING.put(smartLocation.context, new GooglePlayServicesLocationProvider());
+            }
+            provider = MAPPING.get(smartLocation.context);
             provider.init(smartLocation.context, smartLocation.logger);
 
         }
@@ -87,6 +95,7 @@ public class SmartLocation {
                 smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
             }
             provider = newProvider;
+            MAPPING.put(smartLocation.context, newProvider);
             provider.init(smartLocation.context, smartLocation.logger);
             return this;
         }
@@ -123,14 +132,21 @@ public class SmartLocation {
     }
 
     public static class ActivityRecognitionControl {
+        private static final Map<Context, ActivityProvider> MAPPING = new HashMap<>();
+
         private final SmartLocation smartLocation;
         private ActivityParams params;
         private ActivityProvider provider;
 
         public ActivityRecognitionControl(SmartLocation smartLocation) {
             this.smartLocation = smartLocation;
-            this.provider = new GooglePlayServicesActivityProvider();
-            this.params = ActivityParams.NORMAL;
+            params = ActivityParams.NORMAL;
+
+            if (!MAPPING.containsKey(smartLocation.context)) {
+                MAPPING.put(smartLocation.context, new GooglePlayServicesActivityProvider());
+            }
+            provider = MAPPING.get(smartLocation.context);
+
             provider.init(smartLocation.context, smartLocation.logger);
         }
 
@@ -144,6 +160,7 @@ public class SmartLocation {
                 smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
             }
             provider = newProvider;
+            MAPPING.put(smartLocation.context, newProvider);
             provider.init(smartLocation.context, smartLocation.logger);
             return this;
         }
@@ -163,6 +180,7 @@ public class SmartLocation {
         public void stop() {
             provider.stop();
         }
+
     }
 
     public interface OnActivityUpdatedListener {

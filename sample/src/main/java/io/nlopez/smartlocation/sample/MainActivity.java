@@ -18,8 +18,6 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
     private TextView activityText;
     private boolean isCapturingLocation = false;
     private boolean userWantsLocation = false;
-    private SmartLocation.LocationControl locationControl;
-    private SmartLocation.ActivityRecognitionControl activityRecognitionControl;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -97,21 +95,17 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
         isCapturingLocation = true;
         SmartLocation smartLocation = new SmartLocation.Builder(this).logging(true).build();
 
-        locationControl = smartLocation.location().get();
-        locationControl.start(this);
-
-        activityRecognitionControl = smartLocation.activityRecognition().get();
-        activityRecognitionControl.start(this);
-
+        smartLocation.location().start(this);
+        smartLocation.activityRecognition().start(this);
     }
 
     private void stopLocation() {
         isCapturingLocation = false;
 
-        locationControl.stop();
+        SmartLocation.with(this).location().stop();
         locationText.setText("Location stopped!");
 
-        activityRecognitionControl.stop();
+        SmartLocation.with(this).activityRecognition().stop();
         activityText.setText("Activity Recognition stopped!");
     }
 

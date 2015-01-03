@@ -17,28 +17,46 @@ compile 'io.nlopez.smartlocation:library:3.0.0'
 Usage
 -----
 
-### Starting location
+## Location
 
-For starting the location service, you can perform just one call with a listener.
+### Starting
 
-````java
-SmartLocation.with(context).location(new SmartLocation.OnLocationUpdatedListener() { ... }).start();
-````
-
-If you just want a single location (not periodic) you can just use the oneFix modifier. Example:
+For starting the location service, you should run:
 
 ````java
-SmartLocation.with(context).location(new SmartLocation.OnLocationUpdatedListener() { ... }).oneFix().start();
+SmartLocation.with(context).location().start(new OnLocationUpdatedListener() { ... });
 ````
 
-### Stopping location
-
-For stopping the location (but with a chance to restarting it) you should use the stop method.
+If you just want to get a single location (not periodic) you can just use the oneFix modifier. Example:
 
 ````java
-... TODO ...
+SmartLocation.with(context).location().oneFix().start(new OnLocationUpdatedListener() { ... });
 ````
 
+### Stopping
+
+For stopping the location you could use the stop method.
+
+````java
+SmartLocation.with(context).location().stop();
+````
+
+## Activity
+
+### Starting
+
+For starting the activity recognition service, you should run:
+
+````java
+SmartLocation.with(context).activityRecognition().start(new OnActivityUpdatedListener() { ... });
+
+### Stopping
+
+For stopping the activity recognition you could use the stop method.
+
+````java
+SmartLocation.with(context).activityRecognition().stop();
+````
 
 Contributing
 ------------
