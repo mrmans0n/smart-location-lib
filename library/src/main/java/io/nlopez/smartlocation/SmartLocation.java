@@ -32,12 +32,12 @@ public class SmartLocation {
         return new Builder(context).build();
     }
 
-    public LocationControl location(OnLocationUpdatedListener listener) {
-        return new LocationControl(this, listener);
+    public LocationControl location() {
+        return new LocationControl(this);
     }
 
-    public ActivityRecognitionControl activityRecognition(OnActivityUpdatedListener listener) {
-        return new ActivityRecognitionControl(this, listener);
+    public ActivityRecognitionControl activityRecognition() {
+        return new ActivityRecognitionControl(this);
     }
 
     public static class Builder {
@@ -63,19 +63,17 @@ public class SmartLocation {
     public static class LocationControl {
 
         private final SmartLocation smartLocation;
-        private final OnLocationUpdatedListener listener;
         private LocationParams params;
         private LocationProvider provider;
         private boolean oneFix;
 
-        public LocationControl(SmartLocation smartLocation, OnLocationUpdatedListener listener) {
+        public LocationControl(SmartLocation smartLocation) {
             // Default values
             this.provider = new GooglePlayServicesLocationProvider();
             this.params = LocationParams.BEST_EFFORT;
             this.oneFix = false;
-            this.listener = listener;
             this.smartLocation = smartLocation;
-            provider.init(smartLocation.context, listener, smartLocation.logger);
+            provider.init(smartLocation.context, smartLocation.logger);
 
         }
 
@@ -89,7 +87,7 @@ public class SmartLocation {
                 smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
             }
             provider = newProvider;
-            provider.init(smartLocation.context, listener, smartLocation.logger);
+            provider.init(smartLocation.context, smartLocation.logger);
             return this;
         }
 
@@ -111,8 +109,8 @@ public class SmartLocation {
             return this;
         }
 
-        public void start() {
-            provider.start(params, oneFix);
+        public void start(OnLocationUpdatedListener listener) {
+            provider.start(listener, params, oneFix);
         }
 
         public void stop() {
@@ -126,16 +124,14 @@ public class SmartLocation {
 
     public static class ActivityRecognitionControl {
         private final SmartLocation smartLocation;
-        private final OnActivityUpdatedListener listener;
         private ActivityParams params;
         private ActivityProvider provider;
 
-        public ActivityRecognitionControl(SmartLocation smartLocation, OnActivityUpdatedListener listener) {
-            this.listener = listener;
+        public ActivityRecognitionControl(SmartLocation smartLocation) {
             this.smartLocation = smartLocation;
             this.provider = new GooglePlayServicesActivityProvider();
             this.params = ActivityParams.NORMAL;
-            provider.init(smartLocation.context, listener, smartLocation.logger);
+            provider.init(smartLocation.context, smartLocation.logger);
         }
 
         public ActivityRecognitionControl config(@NonNull ActivityParams params) {
@@ -148,7 +144,7 @@ public class SmartLocation {
                 smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
             }
             provider = newProvider;
-            provider.init(smartLocation.context, listener, smartLocation.logger);
+            provider.init(smartLocation.context, smartLocation.logger);
             return this;
         }
 
@@ -160,8 +156,8 @@ public class SmartLocation {
             return this;
         }
 
-        public void start() {
-            provider.start(params);
+        public void start(OnActivityUpdatedListener listener) {
+            provider.start(listener, params);
         }
 
         public void stop() {

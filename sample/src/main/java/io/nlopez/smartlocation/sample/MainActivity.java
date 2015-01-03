@@ -74,7 +74,7 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
     }
 
     private void showLast() {
-        Location lastLocation = SmartLocation.with(this).location(null).getLastLocation();
+        Location lastLocation = SmartLocation.with(this).location().getLastLocation();
         if (lastLocation != null) {
             locationText.setText(
                     String.format("[From Cache] Latitude %.6f, Longitude %.6f",
@@ -83,7 +83,7 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
             );
         }
 
-        DetectedActivity detectedActivity = SmartLocation.with(this).activityRecognition(null).getLastActivity();
+        DetectedActivity detectedActivity = SmartLocation.with(this).activityRecognition().getLastActivity();
         if (detectedActivity != null) {
             activityText.setText(
                     String.format("[From Cache] Activity %s with %d%% confidence",
@@ -97,11 +97,11 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
         isCapturingLocation = true;
         SmartLocation smartLocation = new SmartLocation.Builder(this).logging(true).build();
 
-        locationControl = smartLocation.location(this).get();
-        locationControl.start();
+        locationControl = smartLocation.location().get();
+        locationControl.start(this);
 
-        activityRecognitionControl = smartLocation.activityRecognition(this).get();
-        activityRecognitionControl.start();
+        activityRecognitionControl = smartLocation.activityRecognition().get();
+        activityRecognitionControl.start(this);
 
     }
 

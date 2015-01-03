@@ -27,17 +27,17 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
     private Logger logger;
 
     @Override
-    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, Logger logger) {
+    public void init(Context context, Logger logger) {
         this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-        this.listener = listener;
         this.logger = logger;
 
         locationStore = new LocationStore(context);
     }
 
     @Override
-    public void start(LocationParams params, boolean singleUpdate) {
+    public void start(SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
+        this.listener = listener;
         Criteria criteria = getProvider(params);
 
         if (singleUpdate) {

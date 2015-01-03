@@ -40,9 +40,8 @@ public class GooglePlayServicesActivityProvider implements ActivityProvider, Goo
     private ActivityParams activityParams;
 
     @Override
-    public void init(@NonNull Context context, SmartLocation.OnActivityUpdatedListener listener, Logger logger) {
+    public void init(@NonNull Context context, Logger logger) {
         this.context = context;
-        this.listener = listener;
         this.logger = logger;
 
         activityStore = new ActivityStore(context);
@@ -64,8 +63,10 @@ public class GooglePlayServicesActivityProvider implements ActivityProvider, Goo
     }
 
     @Override
-    public void start(@NonNull ActivityParams params) {
+    public void start(SmartLocation.OnActivityUpdatedListener listener, @NonNull ActivityParams params) {
         this.activityParams = params;
+        this.listener = listener;
+
         if (client.isConnected()) {
             startUpdating(params);
         } else {

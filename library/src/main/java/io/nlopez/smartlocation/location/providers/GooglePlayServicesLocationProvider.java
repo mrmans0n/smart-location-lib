@@ -32,8 +32,7 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
     private LocationRequest locationRequest;
 
     @Override
-    public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, Logger logger) {
-        this.listener = listener;
+    public void init(Context context, Logger logger) {
         this.logger = logger;
 
         locationStore = new LocationStore(context);
@@ -77,7 +76,8 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
     }
 
     @Override
-    public void start(LocationParams params, boolean singleUpdate) {
+    public void start(SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
+        this.listener = listener;
         locationRequest = createRequest(params, singleUpdate);
         if (client.isConnected()) {
             startUpdating(locationRequest);
