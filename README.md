@@ -49,6 +49,7 @@ For starting the activity recognition service, you should run:
 
 ````java
 SmartLocation.with(context).activityRecognition().start(new OnActivityUpdatedListener() { ... });
+````
 
 ### Stopping
 
