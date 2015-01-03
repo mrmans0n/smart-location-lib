@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.DetectedActivity;
 
+import io.nlopez.smartlocation.activity.ActivityProvider;
+import io.nlopez.smartlocation.activity.config.ActivityParams;
+import io.nlopez.smartlocation.activity.providers.GooglePlayServicesActivityProvider;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.location.providers.GooglePlayServicesLocationProvider;
@@ -31,6 +34,10 @@ public class SmartLocation {
 
     public LocationControl location(OnLocationUpdatedListener listener) {
         return new LocationControl(this, listener);
+    }
+
+    public ActivityRecognitionControl activityRecognition(OnActivityUpdatedListener listener) {
+        return new ActivityRecognitionControl(this, listener);
     }
 
     public static class Builder {
@@ -114,6 +121,51 @@ public class SmartLocation {
 
     public interface OnLocationUpdatedListener {
         public void onLocationUpdated(Location location);
+    }
+
+    public static class ActivityRecognitionControl {
+        private final SmartLocation smartLocation;
+        private final OnActivityUpdatedListener listener;
+        private ActivityParams params;
+        private ActivityProvider provider;
+
+        public ActivityRecognitionControl(SmartLocation smartLocation, OnActivityUpdatedListener listener) {
+            this.listener = listener;
+            this.smartLocation = smartLocation;
+            this.provider = new GooglePlayServicesActivityProvider();
+            this.params = ActivityParams.NORMAL;
+            provider.init(smartLocation.context, listener, smartLocation.logger);
+        }
+
+        public ActivityRecognitionControl config(@NonNull ActivityParams params) {
+            this.params = params;
+            return this;
+        }
+
+        public ActivityRecognitionControl provider(@NonNull ActivityProvider newProvider) {
+            if (newProvider.getClass().equals(provider.getClass())) {
+                smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
+            }
+            provider = newProvider;
+            provider.init(smartLocation.context, listener, smartLocation.logger);
+            return this;
+        }
+
+        public DetectedActivity getLastActivity() {
+            return provider.getLastActivity();
+        }
+
+        public ActivityRecognitionControl get() {
+            return this;
+        }
+
+        public void start() {
+            provider.start(params);
+        }
+
+        public void stop() {
+            provider.stop();
+        }
     }
 
     public interface OnActivityUpdatedListener {

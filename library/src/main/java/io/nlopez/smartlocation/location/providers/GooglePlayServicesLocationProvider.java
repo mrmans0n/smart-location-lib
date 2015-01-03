@@ -33,6 +33,11 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
 
     @Override
     public void init(Context context, SmartLocation.OnLocationUpdatedListener listener, Logger logger) {
+        this.listener = listener;
+        this.logger = logger;
+
+        locationStore = new LocationStore(context);
+
         if (!shouldStart) {
             this.client = new GoogleApiClient.Builder(context)
                     .addApi(LocationServices.API)
@@ -41,11 +46,6 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
                     .build();
 
             client.connect();
-            this.listener = listener;
-            this.logger = logger;
-
-            locationStore = new LocationStore(context);
-
         } else {
             logger.d("already started");
         }

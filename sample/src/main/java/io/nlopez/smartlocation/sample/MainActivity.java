@@ -8,16 +8,18 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.location.DetectedActivity;
+
 import io.nlopez.smartlocation.SmartLocation;
 
-public class MainActivity extends Activity implements SmartLocation.OnLocationUpdatedListener {
-
-    private static final String PACKAGE_NAME = "io.nlopez.smartlocation.sample";
+public class MainActivity extends Activity implements SmartLocation.OnLocationUpdatedListener, SmartLocation.OnActivityUpdatedListener {
 
     private TextView locationText;
+    private TextView activityText;
     private boolean isCapturingLocation = false;
     private boolean userWantsLocation = false;
     private SmartLocation.LocationControl locationControl;
+    private SmartLocation.ActivityRecognitionControl activityRecognitionControl;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -45,6 +47,7 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
 
         // bind textviews
         locationText = (TextView) findViewById(R.id.location_text);
+        activityText = (TextView) findViewById(R.id.activity_text);
 
         // Keep the screen always on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -74,9 +77,18 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
         Location lastLocation = SmartLocation.with(this).location(null).getLastLocation();
         if (lastLocation != null) {
             locationText.setText(
-                    String.format("[Last Location] Latitude %.6f, Longitude %.6f",
+                    String.format("[From Cache] Latitude %.6f, Longitude %.6f",
                             lastLocation.getLatitude(),
                             lastLocation.getLongitude())
+            );
+        }
+
+        DetectedActivity detectedActivity = SmartLocation.with(this).activityRecognition(null).getLastActivity();
+        if (detectedActivity != null) {
+            activityText.setText(
+                    String.format("[From Cache] Activity %s with %d%% confidence",
+                            getNameFromType(detectedActivity),
+                            detectedActivity.getConfidence())
             );
         }
     }
@@ -88,19 +100,19 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
         locationControl = smartLocation.location(this).get();
         locationControl.start();
 
+        activityRecognitionControl = smartLocation.activityRecognition(this).get();
+        activityRecognitionControl.start();
+
     }
 
     private void stopLocation() {
         isCapturingLocation = false;
 
         locationControl.stop();
-        // Stop the location capture
-        //SmartLocation.getInstance().stop(this);
-
-        // Cleanup so we know we don't want extra activation/deactivation of the locator for the time being.
-        //SmartLocation.getInstance().cleanup(this);
-
         locationText.setText("Location stopped!");
+
+        activityRecognitionControl.stop();
+        activityText.setText("Activity Recognition stopped!");
     }
 
     private void showLocation(Location location) {
@@ -115,8 +127,42 @@ public class MainActivity extends Activity implements SmartLocation.OnLocationUp
         }
     }
 
+    private void showActivity(DetectedActivity detectedActivity) {
+        if (detectedActivity != null) {
+            activityText.setText(
+                    String.format("Activity %s with %d%% confidence",
+                            getNameFromType(detectedActivity),
+                            detectedActivity.getConfidence())
+            );
+        } else {
+            activityText.setText("Null activity");
+        }
+    }
+
     @Override
     public void onLocationUpdated(Location location) {
         showLocation(location);
+    }
+
+    @Override
+    public void onActivityUpdated(DetectedActivity detectedActivity) {
+        showActivity(detectedActivity);
+    }
+
+    private String getNameFromType(DetectedActivity activityType) {
+        switch (activityType.getType()) {
+            case DetectedActivity.IN_VEHICLE:
+                return "in_vehicle";
+            case DetectedActivity.ON_BICYCLE:
+                return "on_bicycle";
+            case DetectedActivity.ON_FOOT:
+                return "on_foot";
+            case DetectedActivity.STILL:
+                return "still";
+            case DetectedActivity.TILTING:
+                return "tilting";
+            default:
+                return "unknown";
+        }
     }
 }
