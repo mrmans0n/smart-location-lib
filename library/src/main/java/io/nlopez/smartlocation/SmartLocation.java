@@ -2,6 +2,9 @@ package io.nlopez.smartlocation;
 
 import android.content.Context;
 import android.location.Location;
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.location.DetectedActivity;
 
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
@@ -34,7 +37,7 @@ public class SmartLocation {
         private final Context context;
         private boolean loggingEnabled;
 
-        public Builder(Context context) {
+        public Builder(@NonNull Context context) {
             this.context = context.getApplicationContext();
         }
 
@@ -68,13 +71,16 @@ public class SmartLocation {
 
         }
 
-        public LocationControl config(LocationParams params) {
+        public LocationControl config(@NonNull LocationParams params) {
             this.params = params;
             return this;
         }
 
-        public LocationControl provider(LocationProvider provider) {
-            this.provider = provider;
+        public LocationControl provider(@NonNull LocationProvider newProvider) {
+            if (newProvider.getClass().equals(provider.getClass())) {
+                smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
+            }
+            provider = newProvider;
             provider.init(smartLocation.context, listener, smartLocation.logger);
             return this;
         }
@@ -108,5 +114,9 @@ public class SmartLocation {
 
     public interface OnLocationUpdatedListener {
         public void onLocationUpdated(Location location);
+    }
+
+    public interface OnActivityUpdatedListener {
+        public void onActivityUpdated(DetectedActivity detectedActivity);
     }
 }
