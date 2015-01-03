@@ -46,6 +46,7 @@ public class SmartLocation {
 
         public Builder(@NonNull Context context) {
             this.context = context.getApplicationContext();
+            this.loggingEnabled = false;
         }
 
         public Builder logging(boolean enabled) {
