@@ -10,9 +10,11 @@ import android.widget.TextView;
 
 import com.google.android.gms.location.DetectedActivity;
 
+import io.nlopez.smartlocation.OnActivityUpdatedListener;
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 
-public class MainActivity extends Activity implements SmartLocation.OnLocationUpdatedListener, SmartLocation.OnActivityUpdatedListener {
+public class MainActivity extends Activity implements OnLocationUpdatedListener, OnActivityUpdatedListener {
 
     private TextView locationText;
     private TextView activityText;

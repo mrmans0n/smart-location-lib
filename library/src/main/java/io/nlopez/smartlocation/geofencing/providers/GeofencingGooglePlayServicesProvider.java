@@ -15,9 +15,13 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationServices;
 
-import io.nlopez.smartlocation.OnGeofencingListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.nlopez.smartlocation.OnGeofencingTransitionListener;
 import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.GeofencingStore;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
@@ -33,9 +37,12 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
     private static final String BROADCAST_INTENT_ACTION = GeofencingGooglePlayServicesProvider.class.getCanonicalName() + ".GEOFENCE_TRANSITION";
     private static final String GEOFENCES_EXTRA_ID = "geofences";
 
+    private List<Geofence> geofencesToAdd = new ArrayList<>();
+    private List<String> geofencesToRemove = new ArrayList<>();
+
     private GoogleApiClient client;
     private Logger logger;
-    private OnGeofencingListener listener;
+    private OnGeofencingTransitionListener listener;
     private GeofencingStore geofencingStore;
     private Context context;
     private PendingIntent pendingIntent;
@@ -61,16 +68,33 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
     @Override
     public void addGeofence(GeofenceModel geofence) {
+        geofencingStore.put(geofence.getRequestId(), geofence);
+
+        if (client.isConnected()) {
+            List<Geofence> geofenceList = new ArrayList<>();
+            geofenceList.add(geofence.toGeofence());
+            LocationServices.GeofencingApi.addGeofences(client, geofenceList, pendingIntent);
+        } else {
+            geofencesToAdd.add(geofence.toGeofence());
+        }
 
     }
 
     @Override
     public void removeGeofence(String geofenceId) {
+        geofencingStore.remove(geofenceId);
 
+        if (client.isConnected()) {
+            List<String> geofenceIdList = new ArrayList<>();
+            geofenceIdList.add(geofenceId);
+            LocationServices.GeofencingApi.removeGeofences(client, geofenceIdList);
+        } else {
+            geofencesToRemove.add(geofenceId);
+        }
     }
 
     @Override
-    public void start(OnGeofencingListener listener) {
+    public void start(OnGeofencingTransitionListener listener) {
         this.listener = listener;
 
         if (client.isConnected()) {
@@ -104,6 +128,15 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
     public void onConnected(Bundle bundle) {
         logger.d("onConnected");
         // startUpdating();
+        if (geofencesToAdd.size() > 0) {
+            LocationServices.GeofencingApi.addGeofences(client, geofencesToAdd, pendingIntent);
+            geofencesToAdd.clear();
+        }
+
+        if (geofencesToRemove.size() > 0) {
+            LocationServices.GeofencingApi.removeGeofences(client, geofencesToRemove);
+            geofencesToRemove.clear();
+        }
     }
 
     @Override
@@ -136,7 +169,7 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
         @Override
         protected void onHandleIntent(Intent intent) {
-
+            // TODO this - http://developer.android.com/training/location/geofencing.html
         }
     }
 
