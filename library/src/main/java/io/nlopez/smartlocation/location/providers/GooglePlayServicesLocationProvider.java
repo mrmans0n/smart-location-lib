@@ -1,6 +1,8 @@
 package io.nlopez.smartlocation.location.providers;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -22,6 +24,7 @@ import io.nlopez.smartlocation.utils.Logger;
  * Created by mrm on 20/12/14.
  */
 public class GooglePlayServicesLocationProvider implements LocationProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
+    public static final int RESULT_CODE = 10001;
     private static final String GMS_ID = "GMS";
 
     private GoogleApiClient client;
@@ -30,10 +33,12 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
     private boolean shouldStart = false;
     private LocationStore locationStore;
     private LocationRequest locationRequest;
+    private Context context;
 
     @Override
     public void init(Context context, Logger logger) {
         this.logger = logger;
+        this.context = context;
 
         locationStore = new LocationStore(context);
 
@@ -151,15 +156,14 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
         if (status.isSuccess()) {
             logger.d("Locations update request successful");
 
-        } else if (status.hasResolution()) {
-            // TODO this
-            logger.d("Unable to register, but we can solve this");
-            /*
-            status.startResolutionForResult(
-                    context,     // your current activity used to receive the result
-                    RESULT_CODE); // the result code you'll look for in your
-            // onActivityResult method to retry registering
-            */
+        } else if (status.hasResolution() && context instanceof Activity) {
+            logger.w("Unable to register, but we can solve this - will startActivityForResult expecting result code " + RESULT_CODE + " (if received, please try again)");
+
+            try {
+                status.startResolutionForResult((Activity) context, RESULT_CODE);
+            } catch (IntentSender.SendIntentException e) {
+                logger.e(e, "problem with startResolutionForResult");
+            }
         } else {
             // No recovery. Weep softly or inform the user.
             logger.e("Registering failed: " + status.getStatusMessage());
