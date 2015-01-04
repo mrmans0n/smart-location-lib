@@ -9,15 +9,19 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.location.DetectedActivity;
+import com.google.android.gms.location.Geofence;
 
 import io.nlopez.smartlocation.OnActivityUpdatedListener;
+import io.nlopez.smartlocation.OnGeofencingTransitionListener;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 
-public class MainActivity extends Activity implements OnLocationUpdatedListener, OnActivityUpdatedListener {
+public class MainActivity extends Activity implements OnLocationUpdatedListener, OnActivityUpdatedListener, OnGeofencingTransitionListener {
 
     private TextView locationText;
     private TextView activityText;
+    private TextView geofenceText;
     private boolean isCapturingLocation = false;
     private boolean userWantsLocation = false;
 
@@ -48,6 +52,7 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         // bind textviews
         locationText = (TextView) findViewById(R.id.location_text);
         activityText = (TextView) findViewById(R.id.activity_text);
+        geofenceText = (TextView) findViewById(R.id.geofence_text);
 
         // Keep the screen always on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -99,6 +104,10 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
 
         smartLocation.location().start(this);
         smartLocation.activityRecognition().start(this);
+
+        // Create some geofences
+        GeofenceModel mestalla = new GeofenceModel.Builder("1").setTransition(Geofence.GEOFENCE_TRANSITION_ENTER).setLatitude(39.47453120000001).setLongitude(-0.358065799999963).setRadius(500).build();
+        smartLocation.geofencing().add(mestalla).start(this);
     }
 
     private void stopLocation() {
@@ -109,6 +118,9 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
 
         SmartLocation.with(this).activityRecognition().stop();
         activityText.setText("Activity Recognition stopped!");
+
+        SmartLocation.with(this).geofencing().stop();
+        geofenceText.setText("Geofencing stopped!");
     }
 
     private void showLocation(Location location) {
@@ -135,6 +147,14 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         }
     }
 
+    private void showGeofence(Geofence geofence, int transitionType) {
+        if (geofence != null) {
+            geofenceText.setText("Transition " + getTransitionNameFromType(transitionType) + " for Geofence with id = " + geofence.getRequestId());
+        } else {
+            geofenceText.setText("Null geofence");
+        }
+    }
+
     @Override
     public void onLocationUpdated(Location location) {
         showLocation(location);
@@ -143,6 +163,11 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
     @Override
     public void onActivityUpdated(DetectedActivity detectedActivity) {
         showActivity(detectedActivity);
+    }
+
+    @Override
+    public void onGeofenceTransition(Geofence geofence, int transitionType) {
+        showGeofence(geofence, transitionType);
     }
 
     private String getNameFromType(DetectedActivity activityType) {
@@ -159,6 +184,17 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
                 return "tilting";
             default:
                 return "unknown";
+        }
+    }
+
+    private String getTransitionNameFromType(int transitionType) {
+        switch (transitionType) {
+            case Geofence.GEOFENCE_TRANSITION_ENTER:
+                return "enter";
+            case Geofence.GEOFENCE_TRANSITION_EXIT:
+                return "exit";
+            default:
+                return "dwell";
         }
     }
 }
