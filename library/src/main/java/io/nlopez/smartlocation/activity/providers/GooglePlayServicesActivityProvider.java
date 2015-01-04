@@ -1,16 +1,20 @@
 package io.nlopez.smartlocation.activity.providers;
 
+import android.app.Activity;
 import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
@@ -24,7 +28,8 @@ import io.nlopez.smartlocation.utils.Logger;
 /**
  * Created by mrm on 3/1/15.
  */
-public class GooglePlayServicesActivityProvider implements ActivityProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class GooglePlayServicesActivityProvider implements ActivityProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
+    public static final int RESULT_CODE = 10002;
 
     private static final String GMS_ID = "GMS";
     private static final String BROADCAST_INTENT_ACTION = GooglePlayServicesActivityProvider.class.getCanonicalName() + ".DETECTED_ACTIVITY";
@@ -77,7 +82,7 @@ public class GooglePlayServicesActivityProvider implements ActivityProvider, Goo
 
     private void startUpdating(ActivityParams params) {
         pendingIntent = PendingIntent.getService(context, 0, new Intent(context, ActivityRecognitionService.class), PendingIntent.FLAG_UPDATE_CURRENT);
-        ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(client, params.getInterval(), pendingIntent);
+        ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(client, params.getInterval(), pendingIntent).setResultCallback(this);
     }
 
     @Override
@@ -160,6 +165,24 @@ public class GooglePlayServicesActivityProvider implements ActivityProvider, Goo
                 activityIntent.putExtra(DETECTED_ACTIVITY_EXTRA_ID, mostProbableActivity);
                 sendBroadcast(activityIntent);
             }
+        }
+    }
+
+    @Override
+    public void onResult(Status status) {
+        if (status.isSuccess()) {
+            logger.d("Activity update request successful");
+        } else if (status.hasResolution() && context instanceof Activity) {
+            logger.w("Unable to register, but we can solve this - will startActivityForResult expecting result code " + RESULT_CODE + " (if received, please try again)");
+
+            try {
+                status.startResolutionForResult((Activity) context, RESULT_CODE);
+            } catch (IntentSender.SendIntentException e) {
+                logger.e(e, "problem with startResolutionForResult");
+            }
+        } else {
+            // No recovery. Weep softly or inform the user.
+            logger.e("Registering failed: " + status.getStatusMessage());
         }
     }
 
