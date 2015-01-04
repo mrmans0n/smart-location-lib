@@ -11,10 +11,10 @@ import java.util.Map;
 
 import io.nlopez.smartlocation.activity.ActivityProvider;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
-import io.nlopez.smartlocation.activity.providers.GooglePlayServicesActivityProvider;
+import io.nlopez.smartlocation.activity.providers.ActivityGooglePlayServicesProvider;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
-import io.nlopez.smartlocation.location.providers.GooglePlayServicesLocationProvider;
+import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProvider;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
 
@@ -78,7 +78,7 @@ public class SmartLocation {
             oneFix = false;
 
             if (!MAPPING.containsKey(smartLocation.context)) {
-                MAPPING.put(smartLocation.context, new GooglePlayServicesLocationProvider());
+                MAPPING.put(smartLocation.context, new LocationGooglePlayServicesProvider());
             }
             provider = MAPPING.get(smartLocation.context);
             provider.init(smartLocation.context, smartLocation.logger);
@@ -127,9 +127,6 @@ public class SmartLocation {
         }
     }
 
-    public interface OnLocationUpdatedListener {
-        public void onLocationUpdated(Location location);
-    }
 
     public static class ActivityRecognitionControl {
         private static final Map<Context, ActivityProvider> MAPPING = new HashMap<>();
@@ -143,7 +140,7 @@ public class SmartLocation {
             params = ActivityParams.NORMAL;
 
             if (!MAPPING.containsKey(smartLocation.context)) {
-                MAPPING.put(smartLocation.context, new GooglePlayServicesActivityProvider());
+                MAPPING.put(smartLocation.context, new ActivityGooglePlayServicesProvider());
             }
             provider = MAPPING.get(smartLocation.context);
 
@@ -183,7 +180,5 @@ public class SmartLocation {
 
     }
 
-    public interface OnActivityUpdatedListener {
-        public void onActivityUpdated(DetectedActivity detectedActivity);
-    }
+
 }

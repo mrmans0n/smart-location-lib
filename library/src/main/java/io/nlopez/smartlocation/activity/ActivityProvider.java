@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.google.android.gms.location.DetectedActivity;
 
-import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.OnActivityUpdatedListener;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
 import io.nlopez.smartlocation.utils.Logger;
 
@@ -14,7 +14,7 @@ import io.nlopez.smartlocation.utils.Logger;
 public interface ActivityProvider {
     public void init(Context context, Logger logger);
 
-    public void start(SmartLocation.OnActivityUpdatedListener listener, ActivityParams params);
+    public void start(OnActivityUpdatedListener listener, ActivityParams params);
 
     public void stop();
 

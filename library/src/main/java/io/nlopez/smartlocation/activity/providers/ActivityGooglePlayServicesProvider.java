@@ -19,7 +19,7 @@ import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
-import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.OnActivityUpdatedListener;
 import io.nlopez.smartlocation.activity.ActivityProvider;
 import io.nlopez.smartlocation.activity.ActivityStore;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
@@ -28,16 +28,16 @@ import io.nlopez.smartlocation.utils.Logger;
 /**
  * Created by mrm on 3/1/15.
  */
-public class GooglePlayServicesActivityProvider implements ActivityProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
+public class ActivityGooglePlayServicesProvider implements ActivityProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
     public static final int RESULT_CODE = 10002;
 
     private static final String GMS_ID = "GMS";
-    private static final String BROADCAST_INTENT_ACTION = GooglePlayServicesActivityProvider.class.getCanonicalName() + ".DETECTED_ACTIVITY";
+    private static final String BROADCAST_INTENT_ACTION = ActivityGooglePlayServicesProvider.class.getCanonicalName() + ".DETECTED_ACTIVITY";
     private static final String DETECTED_ACTIVITY_EXTRA_ID = "activity";
 
     private GoogleApiClient client;
     private Logger logger;
-    private SmartLocation.OnActivityUpdatedListener listener;
+    private OnActivityUpdatedListener listener;
     private ActivityStore activityStore;
     private Context context;
     private boolean shouldStart = false;
@@ -68,7 +68,7 @@ public class GooglePlayServicesActivityProvider implements ActivityProvider, Goo
     }
 
     @Override
-    public void start(SmartLocation.OnActivityUpdatedListener listener, @NonNull ActivityParams params) {
+    public void start(OnActivityUpdatedListener listener, @NonNull ActivityParams params) {
         this.activityParams = params;
         this.listener = listener;
 

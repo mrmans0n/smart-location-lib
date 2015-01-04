@@ -8,7 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 
-import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.LocationStore;
 import io.nlopez.smartlocation.location.config.LocationAccuracy;
@@ -22,7 +22,7 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
     private static final String LOCATIONMANAGERPROVIDER_ID = "LMP";
 
     private LocationManager locationManager;
-    private SmartLocation.OnLocationUpdatedListener listener;
+    private OnLocationUpdatedListener listener;
     private LocationStore locationStore;
     private Logger logger;
 
@@ -36,7 +36,7 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
     }
 
     @Override
-    public void start(SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
+    public void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
         this.listener = listener;
         Criteria criteria = getProvider(params);
 

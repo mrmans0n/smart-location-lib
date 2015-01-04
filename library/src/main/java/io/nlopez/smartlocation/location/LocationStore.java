@@ -45,8 +45,8 @@ public class LocationStore {
             location.setLongitude(preferences.getFloat(getFieldKey(id, LONGITUDE_ID), 0));
             location.setAccuracy(preferences.getFloat(getFieldKey(id, ACCURACY_ID), 0));
             location.setSpeed(preferences.getFloat(getFieldKey(id, SPEED_ID), 0));
-            location.setTime(preferences.getLong(getFieldKey(id, TIME_ID), location.getTime()));
-            location.setBearing(preferences.getFloat(getFieldKey(id, BEARING_ID), location.getBearing()));
+            location.setTime(preferences.getLong(getFieldKey(id, TIME_ID), 0));
+            location.setBearing(preferences.getFloat(getFieldKey(id, BEARING_ID), 0));
             return location;
         } else {
             return null;

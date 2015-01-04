@@ -15,7 +15,7 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="21" />
     <application>
-        <service android:name=".activity.providers.GooglePlayServicesActivityProvider$ActivityRecognitionService" />
+        <service android:name=".activity.providers.ActivityGooglePlayServicesProvider$ActivityRecognitionService" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

@@ -14,7 +14,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.LocationStore;
 import io.nlopez.smartlocation.location.config.LocationParams;
@@ -23,13 +23,13 @@ import io.nlopez.smartlocation.utils.Logger;
 /**
  * Created by mrm on 20/12/14.
  */
-public class GooglePlayServicesLocationProvider implements LocationProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
+public class LocationGooglePlayServicesProvider implements LocationProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
     public static final int RESULT_CODE = 10001;
     private static final String GMS_ID = "GMS";
 
     private GoogleApiClient client;
     private Logger logger;
-    private SmartLocation.OnLocationUpdatedListener listener;
+    private OnLocationUpdatedListener listener;
     private boolean shouldStart = false;
     private LocationStore locationStore;
     private LocationRequest locationRequest;
@@ -81,7 +81,7 @@ public class GooglePlayServicesLocationProvider implements LocationProvider, Goo
     }
 
     @Override
-    public void start(SmartLocation.OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
+    public void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
         this.listener = listener;
         locationRequest = createRequest(params, singleUpdate);
         if (client.isConnected()) {
