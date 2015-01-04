@@ -16,6 +16,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
@@ -36,6 +37,8 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
     private static final String GMS_ID = "GMS";
     private static final String BROADCAST_INTENT_ACTION = GeofencingGooglePlayServicesProvider.class.getCanonicalName() + ".GEOFENCE_TRANSITION";
     private static final String GEOFENCES_EXTRA_ID = "geofences";
+    private static final String TRANSITION_EXTRA_ID = "transition";
+    private static final String LOCATION_EXTRA_ID = "location";
 
     private List<Geofence> geofencesToAdd = new ArrayList<>();
     private List<String> geofencesToRemove = new ArrayList<>();
@@ -55,7 +58,7 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
         geofencingStore = new GeofencingStore(context);
 
         IntentFilter intentFilter = new IntentFilter(BROADCAST_INTENT_ACTION);
-        context.registerReceiver(activityReceiver, intentFilter);
+        context.registerReceiver(geofencingReceiver, intentFilter);
 
         this.client = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API)
@@ -64,6 +67,8 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
                 .build();
 
         client.connect();
+
+        pendingIntent = PendingIntent.getService(context, 0, new Intent(context, GeofencingService.class), PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
@@ -97,19 +102,10 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
     public void start(OnGeofencingTransitionListener listener) {
         this.listener = listener;
 
-        if (client.isConnected()) {
-            //startUpdating();
-        } else {
+        if (!client.isConnected()) {
             logger.d("still not connected - scheduled start when connection is ok");
         }
     }
-
-    /*
-    private void startUpdating() {
-        pendingIntent = PendingIntent.getService(context, 0, new Intent(context, ActivityRecognitionService.class), PendingIntent.FLAG_UPDATE_CURRENT);
-        ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(client, params.getInterval(), pendingIntent).setResultCallback(this);
-    }
-    */
 
     @Override
     public void stop() {
@@ -118,7 +114,7 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
             client.disconnect();
         }
         try {
-            context.unregisterReceiver(activityReceiver);
+            context.unregisterReceiver(geofencingReceiver);
         } catch (IllegalArgumentException e) {
             logger.d("Silenced 'receiver not registered' stuff (calling stop more times than necessary did this)");
         }
@@ -150,11 +146,12 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
     }
 
-    private BroadcastReceiver activityReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver geofencingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (BROADCAST_INTENT_ACTION.equals(intent.getAction()) && intent.hasExtra(GEOFENCES_EXTRA_ID)) {
-                logger.d("sending new activity");
+                logger.d("geofencing event");
+                // TODO handle this
                 //DetectedActivity detectedActivity = intent.getParcelableExtra(DETECTED_ACTIVITY_EXTRA_ID);
                 //notifyActivity(detectedActivity);
             }
@@ -170,6 +167,21 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
         @Override
         protected void onHandleIntent(Intent intent) {
             // TODO this - http://developer.android.com/training/location/geofencing.html
+            GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
+            if (!geofencingEvent.hasError()) {
+                int transition = geofencingEvent.getGeofenceTransition();
+
+                // Broadcast an intent containing the geofencing info
+                Intent geofenceIntent = new Intent(BROADCAST_INTENT_ACTION);
+                geofenceIntent.putExtra(TRANSITION_EXTRA_ID, transition);
+                geofenceIntent.putExtra(LOCATION_EXTRA_ID, geofencingEvent.getTriggeringLocation());
+                ArrayList<String> geofencingIds = new ArrayList<>();
+                for (Geofence geofence : geofencingEvent.getTriggeringGeofences()) {
+                    geofencingIds.add(geofence.getRequestId());
+                }
+                geofenceIntent.putStringArrayListExtra(GEOFENCES_EXTRA_ID, geofencingIds);
+                sendBroadcast(geofenceIntent);
+            }
         }
     }
 
