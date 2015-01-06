@@ -1,6 +1,8 @@
 Smart Location Library
 ======================
 
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Smart%20Location%20Library-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1321)
+
 Android library project that intends to simplify the usage of location providers and activity recognition with a nice fluid API.
 
 **Supported Android versions**: Android 2.3+
