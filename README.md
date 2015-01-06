@@ -1,6 +1,8 @@
 Smart Location Library
 ======================
 
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Smart%20Location%20Library-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1321)
+
 Android library project that intends to simplify the usage of location providers with a twist: you can modify the location strategy based in your activity.
 
 The principle behind it is detecting the activity the user is doing (moving in a vehicle, riding a bicycle, walking, running, being still) and based on those results, changing the accuracy for the detection and the sensors used.
