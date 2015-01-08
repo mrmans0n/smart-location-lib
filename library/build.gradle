@@ -4,10 +4,12 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'org.robolectric:robolectric-gradle-plugin:0.14.1'
     }
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'robolectric'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
 apply plugin: 'signing'
@@ -16,8 +18,21 @@ apply plugin: 'signing'
 version '3.0.0-SNAPSHOT'
 group 'io.nlopez.smartlocation'
 
+robolectric {
+    include '**/*Test.class'
+    exclude '**/espresso/**/*.class'
+}
+
 dependencies {
+    repositories {
+        mavenCentral()
+    }
     compile 'com.google.android.gms:play-services-location:6.5.87'
+    androidTestCompile 'junit:junit:4.12'
+    androidTestCompile 'org.robolectric:robolectric:2.4'
+    androidTestCompile 'org.mockito:mockito-core:1.9.5'
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
+    androidTestCompile 'com.google.dexmaker:dexmaker:1.0'
 }
 
 android {
@@ -27,10 +42,18 @@ android {
     buildTypes {
         defaultConfig {
             minSdkVersion 9
-            targetSdkVersion 21
+            targetSdkVersion 18
             versionCode 20005
             versionName version
+            testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
         }
+    }
+}
+
+apply plugin: 'idea'
+idea {
+    module {
+        testOutputDir = file('build/test-classes/debug')
     }
 }
 
