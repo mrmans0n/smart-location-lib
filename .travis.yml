@@ -8,5 +8,4 @@ android:
 
 script:
     - cp gradle.properties.example gradle.properties
-    - ls
     - ./gradlew test
