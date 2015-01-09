@@ -17,10 +17,14 @@ public class ActivityStore {
     private static final String CONFIDENCE_ID = "CONFIDENCE";
     private static final String VERSION_CODE_ID = "VERSION_CODE";
 
-    private final SharedPreferences preferences;
+    private SharedPreferences preferences;
 
     public ActivityStore(@NonNull Context context) {
         preferences = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+    }
+
+    void setPreferences(SharedPreferences preferences) {
+        this.preferences = preferences;
     }
 
     public void put(String id, DetectedActivity activity) {
@@ -28,7 +32,7 @@ public class ActivityStore {
         editor.putInt(getFieldKey(id, ACTIVITY_ID), activity.getType());
         editor.putInt(getFieldKey(id, CONFIDENCE_ID), activity.getConfidence());
         editor.putInt(getFieldKey(id, VERSION_CODE_ID), activity.getVersionCode());
-        editor.commit();
+        editor.apply();
     }
 
     public DetectedActivity get(String id) {
@@ -47,7 +51,7 @@ public class ActivityStore {
         editor.remove(getFieldKey(id, ACTIVITY_ID));
         editor.remove(getFieldKey(id, CONFIDENCE_ID));
         editor.remove(getFieldKey(id, VERSION_CODE_ID));
-        editor.commit();
+        editor.apply();
     }
 
     private String getFieldKey(String id, String field) {

@@ -32,7 +32,7 @@ public class GeofencingStore {
         editor.putFloat(getFieldKey(id, RADIUS_ID), geofenceModel.getRadius());
         editor.putFloat(getFieldKey(id, TRANSITION_ID), geofenceModel.getTransition());
         editor.putLong(getFieldKey(id, EXPIRATION_ID), geofenceModel.getExpiration());
-        editor.commit();
+        editor.apply();
     }
 
     public GeofenceModel get(String id) {
@@ -56,7 +56,7 @@ public class GeofencingStore {
         editor.remove(getFieldKey(id, RADIUS_ID));
         editor.remove(getFieldKey(id, TRANSITION_ID));
         editor.remove(getFieldKey(id, EXPIRATION_ID));
-        editor.commit();
+        editor.apply();
     }
 
     private String getFieldKey(String id, String field) {
