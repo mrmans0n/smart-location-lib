@@ -7,5 +7,5 @@ android:
     - android-19
 
 script:
-    - mv gradle.properties.example gradle.properties
+    - cp gradle.properties.example gradle.properties
     - ./gradlew test
