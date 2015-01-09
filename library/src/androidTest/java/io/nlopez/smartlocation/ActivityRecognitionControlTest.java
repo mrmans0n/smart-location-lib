@@ -18,8 +18,8 @@ public class ActivityRecognitionControlTest {
 
     private static final ActivityParams DEFAULT_PARAMS = ActivityParams.NORMAL;
 
-    MockActivityRecognitionProvider mockProvider;
-    OnActivityUpdatedListener activityUpdatedListener;
+    private MockActivityRecognitionProvider mockProvider;
+    private OnActivityUpdatedListener activityUpdatedListener;
 
     @Before
     public void setup() {
