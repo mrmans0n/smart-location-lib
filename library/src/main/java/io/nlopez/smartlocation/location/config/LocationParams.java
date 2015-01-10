@@ -31,6 +31,28 @@ public class LocationParams {
         return accuracy;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LocationParams)) return false;
+
+        LocationParams that = (LocationParams) o;
+
+        if (Float.compare(that.distance, distance) != 0) return false;
+        if (interval != that.interval) return false;
+        if (accuracy != that.accuracy) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (interval ^ (interval >>> 32));
+        result = 31 * result + (distance != +0.0f ? Float.floatToIntBits(distance) : 0);
+        result = 31 * result + accuracy.hashCode();
+        return result;
+    }
+
     public static class Builder {
         private LocationAccuracy accuracy;
         private long interval;

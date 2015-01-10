@@ -17,6 +17,23 @@ public class ActivityParams {
         return interval;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ActivityParams)) return false;
+
+        ActivityParams that = (ActivityParams) o;
+
+        if (interval != that.interval) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (interval ^ (interval >>> 32));
+    }
+
     public static class Builder {
         private long interval;
 
