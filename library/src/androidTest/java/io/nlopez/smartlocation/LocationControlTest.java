@@ -21,7 +21,6 @@ import static org.mockito.Mockito.verify;
 @RunWith(CustomTestRunner.class)
 public class LocationControlTest {
 
-    private static final Location LOCATION = new Location("test");
     private static final LocationParams DEFAULT_PARAMS = LocationParams.BEST_EFFORT;
     private static final boolean DEFAULT_SINGLE_UPDATE = false;
 

@@ -3,23 +3,22 @@ package io.nlopez.smartlocation.location;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
-import com.google.android.gms.location.DetectedActivity;
-
-import io.nlopez.smartlocation.CustomTestRunner;
-import io.nlopez.smartlocation.activity.ActivityStore;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+
+import io.nlopez.smartlocation.CustomTestRunner;
 
 /**
  * Created by nacho on 1/9/15.
  */
 @RunWith(CustomTestRunner.class)
 public class LocationStoreTest {
+
+    private static final double DELTA = 1e-15;
 
     private static final String TEST_LOCATION_ID = "test_location_1";
     private static final float ACCURACY = 1.234f;
@@ -52,12 +51,12 @@ public class LocationStoreTest {
 
         store.put(TEST_LOCATION_ID, testLocation);
         Location storedLocation = store.get(TEST_LOCATION_ID);
-        Assert.assertEquals(storedLocation.getAccuracy(), testLocation.getAccuracy());
-        Assert.assertEquals(storedLocation.getAltitude(), testLocation.getAltitude());
-        Assert.assertEquals(storedLocation.getBearing(), testLocation.getBearing());
-        Assert.assertEquals(storedLocation.getLatitude(), testLocation.getLatitude());
-        Assert.assertEquals(storedLocation.getLongitude(), testLocation.getLongitude());
-        Assert.assertEquals(storedLocation.getSpeed(), testLocation.getSpeed());
+        Assert.assertEquals(storedLocation.getAccuracy(), testLocation.getAccuracy(), DELTA);
+        Assert.assertEquals(storedLocation.getAltitude(), testLocation.getAltitude(), DELTA);
+        Assert.assertEquals(storedLocation.getBearing(), testLocation.getBearing(), DELTA);
+        Assert.assertEquals(storedLocation.getLatitude(), testLocation.getLatitude(), DELTA);
+        Assert.assertEquals(storedLocation.getLongitude(), testLocation.getLongitude(), DELTA);
+        Assert.assertEquals(storedLocation.getSpeed(), testLocation.getSpeed(), DELTA);
         Assert.assertEquals(storedLocation.getTime(), testLocation.getTime());
 
         store.remove(TEST_LOCATION_ID);
