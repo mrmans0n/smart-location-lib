@@ -20,7 +20,7 @@ compile 'io.nlopez.smartlocation:library:3.0.0'
 
 ### Starting
 
-For starting the location service, you should run:
+For starting the location service:
 
 ````java
 SmartLocation.with(context).location()
@@ -37,7 +37,7 @@ SmartLocation.with(context).location()
 
 ### Stopping
 
-For stopping the location you could use the stop method.
+For stopping the location just use the stop method.
 
 ````java
 SmartLocation.with(context).location().stop();
@@ -45,19 +45,25 @@ SmartLocation.with(context).location().stop();
 
 ### Location strategy
 
-There are three presets for location parameters: LocationParams.BEST_EFFORT, LocationParams.NAVIGATION and LocationParams.LAZY. By default, this will use the BEST_EFFORT one.
+There are three presets for location parameters:
 
-If you want to add some custom parameters for the distances or times involved in the location strategy, you can provide a custom LocationParams class, with the `config(yourParams)` modifier.
+* `LocationParams.BEST_EFFORT` (default)
+* `LocationParams.NAVIGATION`
+* `LocationParams.LAZY`
+
+You can change it (if you want one other than the default one) by using the `config(LocationParams.WHATEVER)` modifier.
+
+If you want to add some custom parameters for the distances or times involved in the location strategy, you can create your own LocationParams class.
 
 ### Changing providers
 
 There are some providers shipped with the library.
 
-* LocationGooglePlayServicesProvider (default). This will use the Fused Location Provider.
-* LocationManagerProvider. This is the legacy implementation that uses LocationManager.
-* LocationBasedOnActivityProvider. This allows you to use the activity recognition system to modify the location strategy depending on the activity changes (if the user is walking, running, on a car, a bike...).
+* `LocationGooglePlayServicesProvider` (default). This will use the Fused Location Provider.
+* `LocationManagerProvider` This is the legacy implementation that uses LocationManager.
+* `LocationBasedOnActivityProvider` This allows you to use the activity recognition system to modify the location strategy depending on the activity changes (if the user is walking, running, on a car, a bike...).
 
-You can implement your own if you want and feed it to the library.
+You can implement your own if you want. That's ideal if you wanted to use a mock one for testing or something like that.
 
 ## Activity
 
