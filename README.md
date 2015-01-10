@@ -86,9 +86,33 @@ SmartLocation.with(context).activityRecognition().stop();
 
 ## Geofencing
 
-This is still experimental.
+This is still experimental. Please don't use this feature in production yet :)
 
-TODO write this
+We can add geofences and receive the information when we enter, exit or dwell in a Geofence. The geofences are defined by a GeofenceModel, and you should use the requestId as a identifier.
+
+We can add and remove geofences with a similar syntax as all the others.
+
+````java
+GeofenceModel mestalla = new GeofenceModel.Builder("id_mestalla")
+    .setTransition(Geofence.GEOFENCE_TRANSITION_ENTER)
+    .setLatitude(39.47453120000001)
+    .setLongitude(-0.358065799999963)
+    .setRadius(500)
+    .build();
+
+GeofenceModel cuenca = new GeofenceModel.Builder("id_cuenca")
+    .setTransition(Geofence.GEOFENCE_TRANSITION_EXIT)
+    .setLatitude(40.0703925)
+    .setLongitude(-2.1374161999999615)
+    .setRadius(2000)
+    .build();
+
+SmartLocation.with(context).geofencing()
+    .add(mestalla)
+    .add(cuenca)
+    .remove("already_existing_geofence_id")
+    .start(new OnGeofencingTransitionListener() { ... });
+````
 
 Contributing
 ------------
