@@ -2,12 +2,13 @@ package io.nlopez.smartlocation.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import com.google.android.gms.location.DetectedActivity;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
 
 import io.nlopez.smartlocation.CustomTestRunner;
 

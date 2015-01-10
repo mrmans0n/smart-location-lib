@@ -7,7 +7,8 @@ import com.google.android.gms.location.DetectedActivity;
 
 import io.nlopez.smartlocation.CustomTestRunner;
 import io.nlopez.smartlocation.activity.ActivityStore;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
