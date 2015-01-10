@@ -65,6 +65,14 @@ There are some providers shipped with the library.
 
 You can implement your own if you want. That's ideal if you wanted to use a mock one for testing or something like that.
 
+Example:
+
+````java
+SmartLocation.with(context).location()
+    .provider(new LocationBasedOnActivityProvider(callback))
+    .start(new OnLocationUpdatedListener() { ... });
+````
+
 ## Activity
 
 ### Starting
