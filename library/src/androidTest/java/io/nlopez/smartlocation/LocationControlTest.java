@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
 
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.util.MockLocationProvider;
@@ -19,7 +18,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(CustomTestRunner.class)
 public class LocationControlTest {
 
     private static final Location LOCATION = new Location("test");

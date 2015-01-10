@@ -3,9 +3,11 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.kageiit:robojava-plugin:1.1.5'
     }
 }
 

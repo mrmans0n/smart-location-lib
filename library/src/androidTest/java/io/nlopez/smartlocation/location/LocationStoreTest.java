@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import com.google.android.gms.location.DetectedActivity;
+
+import io.nlopez.smartlocation.CustomTestRunner;
 import io.nlopez.smartlocation.activity.ActivityStore;
 import junit.framework.Assert;
 import org.junit.Before;
@@ -15,7 +17,7 @@ import org.robolectric.RobolectricTestRunner;
 /**
  * Created by nacho on 1/9/15.
  */
-@RunWith(RobolectricTestRunner.class)
+@RunWith(CustomTestRunner.class)
 public class LocationStoreTest {
 
     private static final String TEST_LOCATION_ID = "test_location_1";

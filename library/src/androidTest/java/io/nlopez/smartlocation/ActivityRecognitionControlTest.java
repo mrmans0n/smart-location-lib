@@ -13,7 +13,7 @@ import org.robolectric.RobolectricTestRunner;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(CustomTestRunner.class)
 public class ActivityRecognitionControlTest {
 
     private static final ActivityParams DEFAULT_PARAMS = ActivityParams.NORMAL;

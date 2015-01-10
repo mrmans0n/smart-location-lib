@@ -9,10 +9,12 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
+import io.nlopez.smartlocation.CustomTestRunner;
+
 /**
  * Created by nacho on 1/9/15.
  */
-@RunWith(RobolectricTestRunner.class)
+@RunWith(CustomTestRunner.class)
 public class ActivityStoreTest {
 
     private static final DetectedActivity TEST_ACTIVITY = new DetectedActivity(DetectedActivity.UNKNOWN, 100);

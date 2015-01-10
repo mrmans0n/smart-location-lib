@@ -46,13 +46,8 @@ android {
             testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
         }
     }
-}
 
-apply plugin: 'idea'
-idea {
-    module {
-        testOutputDir = file('build/test-classes/debug')
-    }
+    sourceSets.androidTest.java.srcDirs += 'build/generated-sources'
 }
 
 android.libraryVariants
