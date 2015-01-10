@@ -51,7 +51,7 @@ There are three presets for location parameters:
 * `LocationParams.NAVIGATION`
 * `LocationParams.LAZY`
 
-You can change it (if you want one other than the default one) by using the `config(LocationParams.WHATEVER)` modifier.
+You can change it (if you want one other than the default one) by using the `config(locationParams)` modifier.
 
 If you want to add some custom parameters for the distances or times involved in the location strategy, you can create your own LocationParams class.
 
@@ -63,7 +63,7 @@ There are some providers shipped with the library.
 * `LocationManagerProvider` This is the legacy implementation that uses LocationManager.
 * `LocationBasedOnActivityProvider` This allows you to use the activity recognition system to modify the location strategy depending on the activity changes (if the user is walking, running, on a car, a bike...).
 
-You can implement your own if you want. That's ideal if you wanted to use a mock one for testing or something like that.
+You can implement your own if you want. That's ideal if you wanted to use a mock one for testing or something like that, or add support to another possible provider.
 
 Example:
 
