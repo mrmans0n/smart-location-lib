@@ -7,17 +7,14 @@ Android library project that intends to simplify the usage of location providers
 
 **Supported Android versions**: Android 2.3+
 
-Getting started
----------------
+Adding to your project
+----------------------
 
 You should add this to your dependencies:
 
 ```groovy
 compile 'io.nlopez.smartlocation:library:3.0.0'
 ```
-
-Usage
------
 
 ## Location
 
