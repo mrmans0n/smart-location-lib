@@ -26,13 +26,16 @@ Usage
 For starting the location service, you should run:
 
 ````java
-SmartLocation.with(context).location().start(new OnLocationUpdatedListener() { ... });
+SmartLocation.with(context).location()
+    .start(new OnLocationUpdatedListener() { ... });
 ````
 
 If you just want to get a single location (not periodic) you can just use the oneFix modifier. Example:
 
 ````java
-SmartLocation.with(context).location().oneFix().start(new OnLocationUpdatedListener() { ... });
+SmartLocation.with(context).location()
+    .oneFix()
+    .start(new OnLocationUpdatedListener() { ... });
 ````
 
 ### Stopping
@@ -66,7 +69,8 @@ You can implement your own if you want and feed it to the library.
 For starting the activity recognition service, you should run:
 
 ````java
-SmartLocation.with(context).activityRecognition().start(new OnActivityUpdatedListener() { ... });
+SmartLocation.with(context).activityRecognition()
+    .start(new OnActivityUpdatedListener() { ... });
 ````
 
 ### Stopping
