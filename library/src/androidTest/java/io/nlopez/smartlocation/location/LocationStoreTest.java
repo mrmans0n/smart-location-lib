@@ -18,7 +18,7 @@ import io.nlopez.smartlocation.CustomTestRunner;
 @RunWith(CustomTestRunner.class)
 public class LocationStoreTest {
 
-    private static final double DELTA = 1e-15;
+    private static final double DELTA = 1e-7;
 
     private static final String TEST_LOCATION_ID = "test_location_1";
     private static final float ACCURACY = 1.234f;
