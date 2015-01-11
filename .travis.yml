@@ -4,8 +4,8 @@ jdk: oraclejdk7
 android:
   components:
     - build-tools-21.1.2
-    - android-19
+    - android-21
 
 script:
     - cp gradle.properties.example gradle.properties
-    - ./gradlew test
+    - ./gradlew clean test
