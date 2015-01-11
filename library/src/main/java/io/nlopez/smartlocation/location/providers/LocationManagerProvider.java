@@ -89,17 +89,6 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
         return criteria;
     }
 
-    private String providerFromCriteria(Criteria criteria) {
-        switch (criteria.getAccuracy()) {
-            case Criteria.ACCURACY_HIGH:
-                return LocationManager.GPS_PROVIDER;
-            case Criteria.ACCURACY_MEDIUM:
-                return LocationManager.NETWORK_PROVIDER;
-            default:
-                return LocationManager.NETWORK_PROVIDER;
-        }
-    }
-
     @Override
     public void onLocationChanged(Location location) {
         logger.d("onLocationChanged", location);
