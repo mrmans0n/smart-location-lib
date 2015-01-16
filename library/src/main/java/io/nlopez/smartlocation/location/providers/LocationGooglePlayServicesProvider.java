@@ -98,7 +98,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
         if (client.isConnected()) {
             LocationServices.FusedLocationApi.requestLocationUpdates(client, request, this).setResultCallback(this);
         } else {
-            logger.d("startUpdated executed without the GoogleApiClient being connected");
+            logger.w("startUpdated executed without the GoogleApiClient being connected!!");
         }
     }
 
