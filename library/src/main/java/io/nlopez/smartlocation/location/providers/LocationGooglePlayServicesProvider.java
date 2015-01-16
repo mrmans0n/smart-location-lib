@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -13,7 +12,6 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.LocationStore;
@@ -24,6 +22,7 @@ import io.nlopez.smartlocation.utils.Logger;
  * Created by mrm on 20/12/14.
  */
 public class LocationGooglePlayServicesProvider implements LocationProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
+
     public static final int RESULT_CODE = 10001;
     private static final String GMS_ID = "GMS";
 
@@ -93,7 +92,11 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     }
 
     private void startUpdating(LocationRequest request) {
-        LocationServices.FusedLocationApi.requestLocationUpdates(client, request, this).setResultCallback(this);
+        if (client.isConnected()) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(client, request, this).setResultCallback(this);
+        } else {
+            logger.d("startUpdated executed without the GoogleApiClient being connected");
+        }
     }
 
     @Override
@@ -157,7 +160,8 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
             logger.d("Locations update request successful");
 
         } else if (status.hasResolution() && context instanceof Activity) {
-            logger.w("Unable to register, but we can solve this - will startActivityForResult expecting result code " + RESULT_CODE + " (if received, please try again)");
+            logger.w(
+                    "Unable to register, but we can solve this - will startActivityForResult expecting result code " + RESULT_CODE + " (if received, please try again)");
 
             try {
                 status.startResolutionForResult((Activity) context, RESULT_CODE);
