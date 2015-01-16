@@ -147,7 +147,11 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     public void onLocationChanged(Location location) {
         logger.d("onLocationChanged", location);
 
-        listener.onLocationUpdated(location);
+        if (listener != null) {
+            listener.onLocationUpdated(location);
+        } else {
+            logger.d("Listener is null");
+        }
         if (locationStore != null) {
             logger.d("Stored in SharedPreferences");
             locationStore.put(GMS_ID, location);
