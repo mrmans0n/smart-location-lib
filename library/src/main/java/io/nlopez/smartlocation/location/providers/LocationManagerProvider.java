@@ -38,6 +38,10 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
     @Override
     public void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
         this.listener = listener;
+        if (listener == null) {
+            logger.d("Listener is null, you sure about this?");
+        }
+
         Criteria criteria = getProvider(params);
 
         if (singleUpdate) {
@@ -92,7 +96,9 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
     @Override
     public void onLocationChanged(Location location) {
         logger.d("onLocationChanged", location);
-        listener.onLocationUpdated(location);
+        if (listener != null) {
+            listener.onLocationUpdated(location);
+        }
         if (locationStore != null) {
             logger.d("Stored in SharedPreferences");
             locationStore.put(LOCATIONMANAGERPROVIDER_ID, location);

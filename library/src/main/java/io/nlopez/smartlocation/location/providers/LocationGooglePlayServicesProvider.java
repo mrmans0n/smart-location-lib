@@ -82,6 +82,9 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     @Override
     public void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
         this.listener = listener;
+        if (listener == null) {
+            logger.d("Listener is null, you sure about this?");
+        }
         locationRequest = createRequest(params, singleUpdate);
         if (client.isConnected()) {
             startUpdating(locationRequest);
@@ -149,9 +152,8 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
 
         if (listener != null) {
             listener.onLocationUpdated(location);
-        } else {
-            logger.d("Listener is null");
         }
+
         if (locationStore != null) {
             logger.d("Stored in SharedPreferences");
             locationStore.put(GMS_ID, location);
