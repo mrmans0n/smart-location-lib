@@ -38,7 +38,7 @@ public class GeofencingStoreTest {
     }
 
     @Test
-    public void test_location_store_full_cycle() {
+    public void test_geofencing_store_full_cycle() {
         GeofencingStore store = new GeofencingStore(Robolectric.getShadowApplication().getApplicationContext());
         store.setPreferences(getSharedPreferences());
 

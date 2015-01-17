@@ -46,7 +46,7 @@ public class ActivityRecognitionControlTest {
     }
 
     @Test
-    public void test_location_control_get_last_location() {
+    public void test_activity_recognition_get_last_location() {
         SmartLocation.ActivityRecognitionControl activityRecognitionControl = createActivityRecognitionControl();
         activityRecognitionControl.getLastActivity();
 
@@ -54,7 +54,7 @@ public class ActivityRecognitionControlTest {
     }
 
     @Test
-    public void test_location_control_stop() {
+    public void test_activity_recognition_stop() {
         SmartLocation.ActivityRecognitionControl activityRecognitionControl = createActivityRecognitionControl();
         activityRecognitionControl.stop();
 
