@@ -5,6 +5,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 
@@ -79,15 +80,27 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
         final Criteria criteria = new Criteria();
         switch (accuracy) {
             case HIGH:
-                criteria.setAccuracy(Criteria.ACCURACY_HIGH);
+                criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+                criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+                criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
+                criteria.setBearingAccuracy(Criteria.ACCURACY_HIGH);
+                criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
                 criteria.setPowerRequirement(Criteria.POWER_HIGH);
                 break;
             case MEDIUM:
-                criteria.setAccuracy(Criteria.ACCURACY_MEDIUM);
+                criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                criteria.setHorizontalAccuracy(Criteria.ACCURACY_MEDIUM);
+                criteria.setVerticalAccuracy(Criteria.ACCURACY_MEDIUM);
+                criteria.setBearingAccuracy(Criteria.ACCURACY_MEDIUM);
+                criteria.setSpeedAccuracy(Criteria.ACCURACY_MEDIUM);
                 criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
                 break;
             case LOW:
-                criteria.setAccuracy(Criteria.ACCURACY_LOW);
+                criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                criteria.setHorizontalAccuracy(Criteria.ACCURACY_LOW);
+                criteria.setVerticalAccuracy(Criteria.ACCURACY_LOW);
+                criteria.setBearingAccuracy(Criteria.ACCURACY_LOW);
+                criteria.setSpeedAccuracy(Criteria.ACCURACY_LOW);
                 criteria.setPowerRequirement(Criteria.POWER_LOW);
         }
         return criteria;
