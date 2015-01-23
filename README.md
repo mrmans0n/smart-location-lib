@@ -13,7 +13,7 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:3.0.0'
+compile 'io.nlopez.smartlocation:library:3.0.1'
 ```
 
 ## Location
