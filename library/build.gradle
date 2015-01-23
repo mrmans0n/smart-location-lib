@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:1.0.1'
         classpath 'org.robolectric:robolectric-gradle-plugin:0.14.1'
     }
 }
@@ -15,7 +15,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '3.0.1'
+version '3.0.2'
 group 'io.nlopez.smartlocation'
 
 robolectric {
