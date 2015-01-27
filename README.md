@@ -13,7 +13,17 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:3.0.2'
+compile ('io.nlopez.smartlocation:library:3.0.2'){
+	transitive = false;
+}
+```
+
+If you are already using Google Play Services in your project, you must set the transitive property to false:
+
+```groovy
+compile ('io.nlopez.smartlocation:library:3.0.2'){
+	transitive = false;
+}
 ```
 
 ## Location
