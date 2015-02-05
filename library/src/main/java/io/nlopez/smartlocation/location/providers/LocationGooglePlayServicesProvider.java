@@ -95,6 +95,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     }
 
     private void startUpdating(LocationRequest request) {
+        // TODO wait until the connection is done and retry
         if (client.isConnected()) {
             LocationServices.FusedLocationApi.requestLocationUpdates(client, request, this).setResultCallback(this);
         } else {

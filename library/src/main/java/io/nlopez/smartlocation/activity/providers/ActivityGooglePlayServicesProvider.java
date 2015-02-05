@@ -81,8 +81,13 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
     }
 
     private void startUpdating(ActivityParams params) {
-        pendingIntent = PendingIntent.getService(context, 0, new Intent(context, ActivityRecognitionService.class), PendingIntent.FLAG_UPDATE_CURRENT);
-        ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(client, params.getInterval(), pendingIntent).setResultCallback(this);
+        // TODO wait until the connection is done and retry
+        if (client.isConnected()) {
+            pendingIntent = PendingIntent.getService(context, 0, new Intent(context, ActivityRecognitionService.class),
+                                                     PendingIntent.FLAG_UPDATE_CURRENT);
+            ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(client, params.getInterval(),
+                                                                              pendingIntent).setResultCallback(this);
+        }
     }
 
     @Override
