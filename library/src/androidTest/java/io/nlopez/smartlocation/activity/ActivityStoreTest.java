@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
 
 import io.nlopez.smartlocation.CustomTestRunner;
 
@@ -23,7 +24,7 @@ public class ActivityStoreTest {
 
     @Test
     public void test_activity_store_full_cycle() {
-        ActivityStore store = new ActivityStore(Robolectric.getShadowApplication().getApplicationContext());
+        ActivityStore store = new ActivityStore(RuntimeEnvironment.application.getApplicationContext());
         store.setPreferences(getSharedPreferences());
 
         Assert.assertNull(store.get(TEST_ACTIVITY_ID));
@@ -39,6 +40,6 @@ public class ActivityStoreTest {
     }
 
     private SharedPreferences getSharedPreferences() {
-        return Robolectric.getShadowApplication().getApplicationContext().getSharedPreferences("test_prefs", Context.MODE_PRIVATE);
+        return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs", Context.MODE_PRIVATE);
     }
 }

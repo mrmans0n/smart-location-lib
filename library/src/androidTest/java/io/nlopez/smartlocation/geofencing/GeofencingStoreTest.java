@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
 
 import io.nlopez.smartlocation.CustomTestRunner;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
@@ -39,7 +40,7 @@ public class GeofencingStoreTest {
 
     @Test
     public void test_geofencing_store_full_cycle() {
-        GeofencingStore store = new GeofencingStore(Robolectric.getShadowApplication().getApplicationContext());
+        GeofencingStore store = new GeofencingStore(RuntimeEnvironment.application.getApplicationContext());
         store.setPreferences(getSharedPreferences());
 
         Assert.assertNull(store.get(TEST_GEOFENCE_ID));
@@ -57,6 +58,6 @@ public class GeofencingStoreTest {
     }
 
     private SharedPreferences getSharedPreferences() {
-        return Robolectric.getShadowApplication().getApplicationContext().getSharedPreferences("test_prefs", Context.MODE_PRIVATE);
+        return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs", Context.MODE_PRIVATE);
     }
 }

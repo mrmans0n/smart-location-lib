@@ -1,17 +1,21 @@
 package io.nlopez.smartlocation;
 
 import android.content.Context;
-import io.nlopez.smartlocation.activity.config.ActivityParams;
-import io.nlopez.smartlocation.util.MockActivityRecognitionProvider;
-import io.nlopez.smartlocation.utils.Logger;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+
+import io.nlopez.smartlocation.activity.config.ActivityParams;
+import io.nlopez.smartlocation.util.MockActivityRecognitionProvider;
+import io.nlopez.smartlocation.utils.Logger;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(CustomTestRunner.class)
 public class ActivityRecognitionControlTest {
@@ -29,7 +33,7 @@ public class ActivityRecognitionControlTest {
 
     @Test
     public void test_activity_recognition_control_init() {
-        Context context = Robolectric.getShadowApplication().getApplicationContext();
+        Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation.ActivityRecognitionControl activityRecognitionControl = SmartLocation.with(
                 context).activityRecognition();
         activityRecognitionControl.provider(mockProvider);
@@ -62,7 +66,7 @@ public class ActivityRecognitionControlTest {
     }
 
     private SmartLocation.ActivityRecognitionControl createActivityRecognitionControl() {
-        Context context = Robolectric.getShadowApplication().getApplicationContext();
+        Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation.ActivityRecognitionControl activityRecognitionControl = SmartLocation.with(
                 context).activityRecognition();
         activityRecognitionControl.provider(mockProvider);

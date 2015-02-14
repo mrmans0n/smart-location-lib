@@ -1,8 +1,8 @@
 package io.nlopez.smartlocation;
 
-import org.robolectric.AndroidManifest;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.manifest.AndroidManifest;
 import org.robolectric.res.Fs;
 
 import static com.kageiit.robojava.RobojavaConfig.ASSETS;

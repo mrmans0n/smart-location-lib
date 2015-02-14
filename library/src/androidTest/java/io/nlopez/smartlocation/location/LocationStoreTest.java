@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
 
 import io.nlopez.smartlocation.CustomTestRunner;
 
@@ -44,7 +44,7 @@ public class LocationStoreTest {
 
     @Test
     public void test_location_store_full_cycle() {
-        LocationStore store = new LocationStore(Robolectric.getShadowApplication().getApplicationContext());
+        LocationStore store = new LocationStore(RuntimeEnvironment.application.getApplicationContext());
         store.setPreferences(getSharedPreferences());
 
         Assert.assertNull(store.get(TEST_LOCATION_ID));
@@ -64,6 +64,6 @@ public class LocationStoreTest {
     }
 
     private SharedPreferences getSharedPreferences() {
-        return Robolectric.getShadowApplication().getApplicationContext().getSharedPreferences("test_prefs", Context.MODE_PRIVATE);
+        return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs", Context.MODE_PRIVATE);
     }
 }

@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
 
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.util.MockLocationProvider;
@@ -35,7 +36,7 @@ public class LocationControlTest {
 
     @Test
     public void test_location_control_init() {
-        Context context = Robolectric.getShadowApplication().getApplicationContext();
+        Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation.LocationControl locationControl = SmartLocation.with(context).location();
         locationControl.provider(mockProvider);
 
@@ -95,7 +96,7 @@ public class LocationControlTest {
 
 
     private SmartLocation.LocationControl createLocationControl() {
-        Context context = Robolectric.getShadowApplication().getApplicationContext();
+        Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation.LocationControl locationControl = SmartLocation.with(context).location();
         locationControl.provider(mockProvider);
         return locationControl;
