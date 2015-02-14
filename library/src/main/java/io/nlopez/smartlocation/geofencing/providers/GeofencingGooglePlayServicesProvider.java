@@ -3,14 +3,9 @@ package io.nlopez.smartlocation.geofencing.providers;
 import android.app.Activity;
 import android.app.IntentService;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentSender;
+import android.content.*;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -18,10 +13,6 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.LocationServices;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import io.nlopez.smartlocation.OnGeofencingTransitionListener;
 import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.GeofencingStore;
@@ -29,10 +20,14 @@ import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by mrm on 3/1/15.
  */
 public class GeofencingGooglePlayServicesProvider implements GeofencingProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
+
     public static final int RESULT_CODE = 10003;
 
     private static final String GMS_ID = "GMS";
@@ -80,7 +75,8 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
         client.connect();
 
-        pendingIntent = PendingIntent.getService(context, 0, new Intent(context, GeofencingService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent = PendingIntent.getService(context, 0, new Intent(context, GeofencingService.class),
+                                                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
@@ -165,15 +161,18 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
     @Override
     public void onConnected(Bundle bundle) {
         logger.d("onConnected");
-        // startUpdating();
-        if (geofencesToAdd.size() > 0) {
-            LocationServices.GeofencingApi.addGeofences(client, geofencesToAdd, pendingIntent);
-            geofencesToAdd.clear();
-        }
 
-        if (geofencesToRemove.size() > 0) {
-            LocationServices.GeofencingApi.removeGeofences(client, geofencesToRemove);
-            geofencesToRemove.clear();
+        // TODO wait until the connection is done and retry
+        if (client.isConnected()) {
+            if (geofencesToAdd.size() > 0) {
+                LocationServices.GeofencingApi.addGeofences(client, geofencesToAdd, pendingIntent);
+                geofencesToAdd.clear();
+            }
+
+            if (geofencesToRemove.size() > 0) {
+                LocationServices.GeofencingApi.removeGeofences(client, geofencesToRemove);
+                geofencesToRemove.clear();
+            }
         }
         if (googlePlayServicesListener != null) {
             googlePlayServicesListener.onConnected(bundle);
@@ -241,7 +240,8 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
         if (status.isSuccess()) {
             logger.d("Geofencing update request successful");
         } else if (status.hasResolution() && context instanceof Activity) {
-            logger.w("Unable to register, but we can solve this - will startActivityForResult expecting result code " + RESULT_CODE + " (if received, please try again)");
+            logger.w(
+                    "Unable to register, but we can solve this - will startActivityForResult expecting result code " + RESULT_CODE + " (if received, please try again)");
 
             try {
                 status.startResolutionForResult((Activity) context, RESULT_CODE);
