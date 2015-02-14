@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -12,10 +13,12 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.LocationStore;
 import io.nlopez.smartlocation.location.config.LocationParams;
+import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**
@@ -33,6 +36,15 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     private LocationStore locationStore;
     private LocationRequest locationRequest;
     private Context context;
+    private final GooglePlayServicesListener googlePlayServicesListener;
+
+    public LocationGooglePlayServicesProvider() {
+        this(null);
+    }
+
+    public LocationGooglePlayServicesProvider(GooglePlayServicesListener playServicesListener) {
+        googlePlayServicesListener = playServicesListener;
+    }
 
     @Override
     public void init(Context context, Logger logger) {
@@ -128,22 +140,29 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
 
     @Override
     public void onConnected(Bundle bundle) {
-        // ??
         logger.d("onConnected");
         if (shouldStart) {
             startUpdating(locationRequest);
+        }
+        if (googlePlayServicesListener != null) {
+            googlePlayServicesListener.onConnected(bundle);
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
         logger.d("onConnectionSuspended " + i);
+        if (googlePlayServicesListener != null) {
+            googlePlayServicesListener.onConnectionSuspended(i);
+        }
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         logger.d("onConnectionFailed");
-
+        if (googlePlayServicesListener != null) {
+            googlePlayServicesListener.onConnectionFailed(connectionResult);
+        }
     }
 
     @Override
@@ -179,4 +198,5 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
             logger.e("Registering failed: " + status.getStatusMessage());
         }
     }
+
 }

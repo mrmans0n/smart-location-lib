@@ -26,6 +26,7 @@ import io.nlopez.smartlocation.OnGeofencingTransitionListener;
 import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.GeofencingStore;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
+import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**
@@ -49,6 +50,17 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
     private GeofencingStore geofencingStore;
     private Context context;
     private PendingIntent pendingIntent;
+    private final GooglePlayServicesListener googlePlayServicesListener;
+
+
+    public GeofencingGooglePlayServicesProvider() {
+        this(null);
+    }
+
+    public GeofencingGooglePlayServicesProvider(GooglePlayServicesListener playServicesListener) {
+        googlePlayServicesListener = playServicesListener;
+    }
+
 
     @Override
     public void init(@NonNull Context context, Logger logger) {
@@ -163,16 +175,25 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
             LocationServices.GeofencingApi.removeGeofences(client, geofencesToRemove);
             geofencesToRemove.clear();
         }
+        if (googlePlayServicesListener != null) {
+            googlePlayServicesListener.onConnected(bundle);
+        }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
         logger.d("onConnectionSuspended " + i);
+        if (googlePlayServicesListener != null) {
+            googlePlayServicesListener.onConnectionSuspended(i);
+        }
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         logger.d("onConnectionFailed");
+        if (googlePlayServicesListener != null) {
+            googlePlayServicesListener.onConnectionFailed(connectionResult);
+        }
 
     }
 

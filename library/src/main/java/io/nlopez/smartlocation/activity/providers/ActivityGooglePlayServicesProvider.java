@@ -23,6 +23,7 @@ import io.nlopez.smartlocation.OnActivityUpdatedListener;
 import io.nlopez.smartlocation.activity.ActivityProvider;
 import io.nlopez.smartlocation.activity.ActivityStore;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
+import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**
@@ -43,6 +44,16 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
     private boolean shouldStart = false;
     private PendingIntent pendingIntent;
     private ActivityParams activityParams;
+    private final GooglePlayServicesListener googlePlayServicesListener;
+
+
+    public ActivityGooglePlayServicesProvider() {
+        this(null);
+    }
+
+    public ActivityGooglePlayServicesProvider(GooglePlayServicesListener playServicesListener) {
+        googlePlayServicesListener = playServicesListener;
+    }
 
     @Override
     public void init(@NonNull Context context, Logger logger) {
@@ -111,20 +122,29 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
     @Override
     public void onConnected(Bundle bundle) {
         logger.d("onConnected");
+
         if (shouldStart) {
             startUpdating(activityParams);
+        }
+        if (googlePlayServicesListener != null) {
+            googlePlayServicesListener.onConnected(bundle);
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
         logger.d("onConnectionSuspended " + i);
+        if (googlePlayServicesListener != null) {
+            googlePlayServicesListener.onConnectionSuspended(i);
+        }
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         logger.d("onConnectionFailed");
-
+        if (googlePlayServicesListener != null) {
+            googlePlayServicesListener.onConnectionFailed(connectionResult);
+        }
     }
 
     private void notifyActivity(final DetectedActivity detectedActivity) {
