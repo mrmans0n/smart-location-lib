@@ -18,7 +18,7 @@ import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
-import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProvider;
+import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesWithFallbackProvider;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
 
@@ -86,7 +86,7 @@ public class SmartLocation {
             oneFix = false;
 
             if (!MAPPING.containsKey(smartLocation.context)) {
-                MAPPING.put(smartLocation.context, new LocationGooglePlayServicesProvider());
+                MAPPING.put(smartLocation.context, new LocationGooglePlayServicesWithFallbackProvider(smartLocation.context));
             }
             provider = MAPPING.get(smartLocation.context);
             provider.init(smartLocation.context, smartLocation.logger);
