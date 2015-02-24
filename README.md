@@ -20,7 +20,7 @@ If you are already using Google Play Services in your project, you must set the 
 
 ```groovy
 compile ('io.nlopez.smartlocation:library:3.0.3'){
-	transitive = false;
+	transitive = false
 }
 ```
 
