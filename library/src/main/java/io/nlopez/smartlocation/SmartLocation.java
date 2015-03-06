@@ -94,16 +94,7 @@ public class SmartLocation {
             params = LocationParams.BEST_EFFORT;
             oneFix = false;
 
-<<<<<<< HEAD
             if (smartLocation.preInitialize) {
-=======
-            if (!MAPPING.containsKey(smartLocation.context)) {
-                MAPPING.put(smartLocation.context, new LocationGooglePlayServicesProvider());
-            }
-            provider = MAPPING.get(smartLocation.context);
-            provider.init(smartLocation.context, smartLocation.logger);
->>>>>>> parent of dfb7a65... Changed default provider to the one with fallbacks
-
                 if (!MAPPING.containsKey(smartLocation.context)) {
                     MAPPING.put(smartLocation.context, new LocationGooglePlayServicesProvider());
                 }

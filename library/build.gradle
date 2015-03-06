@@ -54,7 +54,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
-    sourceSets.androidTest.java.srcDirs += 'build/generated-sources'
 }
 
 android.libraryVariants

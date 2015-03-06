@@ -1,18 +1,18 @@
 package io.nlopez.smartlocation.geofencing.model;
 
 import com.google.android.gms.location.Geofence;
-
+import io.nlopez.smartlocation.CustomTestRunner;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import io.nlopez.smartlocation.CustomTestRunner;
+import org.robolectric.annotation.Config;
 
 /**
  * Created by mrm on 10/1/15.
  */
 
 @RunWith(CustomTestRunner.class)
+@Config(manifest = Config.NONE)
 public class GeofenceModelTest {
 
     private static final double DELTA = 1e-7;
@@ -22,7 +22,6 @@ public class GeofenceModelTest {
     private static final double LONGITUDE = -30.65312;
     private static final int RADIUS = 444;
     private static final int TRANSITION = Geofence.GEOFENCE_TRANSITION_EXIT;
-
 
     @Test
     public void test_geofence_model_creation() {
