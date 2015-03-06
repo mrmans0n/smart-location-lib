@@ -29,12 +29,10 @@ public class SmartLocation {
 
     private Context context;
     private Logger logger;
-    private boolean preInitialize;
 
-    private SmartLocation(Context context, Logger logger, boolean preInitialize) {
+    private SmartLocation(Context context, Logger logger) {
         this.context = context;
         this.logger = logger;
-        this.preInitialize = preInitialize;
     }
 
     public static SmartLocation with(Context context) {
@@ -56,12 +54,10 @@ public class SmartLocation {
     public static class Builder {
         private final Context context;
         private boolean loggingEnabled;
-        private boolean preInitialize;
 
         public Builder(@NonNull Context context) {
             this.context = context.getApplicationContext();
             this.loggingEnabled = false;
-            this.preInitialize = true;
         }
 
         public Builder logging(boolean enabled) {
@@ -69,13 +65,8 @@ public class SmartLocation {
             return this;
         }
 
-        public Builder preInitialize(boolean enabled) {
-            this.preInitialize = enabled;
-            return this;
-        }
-
         public SmartLocation build() {
-            return new SmartLocation(context, LoggerFactory.buildLogger(loggingEnabled), preInitialize);
+            return new SmartLocation(context, LoggerFactory.buildLogger(loggingEnabled));
         }
 
     }
@@ -94,14 +85,12 @@ public class SmartLocation {
             params = LocationParams.BEST_EFFORT;
             oneFix = false;
 
-            if (smartLocation.preInitialize) {
-
-                if (!MAPPING.containsKey(smartLocation.context)) {
-                    MAPPING.put(smartLocation.context, new LocationGooglePlayServicesProvider());
-                }
-                provider = MAPPING.get(smartLocation.context);
-                provider.init(smartLocation.context, smartLocation.logger);
+            if (!MAPPING.containsKey(smartLocation.context)) {
+                MAPPING.put(smartLocation.context, new LocationGooglePlayServicesProvider());
             }
+            provider = MAPPING.get(smartLocation.context);
+            provider.init(smartLocation.context, smartLocation.logger);
+
         }
 
         public LocationControl config(@NonNull LocationParams params) {
@@ -110,7 +99,7 @@ public class SmartLocation {
         }
 
         public LocationControl provider(@NonNull LocationProvider newProvider) {
-            if (provider != null && newProvider.getClass().equals(provider.getClass())) {
+            if (newProvider.getClass().equals(provider.getClass())) {
                 smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
             }
             provider = newProvider;
@@ -138,9 +127,6 @@ public class SmartLocation {
         }
 
         public void start(OnLocationUpdatedListener listener) {
-            if (provider == null) {
-                throw new RuntimeException("A provider must be initialized");
-            }
             provider.start(listener, params, oneFix);
         }
 
@@ -160,14 +146,13 @@ public class SmartLocation {
         public ActivityRecognitionControl(SmartLocation smartLocation) {
             this.smartLocation = smartLocation;
             params = ActivityParams.NORMAL;
-            if (smartLocation.preInitialize) {
-                if (!MAPPING.containsKey(smartLocation.context)) {
-                    MAPPING.put(smartLocation.context, new ActivityGooglePlayServicesProvider());
-                }
-                provider = MAPPING.get(smartLocation.context);
 
-                provider.init(smartLocation.context, smartLocation.logger);
+            if (!MAPPING.containsKey(smartLocation.context)) {
+                MAPPING.put(smartLocation.context, new ActivityGooglePlayServicesProvider());
             }
+            provider = MAPPING.get(smartLocation.context);
+
+            provider.init(smartLocation.context, smartLocation.logger);
         }
 
         public ActivityRecognitionControl config(@NonNull ActivityParams params) {
@@ -176,7 +161,7 @@ public class SmartLocation {
         }
 
         public ActivityRecognitionControl provider(@NonNull ActivityProvider newProvider) {
-            if (provider != null && newProvider.getClass().equals(provider.getClass())) {
+            if (newProvider.getClass().equals(provider.getClass())) {
                 smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
             }
             provider = newProvider;
@@ -194,9 +179,6 @@ public class SmartLocation {
         }
 
         public void start(OnActivityUpdatedListener listener) {
-            if (provider == null) {
-                throw new RuntimeException("A provider must be initialized");
-            }
             provider.start(listener, params);
         }
 
@@ -214,18 +196,16 @@ public class SmartLocation {
 
         public GeofencingControl(SmartLocation smartLocation) {
             this.smartLocation = smartLocation;
-            if (smartLocation.preInitialize) {
-                if (!MAPPING.containsKey(smartLocation.context)) {
-                    MAPPING.put(smartLocation.context, new GeofencingGooglePlayServicesProvider());
-                }
-                provider = MAPPING.get(smartLocation.context);
-
-                provider.init(smartLocation.context, smartLocation.logger);
+            if (!MAPPING.containsKey(smartLocation.context)) {
+                MAPPING.put(smartLocation.context, new GeofencingGooglePlayServicesProvider());
             }
+            provider = MAPPING.get(smartLocation.context);
+
+            provider.init(smartLocation.context, smartLocation.logger);
         }
 
         public GeofencingControl provider(@NonNull GeofencingProvider newProvider) {
-            if (provider != null &&newProvider.getClass().equals(provider.getClass())) {
+            if (newProvider.getClass().equals(provider.getClass())) {
                 smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
             }
             provider = newProvider;
@@ -255,9 +235,6 @@ public class SmartLocation {
         }
 
         public void start(OnGeofencingTransitionListener listener) {
-            if (provider == null) {
-                throw new RuntimeException("A provider must be initialized");
-            }
             provider.start(listener);
         }
 
