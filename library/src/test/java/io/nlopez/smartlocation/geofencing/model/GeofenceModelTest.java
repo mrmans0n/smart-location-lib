@@ -7,14 +7,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.nlopez.smartlocation.CustomTestRunner;
-import org.robolectric.annotation.Config;
 
 /**
  * Created by mrm on 10/1/15.
  */
 
 @RunWith(CustomTestRunner.class)
-@Config(manifest = Config.NONE)
 public class GeofenceModelTest {
 
     private static final double DELTA = 1e-7;
