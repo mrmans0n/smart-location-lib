@@ -160,7 +160,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        logger.d("onConnectionFailed");
+        logger.d("onConnectionFailed " + connectionResult.toString());
         if (googlePlayServicesListener != null) {
             googlePlayServicesListener.onConnectionFailed(connectionResult);
         }
