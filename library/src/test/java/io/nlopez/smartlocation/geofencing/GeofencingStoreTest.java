@@ -2,23 +2,21 @@ package io.nlopez.smartlocation.geofencing;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import com.google.android.gms.location.Geofence;
-
+import io.nlopez.smartlocation.CustomTestRunner;
+import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
-
-import io.nlopez.smartlocation.CustomTestRunner;
-import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
+import org.robolectric.annotation.Config;
 
 /**
  * Created by nacho on 1/9/15.
  */
 @RunWith(CustomTestRunner.class)
+@Config(manifest = Config.NONE)
 public class GeofencingStoreTest {
 
     private static final double DELTA = 1e-7;
@@ -58,6 +56,7 @@ public class GeofencingStoreTest {
     }
 
     private SharedPreferences getSharedPreferences() {
-        return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs", Context.MODE_PRIVATE);
+        return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs",
+                                                                                           Context.MODE_PRIVATE);
     }
 }

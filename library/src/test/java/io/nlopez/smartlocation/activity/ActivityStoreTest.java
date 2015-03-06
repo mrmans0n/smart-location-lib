@@ -2,21 +2,19 @@ package io.nlopez.smartlocation.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import com.google.android.gms.location.DetectedActivity;
-
+import io.nlopez.smartlocation.CustomTestRunner;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
-
-import io.nlopez.smartlocation.CustomTestRunner;
+import org.robolectric.annotation.Config;
 
 /**
  * Created by nacho on 1/9/15.
  */
 @RunWith(CustomTestRunner.class)
+@Config(manifest = Config.NONE)
 public class ActivityStoreTest {
 
     private static final DetectedActivity TEST_ACTIVITY = new DetectedActivity(DetectedActivity.UNKNOWN, 100);
@@ -40,6 +38,7 @@ public class ActivityStoreTest {
     }
 
     private SharedPreferences getSharedPreferences() {
-        return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs", Context.MODE_PRIVATE);
+        return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs",
+                                                                                           Context.MODE_PRIVATE);
     }
 }

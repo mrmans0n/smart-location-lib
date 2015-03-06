@@ -1,25 +1,21 @@
 package io.nlopez.smartlocation;
 
 import android.content.Context;
-import android.location.Location;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
-
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.util.MockLocationProvider;
 import io.nlopez.smartlocation.utils.Logger;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
+@Config(manifest = Config.NONE)
 public class LocationControlTest {
 
     private static final LocationParams DEFAULT_PARAMS = LocationParams.BEST_EFFORT;
@@ -37,7 +33,8 @@ public class LocationControlTest {
     @Test
     public void test_location_control_init() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
-        SmartLocation.LocationControl locationControl = SmartLocation.with(context).location();
+        SmartLocation smartLocation = new SmartLocation.Builder(context).logging(false).preInitialize(false).build();
+        SmartLocation.LocationControl locationControl = smartLocation.location();
         locationControl.provider(mockProvider);
 
         verify(mockProvider).init(eq(context), any(Logger.class));
@@ -94,10 +91,10 @@ public class LocationControlTest {
         verify(mockProvider).stop();
     }
 
-
     private SmartLocation.LocationControl createLocationControl() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
-        SmartLocation.LocationControl locationControl = SmartLocation.with(context).location();
+        SmartLocation smartLocation = new SmartLocation.Builder(context).logging(false).preInitialize(false).build();
+        SmartLocation.LocationControl locationControl = smartLocation.location();
         locationControl.provider(mockProvider);
         return locationControl;
     }

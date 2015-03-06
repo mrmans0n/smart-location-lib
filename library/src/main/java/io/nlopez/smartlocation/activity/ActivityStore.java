@@ -23,7 +23,7 @@ public class ActivityStore {
         preferences = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
-    void setPreferences(SharedPreferences preferences) {
+    public void setPreferences(SharedPreferences preferences) {
         this.preferences = preferences;
     }
 

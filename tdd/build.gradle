@@ -1,3 +1,0 @@
-evaluationDependsOn(':library')
-ext.androidProject = 'library'
-apply plugin: 'com.kageiit.robojava'

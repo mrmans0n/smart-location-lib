@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="gms_version">@integer/google_play_services_version</integer>
+</resources>

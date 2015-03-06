@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.nlopez.smartlocation"
-    android:versionCode="1"
-    android:versionName="1.0">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="io.nlopez.smartlocation"
+          android:versionCode="1"
+          android:versionName="1.0">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -23,7 +24,7 @@
             android:exported="false" />
 
         <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:name="com.google.android.gms.version" tools:replace="android:value"
+            android:value="6587000" />
     </application>
 </manifest>

@@ -3,13 +3,13 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.1'
-        classpath 'org.robolectric:robolectric-gradle-plugin:0.14.1'
+        classpath 'com.android.tools.build:gradle:1.1.0'
+        classpath 'org.robolectric:robolectric-gradle-plugin:1.0.1'
     }
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'robolectric'
+apply plugin: 'org.robolectric'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
 apply plugin: 'signing'
@@ -29,10 +29,10 @@ dependencies {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     compile 'com.google.android.gms:play-services-location:6.5.87'
-    androidTestCompile 'junit:junit:4.12'
-    androidTestCompile 'org.robolectric:robolectric:3.0-SNAPSHOT'
-    androidTestCompile 'org.robolectric:robolectric-shadows:3.0-SNAPSHOT'
-    androidTestCompile 'org.mockito:mockito-core:1.9.5'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.robolectric:robolectric:3.0-SNAPSHOT'
+    testCompile 'org.robolectric:robolectric-shadows:3.0-SNAPSHOT'
+    testCompile 'org.mockito:mockito-core:1.9.5'
 }
 
 android {

@@ -5,12 +5,12 @@ import android.content.Context;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 
 import io.nlopez.smartlocation.activity.config.ActivityParams;
 import io.nlopez.smartlocation.util.MockActivityRecognitionProvider;
 import io.nlopez.smartlocation.utils.Logger;
+import org.robolectric.annotation.Config;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
@@ -18,6 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(CustomTestRunner.class)
+@Config(manifest = Config.NONE)
 public class ActivityRecognitionControlTest {
 
     private static final ActivityParams DEFAULT_PARAMS = ActivityParams.NORMAL;
@@ -34,8 +35,8 @@ public class ActivityRecognitionControlTest {
     @Test
     public void test_activity_recognition_control_init() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
-        SmartLocation.ActivityRecognitionControl activityRecognitionControl = SmartLocation.with(
-                context).activityRecognition();
+        SmartLocation smartLocation = new SmartLocation.Builder(context).preInitialize(false).build();
+        SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activityRecognition();
         activityRecognitionControl.provider(mockProvider);
 
         verify(mockProvider).init(eq(context), any(Logger.class));
@@ -67,8 +68,8 @@ public class ActivityRecognitionControlTest {
 
     private SmartLocation.ActivityRecognitionControl createActivityRecognitionControl() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
-        SmartLocation.ActivityRecognitionControl activityRecognitionControl = SmartLocation.with(
-                context).activityRecognition();
+        SmartLocation smartLocation = new SmartLocation.Builder(context).preInitialize(false).build();
+        SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activityRecognition();
         activityRecognitionControl.provider(mockProvider);
         return activityRecognitionControl;
     }

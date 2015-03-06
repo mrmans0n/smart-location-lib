@@ -3,19 +3,19 @@ package io.nlopez.smartlocation.location;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
-
+import io.nlopez.smartlocation.CustomTestRunner;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
-
-import io.nlopez.smartlocation.CustomTestRunner;
+import org.robolectric.annotation.Config;
 
 /**
  * Created by nacho on 1/9/15.
  */
 @RunWith(CustomTestRunner.class)
+@Config(manifest = Config.NONE)
 public class LocationStoreTest {
 
     private static final double DELTA = 1e-7;
@@ -64,6 +64,7 @@ public class LocationStoreTest {
     }
 
     private SharedPreferences getSharedPreferences() {
-        return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs", Context.MODE_PRIVATE);
+        return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs",
+                                                                                           Context.MODE_PRIVATE);
     }
 }
