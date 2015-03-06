@@ -21,6 +21,9 @@ group 'io.nlopez.smartlocation'
 robolectric {
     include '**/*Test.class'
     exclude '**/espresso/**/*.class'
+    afterTest { descriptor, result ->
+        println "Executing test for ${descriptor.name} with result: ${result.resultType}"
+    }
 }
 
 dependencies {
@@ -30,9 +33,9 @@ dependencies {
     }
     compile 'com.google.android.gms:play-services-location:6.5.87'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile 'org.robolectric:robolectric:3.0-SNAPSHOT'
     testCompile 'org.robolectric:robolectric-shadows:3.0-SNAPSHOT'
-    testCompile 'org.mockito:mockito-core:1.9.5'
 }
 
 android {
@@ -54,7 +57,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
-    sourceSets.androidTest.java.srcDirs += 'build/generated-sources'
+    sourceSets {
+        test {
+            java.srcDirs += 'src/main/java'
+        }
+    }
+
 }
 
 android.libraryVariants
