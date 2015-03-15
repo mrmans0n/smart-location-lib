@@ -12,14 +12,16 @@ public class GeofenceModel {
     private float radius;
     private long expiration;
     private int transition;
+    private int loiteringDelay;
 
-    private GeofenceModel(String id, double latitude, double longitude, float radius, long expiration, int transition) {
+    private GeofenceModel(String id, double latitude, double longitude, float radius, long expiration, int transition, int loiteringDelay) {
         this.requestId = id;
         this.latitude = latitude;
         this.longitude = longitude;
         this.radius = radius;
         this.expiration = expiration;
         this.transition = transition;
+        this.loiteringDelay = loiteringDelay;
     }
 
     public String getRequestId() {
@@ -46,12 +48,17 @@ public class GeofenceModel {
         return transition;
     }
 
+    public int getLoiteringDelay() {
+        return loiteringDelay;
+    }
+
     public Geofence toGeofence() {
         return new Geofence.Builder()
                 .setCircularRegion(latitude, longitude, radius)
                 .setExpirationDuration(expiration)
                 .setRequestId(requestId)
                 .setTransitionTypes(transition)
+                .setLoiteringDelay(loiteringDelay)
                 .build();
     }
 
@@ -62,6 +69,7 @@ public class GeofenceModel {
         private float radius;
         private long expiration;
         private int transition;
+        private int loiteringDelay;
 
         public Builder(String id) {
             this.requestId = id;
@@ -92,8 +100,13 @@ public class GeofenceModel {
             return this;
         }
 
+        public Builder setLoiteringDelay(int loiteringDelay) {
+            this.loiteringDelay = loiteringDelay;
+            return this;
+        }
+
         public GeofenceModel build() {
-            return new GeofenceModel(requestId, latitude, longitude, radius, expiration, transition);
+            return new GeofenceModel(requestId, latitude, longitude, radius, expiration, transition, loiteringDelay);
         }
     }
 }

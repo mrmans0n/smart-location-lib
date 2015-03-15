@@ -20,6 +20,7 @@ public class GeofenceModelTest {
     private static final int EXPIRATION = 1234;
     private static final double LATITUDE = 50.123456;
     private static final double LONGITUDE = -30.65312;
+    private static final int LOITERING_DELAY = 100;
     private static final int RADIUS = 444;
     private static final int TRANSITION = Geofence.GEOFENCE_TRANSITION_EXIT;
 
@@ -31,6 +32,7 @@ public class GeofenceModelTest {
                 .setLongitude(LONGITUDE)
                 .setRadius(RADIUS)
                 .setTransition(TRANSITION)
+                .setLoiteringDelay(LOITERING_DELAY)
                 .build();
 
         Assert.assertEquals(model.getRequestId(), GEOFENCE_ID);
@@ -39,6 +41,7 @@ public class GeofenceModelTest {
         Assert.assertEquals(model.getLongitude(), LONGITUDE, DELTA);
         Assert.assertEquals(model.getRadius(), RADIUS, DELTA);
         Assert.assertEquals(model.getTransition(), TRANSITION);
+        Assert.assertEquals(model.getLoiteringDelay(), LOITERING_DELAY);
     }
 
     @Test
@@ -48,6 +51,7 @@ public class GeofenceModelTest {
                 .setLatitude(LATITUDE)
                 .setLongitude(LONGITUDE)
                 .setRadius(RADIUS)
+                .setLoiteringDelay(LOITERING_DELAY)
                 .setTransition(TRANSITION)
                 .build();
 

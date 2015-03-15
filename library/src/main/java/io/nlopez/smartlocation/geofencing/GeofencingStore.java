@@ -18,6 +18,7 @@ public class GeofencingStore {
     private static final String RADIUS_ID = "RADIUS";
     private static final String TRANSITION_ID = "TRANSITION";
     private static final String EXPIRATION_ID = "EXPIRATION";
+    private static final String LOITERING_DELAY_ID = "LOITERING_DELAY";
 
     private SharedPreferences preferences;
 
@@ -36,6 +37,7 @@ public class GeofencingStore {
         editor.putFloat(getFieldKey(id, RADIUS_ID), geofenceModel.getRadius());
         editor.putInt(getFieldKey(id, TRANSITION_ID), geofenceModel.getTransition());
         editor.putLong(getFieldKey(id, EXPIRATION_ID), geofenceModel.getExpiration());
+        editor.putInt(getFieldKey(id, LOITERING_DELAY_ID), geofenceModel.getLoiteringDelay());
         editor.apply();
     }
 
@@ -47,6 +49,7 @@ public class GeofencingStore {
             builder.setRadius(preferences.getFloat(getFieldKey(id, RADIUS_ID), 0));
             builder.setTransition(preferences.getInt(getFieldKey(id, TRANSITION_ID), 0));
             builder.setExpiration(preferences.getLong(getFieldKey(id, EXPIRATION_ID), 0));
+            builder.setLoiteringDelay(preferences.getInt(getFieldKey(id, LOITERING_DELAY_ID), 0));
             return builder.build();
         } else {
             return null;
@@ -60,6 +63,7 @@ public class GeofencingStore {
         editor.remove(getFieldKey(id, RADIUS_ID));
         editor.remove(getFieldKey(id, TRANSITION_ID));
         editor.remove(getFieldKey(id, EXPIRATION_ID));
+        editor.remove(getFieldKey(id, LOITERING_DELAY_ID));
         editor.apply();
     }
 

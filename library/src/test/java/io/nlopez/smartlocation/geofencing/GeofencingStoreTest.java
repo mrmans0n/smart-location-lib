@@ -32,6 +32,7 @@ public class GeofencingStoreTest {
                 .setLatitude(50.505050)
                 .setLongitude(-40.4040)
                 .setRadius(12.34f)
+                .setLoiteringDelay(100)
                 .setTransition(Geofence.GEOFENCE_TRANSITION_ENTER)
                 .build();
     }
@@ -50,6 +51,7 @@ public class GeofencingStoreTest {
         Assert.assertEquals(geofenceModel.getExpiration(), testGeofence.getExpiration());
         Assert.assertEquals(geofenceModel.getRadius(), testGeofence.getRadius(), DELTA);
         Assert.assertEquals(geofenceModel.getTransition(), testGeofence.getTransition());
+        Assert.assertEquals(geofenceModel.getLoiteringDelay(), testGeofence.getLoiteringDelay());
 
         store.remove(TEST_GEOFENCE_ID);
         Assert.assertNull(store.get(TEST_GEOFENCE_ID));
