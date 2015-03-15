@@ -42,7 +42,7 @@ android {
     buildTypes {
         defaultConfig {
             minSdkVersion 9
-            targetSdkVersion 18
+            targetSdkVersion 21
             versionCode 20005
             versionName version
             testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
