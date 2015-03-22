@@ -3,9 +3,14 @@ package io.nlopez.smartlocation.geofencing.providers;
 import android.app.Activity;
 import android.app.IntentService;
 import android.app.PendingIntent;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -13,15 +18,16 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.LocationServices;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import io.nlopez.smartlocation.OnGeofencingTransitionListener;
 import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.GeofencingStore;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by mrm on 3/1/15.
@@ -76,7 +82,7 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
         client.connect();
 
         pendingIntent = PendingIntent.getService(context, 0, new Intent(context, GeofencingService.class),
-                                                 PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
@@ -200,10 +206,19 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
         @Override
         public void onReceive(Context context, Intent intent) {
             if (BROADCAST_INTENT_ACTION.equals(intent.getAction()) && intent.hasExtra(GEOFENCES_EXTRA_ID)) {
-                logger.d("geofencing event");
-                // TODO handle this
-                //DetectedActivity detectedActivity = intent.getParcelableExtra(DETECTED_ACTIVITY_EXTRA_ID);
-                //notifyActivity(detectedActivity);
+                logger.d("Received geofencing event");
+                final int transitionType = intent.getIntExtra(TRANSITION_EXTRA_ID, -1);
+                final List<String> geofencingIds = intent.getStringArrayListExtra(GEOFENCES_EXTRA_ID);
+                for (final String geofenceId : geofencingIds) {
+                    // Get GeofenceModel
+                    GeofenceModel geofenceModel = geofencingStore.get(geofenceId);
+                    if (geofenceModel != null) {
+                        listener.onGeofenceTransition(geofenceModel.toGeofence(), transitionType);
+                    } else {
+                        logger.w("Tried to retrieve geofence " + geofenceId + " but it was not in the store");
+                    }
+
+                }
             }
         }
     };
@@ -216,7 +231,6 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
         @Override
         protected void onHandleIntent(Intent intent) {
-            // TODO this - http://developer.android.com/training/location/geofencing.html
             GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
             if (!geofencingEvent.hasError()) {
                 int transition = geofencingEvent.getGeofenceTransition();
@@ -242,7 +256,6 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
         } else if (status.hasResolution() && context instanceof Activity) {
             logger.w(
                     "Unable to register, but we can solve this - will startActivityForResult expecting result code " + RESULT_CODE + " (if received, please try again)");
-
             try {
                 status.startResolutionForResult((Activity) context, RESULT_CODE);
             } catch (IntentSender.SendIntentException e) {
