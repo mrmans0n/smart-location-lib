@@ -16,13 +16,7 @@ You should add this to your dependencies:
 compile 'io.nlopez.smartlocation:library:3.0.5'
 ```
 
-If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
-
-```groovy
-compile ('io.nlopez.smartlocation:library:3.0.5') {
-	transitive = false
-}
-```
+If you got any problem compiling, please check the Known Problems section of this document.
 
 ## Location
 
@@ -130,6 +124,34 @@ SmartLocation.with(context).geofencing()
     .remove("already_existing_geofence_id")
     .start(new OnGeofencingTransitionListener() { ... });
 ````
+
+Known Problems
+--------------
+
+If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
+
+```groovy
+compile ('io.nlopez.smartlocation:library:3.0.5') {
+	transitive = false
+}
+```
+
+If you got an error in the manifest merging, like this one: 
+
+```
+> Manifest merger failed : Attribute meta-data#com.google.android.gms.version@value value=(@integer/google_play_services_version) from AndroidManifest.xml:44:13
+    is also present at io.nlopez.smartlocation:library:3.0.5:28:13 value=(6587000)
+    Suggestion: add 'tools:replace="android:value"' to <meta-data> element at AndroidManifest.xml:42:9 to override
+
+
+    Error:(46, 13) Attribute meta-data#com.google.android.gms.version@value value=(@integer/google_play_services_version) from AndroidManifest.xml:46:13
+```
+
+If you follow the suggestion provided, you can get rid of it easily. Just change in your manifest the meta-data tag with the google play services version, like this:
+
+```xml
+<meta-data tools:replace="android:value" android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+```
 
 Contributing
 ------------
