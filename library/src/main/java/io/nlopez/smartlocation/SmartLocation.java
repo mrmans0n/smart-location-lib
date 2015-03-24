@@ -45,7 +45,12 @@ public class SmartLocation {
         return new LocationControl(this);
     }
 
+    @Deprecated
     public ActivityRecognitionControl activityRecognition() {
+        return new ActivityRecognitionControl(this);
+    }
+
+    public ActivityRecognitionControl activity() {
         return new ActivityRecognitionControl(this);
     }
 
