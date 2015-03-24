@@ -16,7 +16,7 @@ You should add this to your dependencies:
 compile 'io.nlopez.smartlocation:library:3.0.5'
 ```
 
-If you got any problem compiling, please check the Known Problems section of this document.
+If you got any problem compiling, please check the Common Issues section at the bottom of this document.
 
 ## Location
 
@@ -125,8 +125,8 @@ SmartLocation.with(context).geofencing()
     .start(new OnGeofencingTransitionListener() { ... });
 ````
 
-Known Problems
---------------
+Common issues
+-------------
 
 If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
 
