@@ -33,6 +33,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     private Logger logger;
     private OnLocationUpdatedListener listener;
     private boolean shouldStart = false;
+    private boolean stopped = false;
     private LocationStore locationStore;
     private LocationRequest locationRequest;
     private Context context;
@@ -100,6 +101,10 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
         locationRequest = createRequest(params, singleUpdate);
         if (client.isConnected()) {
             startUpdating(locationRequest);
+        } else if (stopped) {
+            shouldStart = true;
+            client.connect();
+            stopped = false;
         } else {
             shouldStart = true;
             logger.d("still not connected - scheduled start when connection is ok");
@@ -123,6 +128,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
             client.disconnect();
         }
         shouldStart = false;
+        stopped = true;
     }
 
     @Override
