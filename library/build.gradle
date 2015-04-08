@@ -15,7 +15,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '3.0.6'
+version '3.0.7-SNAPSHOT'
 group 'io.nlopez.smartlocation'
 
 robolectric {
