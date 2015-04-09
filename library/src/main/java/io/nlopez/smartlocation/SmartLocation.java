@@ -3,6 +3,7 @@ package io.nlopez.smartlocation;
 import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.android.gms.location.DetectedActivity;
 
@@ -19,6 +20,7 @@ import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServices
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProvider;
+import io.nlopez.smartlocation.location.utils.LocationState;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
 
@@ -133,6 +135,11 @@ public class SmartLocation {
             return this;
         }
 
+        public LocationState state() {
+            return LocationState.with(smartLocation.context);
+        }
+
+        @Nullable
         public Location getLastLocation() {
             return provider.getLastLocation();
         }
@@ -189,6 +196,7 @@ public class SmartLocation {
             return this;
         }
 
+        @Nullable
         public DetectedActivity getLastActivity() {
             return provider.getLastActivity();
         }
@@ -229,7 +237,7 @@ public class SmartLocation {
         }
 
         public GeofencingControl provider(@NonNull GeofencingProvider newProvider) {
-            if (provider != null &&newProvider.getClass().equals(provider.getClass())) {
+            if (provider != null && newProvider.getClass().equals(provider.getClass())) {
                 smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
             }
             provider = newProvider;
@@ -238,22 +246,22 @@ public class SmartLocation {
             return this;
         }
 
-        public GeofencingControl add(GeofenceModel geofenceModel) {
+        public GeofencingControl add(@NonNull GeofenceModel geofenceModel) {
             provider.addGeofence(geofenceModel);
             return this;
         }
 
-        public GeofencingControl remove(String geofenceId) {
+        public GeofencingControl remove(@NonNull String geofenceId) {
             provider.removeGeofence(geofenceId);
             return this;
         }
 
-        public GeofencingControl addAll(List<GeofenceModel> geofenceModelList) {
+        public GeofencingControl addAll(@NonNull List<GeofenceModel> geofenceModelList) {
             provider.addGeofences(geofenceModelList);
             return this;
         }
 
-        public GeofencingControl removeAll(List<String> geofenceIdsList) {
+        public GeofencingControl removeAll(@NonNull List<String> geofenceIdsList) {
             provider.removeGeofences(geofenceIdsList);
             return this;
         }

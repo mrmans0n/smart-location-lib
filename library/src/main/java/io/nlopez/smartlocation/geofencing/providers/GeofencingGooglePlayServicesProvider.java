@@ -36,7 +36,6 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
     public static final int RESULT_CODE = 10003;
 
-    private static final String GMS_ID = "GMS";
     private static final String BROADCAST_INTENT_ACTION = GeofencingGooglePlayServicesProvider.class.getCanonicalName() + ".GEOFENCE_TRANSITION";
     private static final String GEOFENCES_EXTRA_ID = "geofences";
     private static final String TRANSITION_EXTRA_ID = "transition";
