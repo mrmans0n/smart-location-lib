@@ -50,6 +50,7 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
     private GeofencingStore geofencingStore;
     private Context context;
     private PendingIntent pendingIntent;
+    private boolean stopped = false;
     private final GooglePlayServicesListener googlePlayServicesListener;
 
 
@@ -147,6 +148,9 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
         if (!client.isConnected()) {
             logger.d("still not connected - scheduled start when connection is ok");
+        } else if (stopped) {
+            client.connect();
+            stopped = false;
         }
     }
 
@@ -161,6 +165,7 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
         } catch (IllegalArgumentException e) {
             logger.d("Silenced 'receiver not registered' stuff (calling stop more times than necessary did this)");
         }
+        stopped = true;
     }
 
     @Override
