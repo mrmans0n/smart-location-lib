@@ -42,6 +42,7 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
     private ActivityStore activityStore;
     private Context context;
     private boolean shouldStart = false;
+    private boolean stopped = false;
     private PendingIntent pendingIntent;
     private ActivityParams activityParams;
     private final GooglePlayServicesListener googlePlayServicesListener;
@@ -85,6 +86,10 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
 
         if (client.isConnected()) {
             startUpdating(params);
+        } else if (stopped) {
+            shouldStart = true;
+            client.connect();
+            stopped = false;
         } else {
             shouldStart = true;
             logger.d("still not connected - scheduled start when connection is ok");
@@ -114,6 +119,7 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
             logger.d("Silenced 'receiver not registered' stuff (calling stop more times than necessary did this)");
         }
         shouldStart = false;
+        stopped = true;
     }
 
     @Override
