@@ -6,6 +6,9 @@ android:
     - build-tools-24.1.2
     - android-22
     - extra-android-m2repository
+    - extra-google-m2repository
+    - extra-google-google_play_services
+
 
 script:
     - cp gradle.properties.example gradle.properties
