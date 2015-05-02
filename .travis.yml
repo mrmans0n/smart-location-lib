@@ -3,8 +3,9 @@ jdk: oraclejdk7
 
 android:
   components:
-    - build-tools-21.1.2
-    - android-21
+    - build-tools-24.1.2
+    - android-22
+    - extra-android-m2repository
 
 script:
     - cp gradle.properties.example gradle.properties
