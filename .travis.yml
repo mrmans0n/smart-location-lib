@@ -9,7 +9,6 @@ android:
     - extra-google-m2repository
     - extra-google-google_play_services
 
-
 script:
     - cp gradle.properties.example gradle.properties
     - ./gradlew clean assembleDebug testDebug
