@@ -20,7 +20,6 @@ group 'io.nlopez.smartlocation'
 
 robolectric {
     include '**/*Test.class'
-    exclude '**/espresso/**/*.class'
 }
 
 dependencies {
@@ -45,7 +44,6 @@ android {
             targetSdkVersion 21
             versionCode 20005
             versionName version
-            testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
         }
     }
 
