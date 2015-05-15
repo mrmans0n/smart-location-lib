@@ -125,6 +125,8 @@ SmartLocation.with(context).geofencing()
     .start(new OnGeofencingTransitionListener() { ... });
 ````
 
+If you want to capture the Geofence transitions without the app running, you can hook up a BroadcastReceiver to the intent action stored in the `GeofencingGooglePlayServicesProvider.BROADCAST_INTENT_ACTION` constant. The intent will come with the geofence, the location and the type of transition within the bundle.
+
 Common issues
 -------------
 
