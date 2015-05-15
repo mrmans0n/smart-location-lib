@@ -20,6 +20,7 @@ import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.nlopez.smartlocation.OnGeofencingTransitionListener;
@@ -36,13 +37,13 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
     public static final int RESULT_CODE = 10003;
 
-    private static final String BROADCAST_INTENT_ACTION = GeofencingGooglePlayServicesProvider.class.getCanonicalName() + ".GEOFENCE_TRANSITION";
-    private static final String GEOFENCES_EXTRA_ID = "geofences";
-    private static final String TRANSITION_EXTRA_ID = "transition";
-    private static final String LOCATION_EXTRA_ID = "location";
+    public static final String BROADCAST_INTENT_ACTION = GeofencingGooglePlayServicesProvider.class.getCanonicalName() + ".GEOFENCE_TRANSITION";
+    public static final String GEOFENCES_EXTRA_ID = "geofences";
+    public static final String TRANSITION_EXTRA_ID = "transition";
+    public static final String LOCATION_EXTRA_ID = "location";
 
-    private final List<Geofence> geofencesToAdd = new ArrayList<>();
-    private final List<String> geofencesToRemove = new ArrayList<>();
+    private final List<Geofence> geofencesToAdd = Collections.synchronizedList(new ArrayList<Geofence>());
+    private final List<String> geofencesToRemove = Collections.synchronizedList(new ArrayList<String>());
 
     private GoogleApiClient client;
     private Logger logger;
@@ -94,26 +95,25 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
     @Override
     public void addGeofences(List<GeofenceModel> geofenceList) {
-        synchronized (geofencesToAdd) {
-            List<Geofence> convertedGeofences = new ArrayList<>();
-            for (GeofenceModel geofenceModel : geofenceList) {
-                geofencingStore.put(geofenceModel.getRequestId(), geofenceModel);
-                convertedGeofences.add(geofenceModel.toGeofence());
+        List<Geofence> convertedGeofences = new ArrayList<>();
+        for (GeofenceModel geofenceModel : geofenceList) {
+            geofencingStore.put(geofenceModel.getRequestId(), geofenceModel);
+            convertedGeofences.add(geofenceModel.toGeofence());
+        }
+
+        if (client.isConnected()) {
+            if (geofencesToAdd.size() > 0) {
+                convertedGeofences.addAll(geofencesToAdd);
+                geofencesToAdd.clear();
             }
+            LocationServices.GeofencingApi.addGeofences(client, convertedGeofences, pendingIntent);
 
-            if (client.isConnected()) {
-                if (geofencesToAdd.size() > 0) {
-                    convertedGeofences.addAll(geofencesToAdd);
-                    geofencesToAdd.clear();
-                }
-                LocationServices.GeofencingApi.addGeofences(client, convertedGeofences, pendingIntent);
-
-            } else {
-                for (GeofenceModel geofenceModel : geofenceList) {
-                    geofencesToAdd.add(geofenceModel.toGeofence());
-                }
+        } else {
+            for (GeofenceModel geofenceModel : geofenceList) {
+                geofencesToAdd.add(geofenceModel.toGeofence());
             }
         }
+
     }
 
     @Override
@@ -125,21 +125,20 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
     @Override
     public void removeGeofences(List<String> geofenceIds) {
-        synchronized (geofencesToRemove) {
-            for (String id : geofenceIds) {
-                geofencingStore.remove(id);
-            }
-
-            if (client.isConnected()) {
-                if (geofencesToRemove.size() > 0) {
-                    geofenceIds.addAll(geofencesToRemove);
-                    geofencesToRemove.clear();
-                }
-                LocationServices.GeofencingApi.removeGeofences(client, geofenceIds);
-            } else {
-                geofencesToRemove.addAll(geofenceIds);
-            }
+        for (String id : geofenceIds) {
+            geofencingStore.remove(id);
         }
+
+        if (client.isConnected()) {
+            if (geofencesToRemove.size() > 0) {
+                geofenceIds.addAll(geofencesToRemove);
+                geofencesToRemove.clear();
+            }
+            LocationServices.GeofencingApi.removeGeofences(client, geofenceIds);
+        } else {
+            geofencesToRemove.addAll(geofenceIds);
+        }
+
     }
 
     @Override
