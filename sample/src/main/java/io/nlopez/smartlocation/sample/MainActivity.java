@@ -1,8 +1,10 @@
 package io.nlopez.smartlocation.sample;
 
 import android.app.Activity;
+import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -11,9 +13,13 @@ import android.widget.TextView;
 import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.Geofence;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.nlopez.smartlocation.OnActivityUpdatedListener;
 import io.nlopez.smartlocation.OnGeofencingTransitionListener;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
+import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 
@@ -88,7 +94,7 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
             );
         }
 
-        DetectedActivity detectedActivity = SmartLocation.with(this).activityRecognition().getLastActivity();
+        DetectedActivity detectedActivity = SmartLocation.with(this).activity().getLastActivity();
         if (detectedActivity != null) {
             activityText.setText(
                     String.format("[From Cache] Activity %s with %d%% confidence",
@@ -116,7 +122,7 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         SmartLocation.with(this).location().stop();
         locationText.setText("Location stopped!");
 
-        SmartLocation.with(this).activityRecognition().stop();
+        SmartLocation.with(this).activity().stop();
         activityText.setText("Activity Recognition stopped!");
 
         SmartLocation.with(this).geofencing().stop();
@@ -129,7 +135,24 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
                     location.getLatitude(),
                     location.getLongitude());
             locationText.setText(text);
-            
+
+            // We are going to get the address for the current position
+            SmartLocation.with(this).geocoding().add(location).start(new OnReverseGeocodingListener() {
+                @Override
+                public void onAddressResolved(Location original, List<Address> results) {
+                    if (results.size() > 0) {
+                        Address result = results.get(0);
+                        StringBuilder builder = new StringBuilder(text);
+                        builder.append("\n\n");
+                        List<String> addressElements = new ArrayList<>();
+                        for (int i = 0; i <= result.getMaxAddressLineIndex(); i++) {
+                            addressElements.add(result.getAddressLine(i));
+                        }
+                        builder.append(TextUtils.join(", ", addressElements));
+                        locationText.setText(builder.toString());
+                    }
+                }
+            });
         } else {
             locationText.setText("Null location");
         }

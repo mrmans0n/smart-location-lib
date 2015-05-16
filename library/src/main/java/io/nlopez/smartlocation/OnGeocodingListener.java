@@ -8,5 +8,5 @@ import java.util.List;
  * Created by mrm on 4/1/15.
  */
 public interface OnGeocodingListener {
-    void onLocationResolved(String name, List<Address> result);
+    void onLocationResolved(String name, List<Address> results);
 }

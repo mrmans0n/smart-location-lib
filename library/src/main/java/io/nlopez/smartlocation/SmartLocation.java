@@ -14,6 +14,8 @@ import java.util.Map;
 import io.nlopez.smartlocation.activity.ActivityProvider;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
 import io.nlopez.smartlocation.activity.providers.ActivityGooglePlayServicesProvider;
+import io.nlopez.smartlocation.geocoding.GeocodingProvider;
+import io.nlopez.smartlocation.geocoding.providers.AndroidGeocodingProvider;
 import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider;
@@ -49,7 +51,7 @@ public class SmartLocation {
 
     @Deprecated
     public ActivityRecognitionControl activityRecognition() {
-        return new ActivityRecognitionControl(this);
+        return activity();
     }
 
     public ActivityRecognitionControl activity() {
@@ -58,6 +60,10 @@ public class SmartLocation {
 
     public GeofencingControl geofencing() {
         return new GeofencingControl(this);
+    }
+
+    public GeocodingControl geocoding() {
+        return new GeocodingControl(this);
     }
 
     public static class Builder {
@@ -160,6 +166,104 @@ public class SmartLocation {
         }
     }
 
+    public static class GeocodingControl {
+
+        private static final Map<Context, GeocodingProvider> MAPPING = new HashMap<>();
+
+        private final SmartLocation smartLocation;
+        private GeocodingProvider provider;
+        private boolean directAdded = false;
+        private boolean reverseAdded = false;
+
+        public GeocodingControl(SmartLocation smartLocation) {
+            this.smartLocation = smartLocation;
+
+            if (smartLocation.preInitialize) {
+                if (!MAPPING.containsKey(smartLocation.context)) {
+                    MAPPING.put(smartLocation.context, new AndroidGeocodingProvider());
+                }
+                provider = MAPPING.get(smartLocation.context);
+                provider.init(smartLocation.context, smartLocation.logger);
+            }
+        }
+
+        public GeocodingControl provider(@NonNull GeocodingProvider newProvider) {
+            if (directAdded || reverseAdded) {
+                throw new RuntimeException("Custom providers should be set up before adding geofences");
+            }
+            if (provider != null && newProvider.getClass().equals(provider.getClass())) {
+                smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
+            }
+            provider = newProvider;
+            MAPPING.put(smartLocation.context, newProvider);
+            provider.init(smartLocation.context, smartLocation.logger);
+            return this;
+        }
+
+        public GeocodingControl get() {
+            return this;
+        }
+
+        public GeocodingControl add(@NonNull Location location) {
+            reverseAdded = true;
+            provider.addLocation(location, 1);
+            return this;
+        }
+
+        public GeocodingControl add(@NonNull Location location, int maxResults) {
+            reverseAdded = true;
+            provider.addLocation(location, maxResults);
+            return this;
+        }
+
+        public GeocodingControl add(@NonNull String name) {
+            directAdded = true;
+            provider.addName(name, 1);
+            return this;
+        }
+
+        public GeocodingControl add(@NonNull String name, int maxResults) {
+            directAdded = true;
+            provider.addName(name, maxResults);
+            return this;
+        }
+
+        public void start(OnGeocodingListener geocodingListener) {
+            start(geocodingListener, null);
+        }
+
+        public void start(OnReverseGeocodingListener reverseGeocodingListener) {
+            start(null, reverseGeocodingListener);
+        }
+
+        /**
+         * Starts the geocoder conversions, for either direct geocoding (name to location) and reverse geocoding (location to address).
+         *
+         * @param geocodingListener        will be called for name to location queries
+         * @param reverseGeocodingListener will be called for location to name queries
+         */
+        public void start(OnGeocodingListener geocodingListener, OnReverseGeocodingListener reverseGeocodingListener) {
+            if (provider == null) {
+                throw new RuntimeException("A provider must be initialized");
+            }
+            if (directAdded && geocodingListener == null) {
+                smartLocation.logger.w("Some places were added for geocoding but the listener was not specified!");
+            }
+            if (reverseAdded && reverseGeocodingListener == null) {
+                smartLocation.logger.w("Some places were added for reverse geocoding but the listener was not specified!");
+            }
+
+            provider.start(geocodingListener, reverseGeocodingListener);
+        }
+
+        /**
+         * Cleans up after the geocoder calls. Will be needed for avoiding possible leaks in registered receivers.
+         */
+        public void stop() {
+            provider.stop();
+        }
+    }
+
 
     public static class ActivityRecognitionControl {
         private static final Map<Context, ActivityProvider> MAPPING = new HashMap<>();
@@ -223,6 +327,7 @@ public class SmartLocation {
 
         private final SmartLocation smartLocation;
         private GeofencingProvider provider;
+        private boolean alreadyAdded = false;
 
         public GeofencingControl(SmartLocation smartLocation) {
             this.smartLocation = smartLocation;
@@ -237,6 +342,9 @@ public class SmartLocation {
         }
 
         public GeofencingControl provider(@NonNull GeofencingProvider newProvider) {
+            if (alreadyAdded) {
+                throw new RuntimeException("Custom providers should be set up before adding geofences");
+            }
             if (provider != null && newProvider.getClass().equals(provider.getClass())) {
                 smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
             }
@@ -247,6 +355,7 @@ public class SmartLocation {
         }
 
         public GeofencingControl add(@NonNull GeofenceModel geofenceModel) {
+            alreadyAdded = true;
             provider.addGeofence(geofenceModel);
             return this;
         }
@@ -257,6 +366,7 @@ public class SmartLocation {
         }
 
         public GeofencingControl addAll(@NonNull List<GeofenceModel> geofenceModelList) {
+            alreadyAdded = true;
             provider.addGeofences(geofenceModelList);
             return this;
         }
