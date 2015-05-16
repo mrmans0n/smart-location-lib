@@ -137,13 +137,13 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
             locationText.setText(text);
 
             // We are going to get the address for the current position
-            SmartLocation.with(this).geocoding().add(location).start(new OnReverseGeocodingListener() {
+            SmartLocation.with(this).geocoding().reverse(location, new OnReverseGeocodingListener() {
                 @Override
                 public void onAddressResolved(Location original, List<Address> results) {
                     if (results.size() > 0) {
                         Address result = results.get(0);
                         StringBuilder builder = new StringBuilder(text);
-                        builder.append("\n\n");
+                        builder.append("\n[Reverse Geocoding] ");
                         List<String> addressElements = new ArrayList<>();
                         for (int i = 0; i <= result.getMaxAddressLineIndex(); i++) {
                             addressElements.add(result.getAddressLine(i));

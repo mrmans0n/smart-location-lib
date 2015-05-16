@@ -27,7 +27,7 @@ import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
 
 /**
- * Created by Nacho L. on 17/06/13.
+ * Managing class for SmartLocation library.
  */
 public class SmartLocation {
 
@@ -35,6 +35,13 @@ public class SmartLocation {
     private Logger logger;
     private boolean preInitialize;
 
+    /**
+     * Creates the SmartLocation basic instance.
+     *
+     * @param context       execution context
+     * @param logger        logger interface
+     * @param preInitialize TRUE (default) if we want to instantiate directly the default providers. FALSE if we want to initialize them ourselves.
+     */
     private SmartLocation(Context context, Logger logger, boolean preInitialize) {
         this.context = context;
         this.logger = logger;
@@ -45,23 +52,41 @@ public class SmartLocation {
         return new Builder(context).build();
     }
 
+    /**
+     * @return request handler for location operations
+     */
     public LocationControl location() {
         return new LocationControl(this);
     }
 
+    /**
+     * Builder for activity recognition. Use activity() instead.
+     *
+     * @return builder for activity recognition.
+     * @deprecated
+     */
     @Deprecated
     public ActivityRecognitionControl activityRecognition() {
         return activity();
     }
 
+    /**
+     * @return request handler for activity recognition
+     */
     public ActivityRecognitionControl activity() {
         return new ActivityRecognitionControl(this);
     }
 
+    /**
+     * @return request handler for geofencing operations
+     */
     public GeofencingControl geofencing() {
         return new GeofencingControl(this);
     }
 
+    /**
+     * @return request handler for geocoding operations
+     */
     public GeocodingControl geocoding() {
         return new GeocodingControl(this);
     }
@@ -202,6 +227,16 @@ public class SmartLocation {
 
         public GeocodingControl get() {
             return this;
+        }
+
+        public void reverse(@NonNull Location location, @NonNull OnReverseGeocodingListener reverseGeocodingListener) {
+            add(location);
+            start(reverseGeocodingListener);
+        }
+
+        public void direct(@NonNull String name, @NonNull OnGeocodingListener geocodingListener) {
+            add(name);
+            start(geocodingListener);
         }
 
         public GeocodingControl add(@NonNull Location location) {

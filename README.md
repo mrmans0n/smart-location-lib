@@ -13,7 +13,7 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:3.0.9'
+compile 'io.nlopez.smartlocation:library:3.0.10'
 ```
 
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
@@ -97,8 +97,6 @@ SmartLocation.with(context).activityRecognition().stop();
 
 ## Geofencing
 
-This is still experimental. Please notify me of any problems you might find with it.
-
 We can add geofences and receive the information when we enter, exit or dwell in a Geofence. The geofences are defined by a GeofenceModel, and you should use the requestId as a identifier.
 
 We can add and remove geofences with a similar syntax as all the others.
@@ -127,13 +125,64 @@ SmartLocation.with(context).geofencing()
 
 If you want to capture the Geofence transitions without the app running, you can hook up a BroadcastReceiver to the intent action stored in the `GeofencingGooglePlayServicesProvider.BROADCAST_INTENT_ACTION` constant. The intent will come with the geofence, the location and the type of transition within the bundle.
 
+## Geocoding
+
+The library has support for direct geocoding (aka getting a Location object based on a String) and reverse geocoding (getting the Street name based on a Location object).
+
+There are pretty basic calls in the API for both operations separatedly.
+
+### Direct geocoding
+````java
+SmartLocation.with(context).geocoding()
+    .direct("Estadi de Mestalla", new OnGeocodingListener() {
+        @Override
+        public void onLocationResolved(String name, List<LocationAddress> results) {
+            // name is the same you introduced in the parameters of the call
+            // LocationAddress is a wrapper class for Address that has a Location based on its data
+            Location mestallaLocation = results.get(0).getLocation();
+            // [...] Do your thing! :D
+        }
+    });
+````
+
+### Reverse geocoding
+````java
+SmartLocation.with(context).geocoding()
+    .reverse(location, new OnReverseGeocodingListener() {
+        @Override
+        public onAddressResolved(Location original, List<Address> results) {
+            // ...
+        }
+    });
+````
+
+### Mixing things up
+
+But we can mix and batch those requests, if needed. Also, you can provide the number of maximum possible matches you want to receive for each one of the lookups separatedly.
+
+````java
+Location myLocation1 = new Location(...);
+
+SmartLocation.with(context).geocoding()
+    .add("Estadi de Mestalla", 5)
+    .add("Big Ben", 2)
+    .add(myLocation1, 4)
+    .start(directGeocodingListener, reverseGeocodingListener);
+````
+
+This will launch a new call to the callbacks everytime one of the geofence lookups is resolved.
+
+### Stopping
+
+You should invoke the stop method whenever the calling activity/fragment or whatever is going to be destroyed, for cleanup purposes.
+
 Common issues
 -------------
 
 If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
 
 ```groovy
-compile ('io.nlopez.smartlocation:library:3.0.9) {
+compile ('io.nlopez.smartlocation:library:3.0.10) {
 	transitive = false
 }
 ```

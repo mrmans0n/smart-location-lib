@@ -12,15 +12,17 @@ import android.location.Location;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import io.nlopez.smartlocation.OnGeocodingListener;
 import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.geocoding.GeocodingProvider;
+import io.nlopez.smartlocation.geocoding.utils.LocationAddress;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**
- * Created by mrm on 16/5/15.
+ * Geocoding provider based on Android's Geocoder class.
  */
 public class AndroidGeocodingProvider implements GeocodingProvider {
     private static final String BROADCAST_DIRECT_GEOCODING_ACTION = AndroidGeocodingProvider.class.getCanonicalName() + ".DIRECT_GEOCODE_ACTION";
@@ -116,7 +118,7 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
                 logger.d("sending new direct geocoding response");
                 if (geocodingListener != null) {
                     String name = intent.getStringExtra(NAME_ID);
-                    ArrayList<Address> results = (ArrayList<Address>) intent.getSerializableExtra(RESULT_ID);
+                    ArrayList<LocationAddress> results = intent.getParcelableArrayListExtra(RESULT_ID);
                     geocodingListener.onLocationResolved(name, results);
                 }
             }
@@ -155,7 +157,7 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
                 HashMap<String, Integer> nameList = (HashMap<String, Integer>) intent.getSerializableExtra(DIRECT_GEOCODING_ID);
                 for (String name : nameList.keySet()) {
                     int maxResults = nameList.get(name);
-                    ArrayList<Address> response = addressFromName(name, maxResults);
+                    ArrayList<LocationAddress> response = addressFromName(name, maxResults);
                     sendDirectGeocodingBroadcast(name, response);
                 }
             }
@@ -170,7 +172,7 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
             }
         }
 
-        private void sendDirectGeocodingBroadcast(String name, ArrayList<Address> results) {
+        private void sendDirectGeocodingBroadcast(String name, ArrayList<LocationAddress> results) {
             Intent directIntent = new Intent(BROADCAST_DIRECT_GEOCODING_ACTION);
             directIntent.putExtra(NAME_ID, name);
             directIntent.putExtra(RESULT_ID, results);
@@ -192,9 +194,14 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
             return new ArrayList<>();
         }
 
-        private ArrayList<Address> addressFromName(String name, int maxResults) {
+        private ArrayList<LocationAddress> addressFromName(String name, int maxResults) {
             try {
-                return new ArrayList<>(geocoder.getFromLocationName(name, maxResults));
+                List<Address> addresses = geocoder.getFromLocationName(name, maxResults);
+                ArrayList<LocationAddress> result = new ArrayList<>();
+                for (Address address : addresses) {
+                    result.add(new LocationAddress(address));
+                }
+                return result;
             } catch (IOException ignored) {
             }
             return new ArrayList<>();
