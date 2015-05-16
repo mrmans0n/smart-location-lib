@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="io.nlopez.smartlocation.sample"
-          android:versionCode="1"
-          android:versionName="1.0">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.nlopez.smartlocation.sample"
+    android:versionCode="1"
+    android:versionName="1.0">
 
     <uses-sdk
-            android:minSdkVersion="9"
-            android:targetSdkVersion="19"/>
+        android:minSdkVersion="9"
+        android:targetSdkVersion="19" />
 
     <application
-            android:label="SmartLocation Sample"
-            android:icon="@drawable/ic_launcher">
+        android:icon="@drawable/ic_launcher"
+        android:label="SmartLocation Sample">
 
         <activity
-                android:name="io.nlopez.smartlocation.sample.MainActivity"
-                android:label="SmartLocation Sample"
-                android:screenOrientation="portrait">
+            android:name="io.nlopez.smartlocation.sample.MainActivity"
+            android:label="SmartLocation Sample"
+            android:screenOrientation="portrait">
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"
+            tools:replace="android:value" />
     </application>
 </manifest>

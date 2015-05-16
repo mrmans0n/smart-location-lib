@@ -12,18 +12,18 @@ import io.nlopez.smartlocation.utils.Logger;
  * Created by mrm on 20/12/14.
  */
 public interface GeofencingProvider {
-    public void init(Context context, Logger logger);
+    void init(Context context, Logger logger);
 
-    public void start(OnGeofencingTransitionListener listener);
+    void start(OnGeofencingTransitionListener listener);
 
-    public void addGeofence(GeofenceModel geofence);
+    void addGeofence(GeofenceModel geofence);
 
-    public void addGeofences(List<GeofenceModel> geofenceList);
+    void addGeofences(List<GeofenceModel> geofenceList);
 
-    public void removeGeofence(String geofenceId);
+    void removeGeofence(String geofenceId);
 
-    public void removeGeofences(List<String> geofenceIds);
+    void removeGeofences(List<String> geofenceIds);
 
-    public void stop();
+    void stop();
 
 }

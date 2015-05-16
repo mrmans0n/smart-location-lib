@@ -6,10 +6,13 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.DetectedActivity;
 
+import io.nlopez.smartlocation.common.Store;
+import io.nlopez.smartlocation.utils.VisibilityIncreasedForTesting;
+
 /**
  * Created by mrm on 3/1/15.
  */
-public class ActivityStore {
+public class ActivityStore implements Store<DetectedActivity> {
 
     private static final String PREFERENCES_FILE = "ACTIVITY_STORE";
     private static final String PREFIX_ID = ActivityStore.class.getCanonicalName() + ".KEY";
@@ -23,10 +26,12 @@ public class ActivityStore {
         preferences = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
+    @VisibilityIncreasedForTesting
     public void setPreferences(SharedPreferences preferences) {
         this.preferences = preferences;
     }
 
+    @Override
     public void put(String id, DetectedActivity activity) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(getFieldKey(id, ACTIVITY_ID), activity.getType());
@@ -35,6 +40,7 @@ public class ActivityStore {
         editor.apply();
     }
 
+    @Override
     public DetectedActivity get(String id) {
         if (preferences != null && preferences.contains(getFieldKey(id, ACTIVITY_ID)) && preferences.contains(getFieldKey(id, CONFIDENCE_ID))) {
             int activity = preferences.getInt(getFieldKey(id, ACTIVITY_ID), DetectedActivity.UNKNOWN);
@@ -46,6 +52,7 @@ public class ActivityStore {
         }
     }
 
+    @Override
     public void remove(String id) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove(getFieldKey(id, ACTIVITY_ID));

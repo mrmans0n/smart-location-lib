@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
+import io.nlopez.smartlocation.common.Store;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
+import io.nlopez.smartlocation.utils.VisibilityIncreasedForTesting;
 
 /**
  * Created by mrm on 3/1/15.
  */
-public class GeofencingStore {
+public class GeofencingStore implements Store<GeofenceModel> {
 
     private static final String PREFERENCES_FILE = "GEOFENCING_STORE";
     private static final String PREFIX_ID = GeofencingStore.class.getCanonicalName() + ".KEY";
@@ -26,10 +28,12 @@ public class GeofencingStore {
         preferences = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
+    @VisibilityIncreasedForTesting
     public void setPreferences(SharedPreferences preferences) {
         this.preferences = preferences;
     }
 
+    @Override
     public void put(String id, GeofenceModel geofenceModel) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putLong(getFieldKey(id, LATITUDE_ID), Double.doubleToLongBits(geofenceModel.getLatitude()));
@@ -41,6 +45,7 @@ public class GeofencingStore {
         editor.apply();
     }
 
+    @Override
     public GeofenceModel get(String id) {
         if (preferences != null && preferences.contains(getFieldKey(id, LATITUDE_ID)) && preferences.contains(getFieldKey(id, LONGITUDE_ID))) {
             GeofenceModel.Builder builder = new GeofenceModel.Builder(id);
@@ -56,6 +61,7 @@ public class GeofencingStore {
         }
     }
 
+    @Override
     public void remove(String id) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove(getFieldKey(id, LATITUDE_ID));

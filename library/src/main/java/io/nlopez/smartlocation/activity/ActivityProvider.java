@@ -12,11 +12,11 @@ import io.nlopez.smartlocation.utils.Logger;
  * Created by mrm on 3/1/15.
  */
 public interface ActivityProvider {
-    public void init(Context context, Logger logger);
+    void init(Context context, Logger logger);
 
-    public void start(OnActivityUpdatedListener listener, ActivityParams params);
+    void start(OnActivityUpdatedListener listener, ActivityParams params);
 
-    public void stop();
+    void stop();
 
-    public DetectedActivity getLastActivity();
+    DetectedActivity getLastActivity();
 }

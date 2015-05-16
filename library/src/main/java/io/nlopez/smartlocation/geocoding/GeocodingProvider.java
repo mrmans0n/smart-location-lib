@@ -1,4 +1,4 @@
-package io.nlopez.smartlocation.location;
+package io.nlopez.smartlocation.geocoding;
 
 import android.content.Context;
 import android.location.Location;
@@ -10,13 +10,13 @@ import io.nlopez.smartlocation.utils.Logger;
 /**
  * Created by mrm on 20/12/14.
  */
-public interface LocationProvider {
+public interface GeocodingProvider {
     void init(Context context, Logger logger);
 
-    void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate);
+    void fromName(String name, int maxResults);
+
+    void fromLocation(Location location, int maxResults);
 
     void stop();
-
-    Location getLastLocation();
 
 }

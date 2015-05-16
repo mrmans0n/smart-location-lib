@@ -5,10 +5,13 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.support.annotation.NonNull;
 
+import io.nlopez.smartlocation.common.Store;
+import io.nlopez.smartlocation.utils.VisibilityIncreasedForTesting;
+
 /**
  * Created by mrm on 3/1/15.
  */
-public class LocationStore {
+public class LocationStore implements Store<Location> {
 
     public static final String PROVIDER = "LocationStore";
 
@@ -29,10 +32,12 @@ public class LocationStore {
         preferences = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
+    @VisibilityIncreasedForTesting
     public void setPreferences(SharedPreferences preferences) {
         this.preferences = preferences;
     }
 
+    @Override
     public void put(String id, Location location) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(getFieldKey(id, PROVIDER_ID), location.getProvider());
@@ -46,6 +51,7 @@ public class LocationStore {
         editor.apply();
     }
 
+    @Override
     public Location get(String id) {
         if (preferences != null && preferences.contains(getFieldKey(id, LATITUDE_ID)) && preferences.contains(
                 getFieldKey(id, LONGITUDE_ID))) {
@@ -63,6 +69,7 @@ public class LocationStore {
         }
     }
 
+    @Override
     public void remove(String id) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove(getFieldKey(id, PROVIDER_ID));
