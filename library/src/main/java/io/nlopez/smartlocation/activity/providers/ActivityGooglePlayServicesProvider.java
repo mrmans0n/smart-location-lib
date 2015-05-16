@@ -63,9 +63,6 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
 
         activityStore = new ActivityStore(context);
 
-        IntentFilter intentFilter = new IntentFilter(BROADCAST_INTENT_ACTION);
-        context.registerReceiver(activityReceiver, intentFilter);
-
         if (!shouldStart) {
             this.client = new GoogleApiClient.Builder(context)
                     .addApi(ActivityRecognition.API)
@@ -83,6 +80,9 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
     public void start(OnActivityUpdatedListener listener, @NonNull ActivityParams params) {
         this.activityParams = params;
         this.listener = listener;
+
+        IntentFilter intentFilter = new IntentFilter(BROADCAST_INTENT_ACTION);
+        context.registerReceiver(activityReceiver, intentFilter);
 
         if (client.isConnected()) {
             startUpdating(params);

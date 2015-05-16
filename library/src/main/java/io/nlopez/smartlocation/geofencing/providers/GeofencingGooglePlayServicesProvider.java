@@ -71,9 +71,6 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
         geofencingStore = new GeofencingStore(context);
 
-        IntentFilter intentFilter = new IntentFilter(BROADCAST_INTENT_ACTION);
-        context.registerReceiver(geofencingReceiver, intentFilter);
-
         this.client = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -144,6 +141,9 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
     @Override
     public void start(OnGeofencingTransitionListener listener) {
         this.listener = listener;
+
+        IntentFilter intentFilter = new IntentFilter(BROADCAST_INTENT_ACTION);
+        context.registerReceiver(geofencingReceiver, intentFilter);
 
         if (!client.isConnected()) {
             logger.d("still not connected - scheduled start when connection is ok");

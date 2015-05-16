@@ -103,7 +103,7 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         SmartLocation smartLocation = new SmartLocation.Builder(this).logging(true).build();
 
         smartLocation.location().start(this);
-        smartLocation.activityRecognition().start(this);
+        smartLocation.activity().start(this);
 
         // Create some geofences
         GeofenceModel mestalla = new GeofenceModel.Builder("1").setTransition(Geofence.GEOFENCE_TRANSITION_ENTER).setLatitude(39.47453120000001).setLongitude(-0.358065799999963).setRadius(500).build();
@@ -125,11 +125,11 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
 
     private void showLocation(Location location) {
         if (location != null) {
-            locationText.setText(
-                    String.format("Latitude %.6f, Longitude %.6f",
-                            location.getLatitude(),
-                            location.getLongitude())
-            );
+            final String text = String.format("Latitude %.6f, Longitude %.6f",
+                    location.getLatitude(),
+                    location.getLongitude());
+            locationText.setText(text);
+            
         } else {
             locationText.setText("Null location");
         }
