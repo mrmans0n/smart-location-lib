@@ -138,9 +138,12 @@ SmartLocation.with(context).geocoding()
         @Override
         public void onLocationResolved(String name, List<LocationAddress> results) {
             // name is the same you introduced in the parameters of the call
+            // results could come empty if there is no match, so please add some checks around that
             // LocationAddress is a wrapper class for Address that has a Location based on its data
-            Location mestallaLocation = results.get(0).getLocation();
-            // [...] Do your thing! :D
+            if (results.size() > 0) {
+            	Location mestallaLocation = results.get(0).getLocation();
+            	// [...] Do your thing! :D
+            }
         }
     });
 ````
