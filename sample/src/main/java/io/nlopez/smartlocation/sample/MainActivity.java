@@ -69,7 +69,7 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         super.onResume();
 
         showLast();
-
+        
         if (userWantsLocation && !isCapturingLocation) {
             startLocation();
         }

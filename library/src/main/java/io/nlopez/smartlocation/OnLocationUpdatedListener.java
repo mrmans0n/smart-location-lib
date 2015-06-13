@@ -6,5 +6,5 @@ import android.location.Location;
  * Created by mrm on 4/1/15.
  */
 public interface OnLocationUpdatedListener {
-    public void onLocationUpdated(Location location);
+    void onLocationUpdated(Location location);
 }
