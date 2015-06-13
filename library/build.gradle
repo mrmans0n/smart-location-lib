@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.0'
+        classpath 'com.android.tools.build:gradle:1.2.3'
         classpath 'org.robolectric:robolectric-gradle-plugin:1.0.1'
     }
 }
@@ -15,11 +15,12 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '3.0.11-SNAPSHOT'
+version '3.1.11'
 group 'io.nlopez.smartlocation'
 
 robolectric {
     include '**/*Test.class'
+    ignoreVersionCheck true
 }
 
 dependencies {
@@ -27,7 +28,7 @@ dependencies {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:7.3.0'
+    compile 'com.google.android.gms:play-services-location:7.5.0'
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.0-SNAPSHOT'
     testCompile 'org.robolectric:robolectric-shadows:3.0-SNAPSHOT'
@@ -35,8 +36,8 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
 
     buildTypes {
         defaultConfig {
