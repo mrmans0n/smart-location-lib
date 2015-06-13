@@ -3,10 +3,10 @@ package io.nlopez.smartlocation.geofencing;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import io.nlopez.smartlocation.common.Store;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
-import io.nlopez.smartlocation.utils.VisibilityIncreasedForTesting;
 
 /**
  * Created by mrm on 3/1/15.
@@ -28,7 +28,7 @@ public class GeofencingStore implements Store<GeofenceModel> {
         preferences = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
-    @VisibilityIncreasedForTesting
+    @VisibleForTesting
     public void setPreferences(SharedPreferences preferences) {
         this.preferences = preferences;
     }

@@ -3,11 +3,12 @@ package io.nlopez.smartlocation.activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
+
 
 import com.google.android.gms.location.DetectedActivity;
 
 import io.nlopez.smartlocation.common.Store;
-import io.nlopez.smartlocation.utils.VisibilityIncreasedForTesting;
 
 /**
  * Created by mrm on 3/1/15.
@@ -26,7 +27,7 @@ public class ActivityStore implements Store<DetectedActivity> {
         preferences = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
-    @VisibilityIncreasedForTesting
+    @VisibleForTesting
     public void setPreferences(SharedPreferences preferences) {
         this.preferences = preferences;
     }
