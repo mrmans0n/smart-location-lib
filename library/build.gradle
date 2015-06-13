@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
-        classpath 'org.robolectric:robolectric-gradle-plugin:1.0.1'
+        classpath 'org.robolectric:robolectric-gradle-plugin:1.1.0'
     }
 }
 
@@ -17,11 +17,6 @@ apply plugin: 'signing'
 
 version '3.1.11'
 group 'io.nlopez.smartlocation'
-
-robolectric {
-    include '**/*Test.class'
-    ignoreVersionCheck true
-}
 
 dependencies {
     repositories {
