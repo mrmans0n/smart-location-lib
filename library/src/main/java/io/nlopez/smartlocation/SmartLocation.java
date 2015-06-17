@@ -7,9 +7,9 @@ import android.support.annotation.Nullable;
 
 import com.google.android.gms.location.DetectedActivity;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import io.nlopez.smartlocation.activity.ActivityProvider;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
@@ -120,7 +120,7 @@ public class SmartLocation {
 
     public static class LocationControl {
 
-        private static final Map<Context, LocationProvider> MAPPING = new HashMap<>();
+        private static final Map<Context, LocationProvider> MAPPING = new WeakHashMap<>();
 
         private final SmartLocation smartLocation;
         private LocationParams params;
@@ -193,7 +193,7 @@ public class SmartLocation {
 
     public static class GeocodingControl {
 
-        private static final Map<Context, GeocodingProvider> MAPPING = new HashMap<>();
+        private static final Map<Context, GeocodingProvider> MAPPING = new WeakHashMap<>();
 
         private final SmartLocation smartLocation;
         private GeocodingProvider provider;
@@ -301,7 +301,7 @@ public class SmartLocation {
 
 
     public static class ActivityRecognitionControl {
-        private static final Map<Context, ActivityProvider> MAPPING = new HashMap<>();
+        private static final Map<Context, ActivityProvider> MAPPING = new WeakHashMap<>();
 
         private final SmartLocation smartLocation;
         private ActivityParams params;
@@ -358,7 +358,7 @@ public class SmartLocation {
     }
 
     public static class GeofencingControl {
-        private static final Map<Context, GeofencingProvider> MAPPING = new HashMap<>();
+        private static final Map<Context, GeofencingProvider> MAPPING = new WeakHashMap<>();
 
         private final SmartLocation smartLocation;
         private GeofencingProvider provider;
