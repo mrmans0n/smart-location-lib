@@ -22,6 +22,7 @@ import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
+import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
 
 public class MainActivity extends Activity implements OnLocationUpdatedListener, OnActivityUpdatedListener, OnGeofencingTransitionListener {
 
@@ -69,7 +70,7 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         super.onResume();
 
         showLast();
-        
+
         if (userWantsLocation && !isCapturingLocation) {
             startLocation();
         }
@@ -189,8 +190,8 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
     }
 
     @Override
-    public void onGeofenceTransition(Geofence geofence, int transitionType) {
-        showGeofence(geofence, transitionType);
+    public void onGeofenceTransition(TransitionGeofence geofence) {
+        showGeofence(geofence.getGeofenceModel().toGeofence(), geofence.getTransitionType());
     }
 
     private String getNameFromType(DetectedActivity activityType) {

@@ -27,6 +27,7 @@ import io.nlopez.smartlocation.OnGeofencingTransitionListener;
 import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.GeofencingStore;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
+import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
 import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
 
@@ -216,7 +217,7 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
                     // Get GeofenceModel
                     GeofenceModel geofenceModel = geofencingStore.get(geofenceId);
                     if (geofenceModel != null) {
-                        listener.onGeofenceTransition(geofenceModel.toGeofence(), transitionType);
+                        listener.onGeofenceTransition(new TransitionGeofence(geofenceModel, transitionType));
                     } else {
                         logger.w("Tried to retrieve geofence " + geofenceId + " but it was not in the store");
                     }

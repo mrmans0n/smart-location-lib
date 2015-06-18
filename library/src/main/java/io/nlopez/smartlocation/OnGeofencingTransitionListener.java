@@ -1,10 +1,10 @@
 package io.nlopez.smartlocation;
 
-import com.google.android.gms.location.Geofence;
+import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
 
 /**
  * Created by mrm on 4/1/15.
  */
 public interface OnGeofencingTransitionListener {
-    void onGeofenceTransition(Geofence geofence, int transitionType);
+    void onGeofenceTransition(TransitionGeofence transitionGeofence);
 }
