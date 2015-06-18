@@ -23,7 +23,7 @@ import rx.functions.Action0;
 /**
  * Creates RxJava Observables for all the library calls.
  * <p/>
- * For now it provides just basic support for location and activity recognition.
+ * For now it provides just basic support for all the available actions.
  */
 public class ObservableFactory {
     private ObservableFactory() {
