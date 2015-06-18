@@ -97,7 +97,7 @@ public class SmartLocation {
         private boolean preInitialize;
 
         public Builder(@NonNull Context context) {
-            this.context = context.getApplicationContext();
+            this.context = context;
             this.loggingEnabled = false;
             this.preInitialize = true;
         }

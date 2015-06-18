@@ -262,6 +262,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
                     break;
                 case Activity.RESULT_CANCELED:
                     logger.i("User chose not to make required location settings changes.");
+                    stop();
                     break;
             }
         }
@@ -297,6 +298,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
                 case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                     logger.i("Location settings are inadequate, and cannot be fixed here. Dialog " +
                             "not created.");
+                    stop();
                     break;
             }
         }

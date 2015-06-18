@@ -1,6 +1,7 @@
 package io.nlopez.smartlocation.sample;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
@@ -23,14 +24,15 @@ import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
+import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProvider;
 
 public class MainActivity extends Activity implements OnLocationUpdatedListener, OnActivityUpdatedListener, OnGeofencingTransitionListener {
 
     private TextView locationText;
     private TextView activityText;
     private TextView geofenceText;
-    private boolean isCapturingLocation = false;
-    private boolean userWantsLocation = false;
+
+    private LocationGooglePlayServicesProvider provider;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -42,7 +44,6 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         startLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userWantsLocation = true;
                 startLocation();
             }
         });
@@ -51,7 +52,6 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         stopLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userWantsLocation = false;
                 stopLocation();
             }
         });
@@ -63,26 +63,8 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
 
         // Keep the screen always on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         showLast();
-
-        if (userWantsLocation && !isCapturingLocation) {
-            startLocation();
-        }
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (isCapturingLocation) {
-            stopLocation();
-        }
     }
 
     private void showLast() {
@@ -105,11 +87,22 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (provider != null) {
+            provider.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     private void startLocation() {
-        isCapturingLocation = true;
+
+        provider = new LocationGooglePlayServicesProvider();
+        provider.setCheckLocationSettings(true);
+
         SmartLocation smartLocation = new SmartLocation.Builder(this).logging(true).build();
 
-        smartLocation.location().start(this);
+        smartLocation.location().provider(provider).start(this);
         smartLocation.activity().start(this);
 
         // Create some geofences
@@ -118,8 +111,6 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
     }
 
     private void stopLocation() {
-        isCapturingLocation = false;
-
         SmartLocation.with(this).location().stop();
         locationText.setText("Location stopped!");
 
