@@ -123,7 +123,6 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
 
     private void startUpdating(LocationRequest request) {
         // TODO wait until the connection is done and retry
-        // TODO check if settings are okay
         if (checkLocationSettings && !fulfilledCheckLocationSettings) {
             logger.d("startUpdating wont be executed for now, as we have to test the location settings before");
             checkLocationSettings();
