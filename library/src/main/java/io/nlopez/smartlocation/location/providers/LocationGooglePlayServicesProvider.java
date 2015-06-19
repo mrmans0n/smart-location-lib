@@ -214,7 +214,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
 
         } else if (status.hasResolution() && context instanceof Activity) {
             logger.w(
-                    "Unable to register, but we can solve this - will startActivityForResult expecting result code " + REQUEST_START_LOCATION_FIX + " (if received, please try again)");
+                    "Unable to register, but we can solve this - will startActivityForResult. You should hook into the Activity onActivityResult and call this provider onActivityResult method for continuing this call flow.");
             try {
                 status.startResolutionForResult((Activity) context, REQUEST_START_LOCATION_FIX);
             } catch (IntentSender.SendIntentException e) {
@@ -264,6 +264,17 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
                     stop();
                     break;
             }
+        } else if (requestCode == REQUEST_START_LOCATION_FIX) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    logger.i("User fixed the problem.");
+                    startUpdating(locationRequest);
+                    break;
+                case Activity.RESULT_CANCELED:
+                    logger.i("User chose not to fix the problem.");
+                    stop();
+                    break;
+            }
         }
     }
 
@@ -279,7 +290,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
                     break;
                 case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                     logger.w("Location settings are not satisfied. Show the user a dialog to" +
-                            "upgrade location settings ");
+                            "upgrade location settings. You should hook into the Activity onActivityResult and call this provider onActivityResult method for continuing this call flow. ");
 
                     if (context instanceof Activity) {
                         try {
