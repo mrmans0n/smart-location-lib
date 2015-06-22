@@ -54,16 +54,16 @@ You can get some information about the current status of location providers to k
 SmartLocation.with(context).location().state().locationServicesEnabled();
 
 // Check if any provider (network or gps) is enabled
-SmartLocation.with(context).location().state().isAnyProviderAvailable()
+SmartLocation.with(context).location().state().isAnyProviderAvailable();
 
 // Check if GPS is available
-SmartLocation.with(context).location().state().isGpsAvailable()
+SmartLocation.with(context).location().state().isGpsAvailable();
 
 // Check if Network is available
-SmartLocation.with(context).location().state().isNetworkAvailable()
+SmartLocation.with(context).location().state().isNetworkAvailable();
 
 // Check if the passive provider is available
-SmartLocation.with(context).location().state().isPassiveAvailable()
+SmartLocation.with(context).location().state().isPassiveAvailable();
 ````
 
 ### Location strategy
