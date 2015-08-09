@@ -80,7 +80,7 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
         final Criteria criteria = new Criteria();
         switch (accuracy) {
             case HIGH:
-                criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+                criteria.setAccuracy(Criteria.ACCURACY_FINE);
                 criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
                 criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
                 criteria.setBearingAccuracy(Criteria.ACCURACY_HIGH);
@@ -88,7 +88,7 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
                 criteria.setPowerRequirement(Criteria.POWER_HIGH);
                 break;
             case MEDIUM:
-                criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                criteria.setAccuracy(Criteria.ACCURACY_COARSE);
                 criteria.setHorizontalAccuracy(Criteria.ACCURACY_MEDIUM);
                 criteria.setVerticalAccuracy(Criteria.ACCURACY_MEDIUM);
                 criteria.setBearingAccuracy(Criteria.ACCURACY_MEDIUM);
@@ -96,7 +96,7 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
                 criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
                 break;
             case LOW:
-                criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                criteria.setAccuracy(Criteria.ACCURACY_COARSE);
                 criteria.setHorizontalAccuracy(Criteria.ACCURACY_LOW);
                 criteria.setVerticalAccuracy(Criteria.ACCURACY_LOW);
                 criteria.setBearingAccuracy(Criteria.ACCURACY_LOW);
