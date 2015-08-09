@@ -61,4 +61,9 @@ public class LocationState {
     public boolean isPassiveAvailable() {
         return locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
     }
+
+    public boolean isMockSettingEnabled() {
+        return !("0".equals(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION)));
+    }
+}
 }
