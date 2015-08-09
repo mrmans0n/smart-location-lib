@@ -93,6 +93,10 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
                 serviceIntent.putExtra(REVERSE_GEOCODING_ID, fromLocationList);
             }
             context.startService(serviceIntent);
+
+            // Clear hashmaps so they don't stay added for next invocations
+            fromNameList.clear();
+            fromLocationList.clear();
         }
     }
 
