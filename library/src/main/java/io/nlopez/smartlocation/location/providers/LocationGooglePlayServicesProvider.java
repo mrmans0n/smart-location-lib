@@ -92,6 +92,9 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
             case LOW:
                 request.setPriority(LocationRequest.PRIORITY_LOW_POWER);
                 break;
+            case LOWEST:
+                request.setPriority(LocationRequest.PRIORITY_NO_POWER);
+                break;
         }
 
         if (singleUpdate) {

@@ -5,7 +5,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 
@@ -96,6 +95,7 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
                 criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
                 break;
             case LOW:
+            case LOWEST:
                 criteria.setAccuracy(Criteria.ACCURACY_COARSE);
                 criteria.setHorizontalAccuracy(Criteria.ACCURACY_LOW);
                 criteria.setVerticalAccuracy(Criteria.ACCURACY_LOW);
