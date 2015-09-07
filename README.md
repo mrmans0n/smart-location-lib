@@ -218,8 +218,6 @@ locationObservable.subscribe(new Action1<Location>() {
 });
 ```
 
-Of course, you have all the RxJava goodies like timeouts.
-
 Common issues
 -------------
 

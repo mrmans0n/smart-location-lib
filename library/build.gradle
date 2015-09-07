@@ -23,8 +23,8 @@ dependencies {
     }
     compile 'com.google.android.gms:play-services-location:7.8.0'
     compile 'com.android.support:support-annotations:23.0.1'
-    provided 'io.reactivex:rxjava:1.0.12'
-    provided 'io.reactivex:rxandroid:0.24.0'
+    provided 'io.reactivex:rxjava:1.0.14'
+    provided 'io.reactivex:rxandroid:1.0.1'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.0'
