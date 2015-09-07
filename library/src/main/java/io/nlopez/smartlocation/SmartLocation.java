@@ -22,6 +22,7 @@ import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServices
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProvider;
+import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesWithFallbackProvider;
 import io.nlopez.smartlocation.location.utils.LocationState;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
@@ -56,7 +57,15 @@ public class SmartLocation {
      * @return request handler for location operations
      */
     public LocationControl location() {
-        return new LocationControl(this);
+        return location(new LocationGooglePlayServicesWithFallbackProvider(context));
+    }
+
+    /**
+     * @param provider location provider we want to use
+     * @return request handler for location operations
+     */
+    public LocationControl location(LocationProvider provider) {
+        return new LocationControl(this, provider);
     }
 
     /**
@@ -74,21 +83,45 @@ public class SmartLocation {
      * @return request handler for activity recognition
      */
     public ActivityRecognitionControl activity() {
-        return new ActivityRecognitionControl(this);
+        return activity(new ActivityGooglePlayServicesProvider());
+    }
+
+    /**
+     * @param activityProvider activity provider we want to use
+     * @return request handler for activity recognition
+     */
+    public ActivityRecognitionControl activity(ActivityProvider activityProvider) {
+        return new ActivityRecognitionControl(this, activityProvider);
     }
 
     /**
      * @return request handler for geofencing operations
      */
     public GeofencingControl geofencing() {
-        return new GeofencingControl(this);
+        return geofencing(new GeofencingGooglePlayServicesProvider());
+    }
+
+    /**
+     * @param geofencingProvider geofencing provider we want to use
+     * @return request handler for geofencing operations
+     */
+    public GeofencingControl geofencing(GeofencingProvider geofencingProvider) {
+        return new GeofencingControl(this, geofencingProvider);
     }
 
     /**
      * @return request handler for geocoding operations
      */
     public GeocodingControl geocoding() {
-        return new GeocodingControl(this);
+        return geocoding(new AndroidGeocodingProvider());
+    }
+
+    /**
+     * @param geocodingProvider geocoding provider we want to use
+     * @return request handler for geocoding operations
+     */
+    public GeocodingControl geocoding(GeocodingProvider geocodingProvider) {
+        return new GeocodingControl(this, geocodingProvider);
     }
 
     public static class Builder {
@@ -127,32 +160,23 @@ public class SmartLocation {
         private LocationProvider provider;
         private boolean oneFix;
 
-        public LocationControl(SmartLocation smartLocation) {
+        public LocationControl(@NonNull SmartLocation smartLocation, @NonNull LocationProvider locationProvider) {
             this.smartLocation = smartLocation;
             params = LocationParams.BEST_EFFORT;
             oneFix = false;
 
+            if (!MAPPING.containsKey(smartLocation.context)) {
+                MAPPING.put(smartLocation.context, locationProvider);
+            }
+            provider = MAPPING.get(smartLocation.context);
+
             if (smartLocation.preInitialize) {
-                if (!MAPPING.containsKey(smartLocation.context)) {
-                    MAPPING.put(smartLocation.context, new LocationGooglePlayServicesProvider());
-                }
-                provider = MAPPING.get(smartLocation.context);
                 provider.init(smartLocation.context, smartLocation.logger);
             }
         }
 
         public LocationControl config(@NonNull LocationParams params) {
             this.params = params;
-            return this;
-        }
-
-        public LocationControl provider(@NonNull LocationProvider newProvider) {
-            if (provider != null && newProvider.getClass().equals(provider.getClass())) {
-                smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
-            }
-            provider = newProvider;
-            MAPPING.put(smartLocation.context, newProvider);
-            provider.init(smartLocation.context, smartLocation.logger);
             return this;
         }
 
@@ -200,29 +224,17 @@ public class SmartLocation {
         private boolean directAdded = false;
         private boolean reverseAdded = false;
 
-        public GeocodingControl(SmartLocation smartLocation) {
+        public GeocodingControl(@NonNull SmartLocation smartLocation, @NonNull GeocodingProvider geocodingProvider) {
             this.smartLocation = smartLocation;
 
+            if (!MAPPING.containsKey(smartLocation.context)) {
+                MAPPING.put(smartLocation.context, geocodingProvider);
+            }
+            provider = MAPPING.get(smartLocation.context);
+
             if (smartLocation.preInitialize) {
-                if (!MAPPING.containsKey(smartLocation.context)) {
-                    MAPPING.put(smartLocation.context, new AndroidGeocodingProvider());
-                }
-                provider = MAPPING.get(smartLocation.context);
                 provider.init(smartLocation.context, smartLocation.logger);
             }
-        }
-
-        public GeocodingControl provider(@NonNull GeocodingProvider newProvider) {
-            if (directAdded || reverseAdded) {
-                throw new RuntimeException("Custom providers should be set up before adding geofences");
-            }
-            if (provider != null && newProvider.getClass().equals(provider.getClass())) {
-                smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
-            }
-            provider = newProvider;
-            MAPPING.put(smartLocation.context, newProvider);
-            provider.init(smartLocation.context, smartLocation.logger);
-            return this;
         }
 
         public GeocodingControl get() {
@@ -307,31 +319,22 @@ public class SmartLocation {
         private ActivityParams params;
         private ActivityProvider provider;
 
-        public ActivityRecognitionControl(SmartLocation smartLocation) {
+        public ActivityRecognitionControl(@NonNull SmartLocation smartLocation, @NonNull ActivityProvider activityProvider) {
             this.smartLocation = smartLocation;
             params = ActivityParams.NORMAL;
-            if (smartLocation.preInitialize) {
-                if (!MAPPING.containsKey(smartLocation.context)) {
-                    MAPPING.put(smartLocation.context, new ActivityGooglePlayServicesProvider());
-                }
-                provider = MAPPING.get(smartLocation.context);
 
+            if (!MAPPING.containsKey(smartLocation.context)) {
+                MAPPING.put(smartLocation.context, activityProvider);
+            }
+            provider = MAPPING.get(smartLocation.context);
+
+            if (smartLocation.preInitialize) {
                 provider.init(smartLocation.context, smartLocation.logger);
             }
         }
 
         public ActivityRecognitionControl config(@NonNull ActivityParams params) {
             this.params = params;
-            return this;
-        }
-
-        public ActivityRecognitionControl provider(@NonNull ActivityProvider newProvider) {
-            if (provider != null && newProvider.getClass().equals(provider.getClass())) {
-                smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
-            }
-            provider = newProvider;
-            MAPPING.put(smartLocation.context, newProvider);
-            provider.init(smartLocation.context, smartLocation.logger);
             return this;
         }
 
@@ -362,35 +365,21 @@ public class SmartLocation {
 
         private final SmartLocation smartLocation;
         private GeofencingProvider provider;
-        private boolean alreadyAdded = false;
 
-        public GeofencingControl(SmartLocation smartLocation) {
+        public GeofencingControl(@NonNull SmartLocation smartLocation, @NonNull GeofencingProvider geofencingProvider) {
             this.smartLocation = smartLocation;
-            if (smartLocation.preInitialize) {
-                if (!MAPPING.containsKey(smartLocation.context)) {
-                    MAPPING.put(smartLocation.context, new GeofencingGooglePlayServicesProvider());
-                }
-                provider = MAPPING.get(smartLocation.context);
 
+            if (!MAPPING.containsKey(smartLocation.context)) {
+                MAPPING.put(smartLocation.context, geofencingProvider);
+            }
+            provider = MAPPING.get(smartLocation.context);
+
+            if (smartLocation.preInitialize) {
                 provider.init(smartLocation.context, smartLocation.logger);
             }
         }
 
-        public GeofencingControl provider(@NonNull GeofencingProvider newProvider) {
-            if (alreadyAdded) {
-                throw new RuntimeException("Custom providers should be set up before adding geofences");
-            }
-            if (provider != null && newProvider.getClass().equals(provider.getClass())) {
-                smartLocation.logger.w("Creating a new provider that has the same class as before. Are you sure you want to do this?");
-            }
-            provider = newProvider;
-            MAPPING.put(smartLocation.context, newProvider);
-            provider.init(smartLocation.context, smartLocation.logger);
-            return this;
-        }
-
         public GeofencingControl add(@NonNull GeofenceModel geofenceModel) {
-            alreadyAdded = true;
             provider.addGeofence(geofenceModel);
             return this;
         }
@@ -401,7 +390,6 @@ public class SmartLocation {
         }
 
         public GeofencingControl addAll(@NonNull List<GeofenceModel> geofenceModelList) {
-            alreadyAdded = true;
             provider.addGeofences(geofenceModelList);
             return this;
         }

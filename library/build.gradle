@@ -33,13 +33,13 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
 
     buildTypes {
         defaultConfig {
             minSdkVersion 9
-            targetSdkVersion 23
+            targetSdkVersion 22
             versionCode 20005
             versionName version
         }

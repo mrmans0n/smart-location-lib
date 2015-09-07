@@ -34,8 +34,7 @@ public class LocationControlTest {
     public void test_location_control_init() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation smartLocation = new SmartLocation.Builder(context).logging(false).preInitialize(false).build();
-        SmartLocation.LocationControl locationControl = smartLocation.location();
-        locationControl.provider(mockProvider);
+        SmartLocation.LocationControl locationControl = smartLocation.location(mockProvider);
 
         verify(mockProvider).init(eq(context), any(Logger.class));
     }
@@ -94,8 +93,7 @@ public class LocationControlTest {
     private SmartLocation.LocationControl createLocationControl() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation smartLocation = new SmartLocation.Builder(context).logging(false).preInitialize(false).build();
-        SmartLocation.LocationControl locationControl = smartLocation.location();
-        locationControl.provider(mockProvider);
+        SmartLocation.LocationControl locationControl = smartLocation.location(mockProvider);
         return locationControl;
     }
 

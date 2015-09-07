@@ -36,8 +36,7 @@ public class ActivityRecognitionControlTest {
     public void test_activity_recognition_control_init() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation smartLocation = new SmartLocation.Builder(context).preInitialize(false).build();
-        SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activityRecognition();
-        activityRecognitionControl.provider(mockProvider);
+        SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activity(mockProvider);
 
         verify(mockProvider).init(eq(context), any(Logger.class));
     }
@@ -69,8 +68,7 @@ public class ActivityRecognitionControlTest {
     private SmartLocation.ActivityRecognitionControl createActivityRecognitionControl() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation smartLocation = new SmartLocation.Builder(context).preInitialize(false).build();
-        SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activityRecognition();
-        activityRecognitionControl.provider(mockProvider);
+        SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activity(mockProvider);
         return activityRecognitionControl;
     }
 
