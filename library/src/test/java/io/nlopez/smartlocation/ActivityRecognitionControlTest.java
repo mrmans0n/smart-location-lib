@@ -16,6 +16,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(CustomTestRunner.class)
 @Config(manifest = Config.NONE)
@@ -38,6 +39,10 @@ public class ActivityRecognitionControlTest {
         SmartLocation smartLocation = new SmartLocation.Builder(context).preInitialize(false).build();
         SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activity(mockProvider);
 
+        verifyZeroInteractions(mockProvider);
+
+        smartLocation = new SmartLocation.Builder(context).build();
+        activityRecognitionControl = smartLocation.activity(mockProvider);
         verify(mockProvider).init(eq(context), any(Logger.class));
     }
 
