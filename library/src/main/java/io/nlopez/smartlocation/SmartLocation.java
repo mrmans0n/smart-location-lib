@@ -199,10 +199,11 @@ public class SmartLocation {
         private GeocodingProvider provider;
         private boolean directAdded = false;
         private boolean reverseAdded = false;
+        private boolean once;
 
         public GeocodingControl(SmartLocation smartLocation) {
             this.smartLocation = smartLocation;
-
+            this.once = false;
             if (smartLocation.preInitialize) {
                 if (!MAPPING.containsKey(smartLocation.context)) {
                     MAPPING.put(smartLocation.context, new AndroidGeocodingProvider());
@@ -222,6 +223,11 @@ public class SmartLocation {
             provider = newProvider;
             MAPPING.put(smartLocation.context, newProvider);
             provider.init(smartLocation.context, smartLocation.logger);
+            return this;
+        }
+
+        public GeocodingControl once() {
+            this.once = true;
             return this;
         }
 

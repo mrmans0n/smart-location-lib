@@ -42,6 +42,7 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
     private HashMap<Location, Integer> fromLocationList;
     private Context context;
     private Logger logger;
+    private boolean singleUpdate;
 
     public AndroidGeocodingProvider() {
         this(Locale.getDefault());
@@ -70,9 +71,10 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
     }
 
     @Override
-    public void start(OnGeocodingListener geocodingListener, OnReverseGeocodingListener reverseGeocodingListener) {
+    public void start(OnGeocodingListener geocodingListener, OnReverseGeocodingListener reverseGeocodingListener, boolean singleUpdate) {
         this.geocodingListener = geocodingListener;
         this.reverseGeocodingListener = reverseGeocodingListener;
+        this.singleUpdate = singleUpdate;
 
         if (fromNameList.isEmpty() && fromLocationList.isEmpty()) {
             logger.w("No direct geocoding or reverse geocoding points added");
@@ -124,6 +126,8 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
                     String name = intent.getStringExtra(NAME_ID);
                     ArrayList<LocationAddress> results = intent.getParcelableArrayListExtra(RESULT_ID);
                     geocodingListener.onLocationResolved(name, results);
+                    // I detach the broadcast receiver as soon as it send the first event
+                    if (singleUpdate) stop();
                 }
             }
         }
@@ -138,6 +142,8 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
                     Location location = intent.getParcelableExtra(LOCATION_ID);
                     ArrayList<Address> results = (ArrayList<Address>) intent.getSerializableExtra(RESULT_ID);
                     reverseGeocodingListener.onAddressResolved(location, results);
+                    // I detach the broadcast receiver as soon as it send the first event
+                    if (singleUpdate) stop();
                 }
             }
         }
@@ -162,7 +168,9 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
                 for (String name : nameList.keySet()) {
                     int maxResults = nameList.get(name);
                     ArrayList<LocationAddress> response = addressFromName(name, maxResults);
-                    sendDirectGeocodingBroadcast(name, response);
+                    if (response.size() != 0) {
+                        sendDirectGeocodingBroadcast(name, response);
+                    }
                 }
             }
 
@@ -171,7 +179,9 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
                 for (Location location : locationList.keySet()) {
                     int maxResults = locationList.get(location);
                     ArrayList<Address> response = addressFromLocation(location, maxResults);
-                    sendReverseGeocodingBroadcast(location, response);
+                    if (response.size() != 0) {
+                        sendReverseGeocodingBroadcast(location, response);
+                    }
                 }
             }
         }
