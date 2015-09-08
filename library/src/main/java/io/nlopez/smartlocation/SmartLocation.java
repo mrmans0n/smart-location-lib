@@ -294,7 +294,7 @@ public class SmartLocation {
                 smartLocation.logger.w("Some places were added for reverse geocoding but the listener was not specified!");
             }
 
-            provider.start(geocodingListener, reverseGeocodingListener);
+            provider.start(geocodingListener, reverseGeocodingListener, once);
         }
 
         /**
