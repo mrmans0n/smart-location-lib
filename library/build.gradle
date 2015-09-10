@@ -8,9 +8,9 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'maven-publish'
-apply plugin: 'maven'
-apply plugin: 'signing'
+//apply plugin: 'maven-publish'
+//apply plugin: 'maven'
+//apply plugin: 'signing'
 
 
 version '3.2.0-SNAPSHOT'
