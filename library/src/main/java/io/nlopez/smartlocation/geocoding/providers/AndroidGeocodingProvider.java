@@ -49,6 +49,10 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
     }
 
     public AndroidGeocodingProvider(Locale locale) {
+        if (locale == null) {
+            // This should be super weird
+            throw new RuntimeException("Locale is null");
+        }
         this.locale = locale;
         fromNameList = new HashMap<>();
         fromLocationList = new HashMap<>();
