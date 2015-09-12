@@ -51,6 +51,9 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
         this.locale = locale;
         fromNameList = new HashMap<>();
         fromLocationList = new HashMap<>();
+        if (!Geocoder.isPresent()) {
+            throw new RuntimeException("Android Geocoder not present. Please check if Geocoder.isPresent() before invoking the search");
+        }
     }
 
     @Override
