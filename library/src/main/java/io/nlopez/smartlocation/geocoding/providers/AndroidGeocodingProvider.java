@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.support.v4.util.ArrayMap;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,11 +82,11 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
             logger.w("No direct geocoding or reverse geocoding points added");
         } else {
             // Registering receivers for both possibilities
-            IntentFilter directFilter = new IntentFilter(BROADCAST_DIRECT_GEOCODING_ACTION);
-            IntentFilter reverseFilter = new IntentFilter(BROADCAST_REVERSE_GEOCODING_ACTION);
+            final IntentFilter directFilter = new IntentFilter(BROADCAST_DIRECT_GEOCODING_ACTION);
+            final IntentFilter reverseFilter = new IntentFilter(BROADCAST_REVERSE_GEOCODING_ACTION);
 
             // Launch service for processing the geocoder stuff in a background thread
-            Intent serviceIntent = new Intent(context, AndroidGeocodingService.class);
+            final Intent serviceIntent = new Intent(context, AndroidGeocodingService.class);
             serviceIntent.putExtra(LOCALE_ID, locale);
             if (!fromNameList.isEmpty()) {
                 context.registerReceiver(directReceiver, directFilter);
@@ -124,8 +125,8 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
             if (BROADCAST_DIRECT_GEOCODING_ACTION.equals(intent.getAction())) {
                 logger.d("sending new direct geocoding response");
                 if (geocodingListener != null) {
-                    String name = intent.getStringExtra(NAME_ID);
-                    ArrayList<LocationAddress> results = intent.getParcelableArrayListExtra(RESULT_ID);
+                    final String name = intent.getStringExtra(NAME_ID);
+                    final ArrayList<LocationAddress> results = intent.getParcelableArrayListExtra(RESULT_ID);
                     geocodingListener.onLocationResolved(name, results);
                 }
             }
@@ -138,8 +139,8 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
             if (BROADCAST_REVERSE_GEOCODING_ACTION.equals(intent.getAction())) {
                 logger.d("sending new reverse geocoding response");
                 if (reverseGeocodingListener != null) {
-                    Location location = intent.getParcelableExtra(LOCATION_ID);
-                    ArrayList<Address> results = (ArrayList<Address>) intent.getSerializableExtra(RESULT_ID);
+                    final Location location = intent.getParcelableExtra(LOCATION_ID);
+                    final ArrayList<Address> results = (ArrayList<Address>) intent.getSerializableExtra(RESULT_ID);
                     reverseGeocodingListener.onAddressResolved(location, results);
                 }
             }
@@ -157,37 +158,37 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
 
         @Override
         protected void onHandleIntent(Intent intent) {
-            Locale locale = (Locale) intent.getSerializableExtra(LOCALE_ID);
+            final Locale locale = (Locale) intent.getSerializableExtra(LOCALE_ID);
             geocoder = new Geocoder(this, locale);
 
             if (intent.hasExtra(DIRECT_GEOCODING_ID)) {
-                HashMap<String, Integer> nameList = (HashMap<String, Integer>) intent.getSerializableExtra(DIRECT_GEOCODING_ID);
+                final HashMap<String, Integer> nameList = (HashMap<String, Integer>) intent.getSerializableExtra(DIRECT_GEOCODING_ID);
                 for (String name : nameList.keySet()) {
                     int maxResults = nameList.get(name);
-                    ArrayList<LocationAddress> response = addressFromName(name, maxResults);
+                    final ArrayList<LocationAddress> response = addressFromName(name, maxResults);
                     sendDirectGeocodingBroadcast(name, response);
                 }
             }
 
             if (intent.hasExtra(REVERSE_GEOCODING_ID)) {
-                HashMap<Location, Integer> locationList = (HashMap<Location, Integer>) intent.getSerializableExtra(REVERSE_GEOCODING_ID);
+                final HashMap<Location, Integer> locationList = (HashMap<Location, Integer>) intent.getSerializableExtra(REVERSE_GEOCODING_ID);
                 for (Location location : locationList.keySet()) {
                     int maxResults = locationList.get(location);
-                    ArrayList<Address> response = addressFromLocation(location, maxResults);
+                    final ArrayList<Address> response = addressFromLocation(location, maxResults);
                     sendReverseGeocodingBroadcast(location, response);
                 }
             }
         }
 
         private void sendDirectGeocodingBroadcast(String name, ArrayList<LocationAddress> results) {
-            Intent directIntent = new Intent(BROADCAST_DIRECT_GEOCODING_ACTION);
+            final Intent directIntent = new Intent(BROADCAST_DIRECT_GEOCODING_ACTION);
             directIntent.putExtra(NAME_ID, name);
             directIntent.putExtra(RESULT_ID, results);
             sendBroadcast(directIntent);
         }
 
         private void sendReverseGeocodingBroadcast(Location location, ArrayList<Address> results) {
-            Intent reverseIntent = new Intent(BROADCAST_REVERSE_GEOCODING_ACTION);
+            final Intent reverseIntent = new Intent(BROADCAST_REVERSE_GEOCODING_ACTION);
             reverseIntent.putExtra(LOCATION_ID, location);
             reverseIntent.putExtra(RESULT_ID, results);
             sendBroadcast(reverseIntent);
@@ -203,8 +204,8 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
 
         private ArrayList<LocationAddress> addressFromName(String name, int maxResults) {
             try {
-                List<Address> addresses = geocoder.getFromLocationName(name, maxResults);
-                ArrayList<LocationAddress> result = new ArrayList<>();
+                final List<Address> addresses = geocoder.getFromLocationName(name, maxResults);
+                final ArrayList<LocationAddress> result = new ArrayList<>();
                 for (Address address : addresses) {
                     result.add(new LocationAddress(address));
                 }
