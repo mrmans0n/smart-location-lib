@@ -237,19 +237,6 @@ public class SmartLocation {
             }
         }
 
-        public GeocodingControl provider(@NonNull GeocodingProvider newProvider) {
-            if (directAdded || reverseAdded) {
-                throw new RuntimeException("Custom providers should be set up before adding geofences");
-            }
-            if (provider != null && newProvider.getClass().equals(provider.getClass())) {
-            }
-            provider = MAPPING.get(smartLocation.context);
-
-            if (smartLocation.preInitialize) {
-                provider.init(smartLocation.context, smartLocation.logger);
-            }
-        }
-
         public GeocodingControl once() {
             this.once = true;
             return this;
