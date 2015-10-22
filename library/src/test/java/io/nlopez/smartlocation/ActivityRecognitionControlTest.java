@@ -1,6 +1,9 @@
 package io.nlopez.smartlocation;
 
 import android.content.Context;
+import android.location.Location;
+
+import com.google.android.gms.location.DetectedActivity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,14 +11,22 @@ import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 
 import io.nlopez.smartlocation.activity.config.ActivityParams;
+import io.nlopez.smartlocation.rx.ObservableFactory;
 import io.nlopez.smartlocation.util.MockActivityRecognitionProvider;
+import io.nlopez.smartlocation.util.MockLocationProvider;
 import io.nlopez.smartlocation.utils.Logger;
+import rx.Observable;
+import rx.observers.TestSubscriber;
+
 import org.robolectric.annotation.Config;
+
+import java.util.Collections;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(CustomTestRunner.class)
 @Config(manifest = Config.NONE)
@@ -36,9 +47,12 @@ public class ActivityRecognitionControlTest {
     public void test_activity_recognition_control_init() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation smartLocation = new SmartLocation.Builder(context).preInitialize(false).build();
-        SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activityRecognition();
-        activityRecognitionControl.provider(mockProvider);
+        SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activity(mockProvider);
 
+        verifyZeroInteractions(mockProvider);
+
+        smartLocation = new SmartLocation.Builder(context).build();
+        activityRecognitionControl = smartLocation.activity(mockProvider);
         verify(mockProvider).init(eq(context), any(Logger.class));
     }
 
@@ -66,11 +80,26 @@ public class ActivityRecognitionControlTest {
         verify(mockProvider).stop();
     }
 
+    @Test
+    public void test_observable_activity() {
+        TestSubscriber<DetectedActivity> testSubscriber = new TestSubscriber<>();
+        MockActivityRecognitionProvider provider = new MockActivityRecognitionProvider();
+        Observable<DetectedActivity> activityObservable = ObservableFactory.from(
+                SmartLocation.with(RuntimeEnvironment.application.getApplicationContext())
+                        .activity(provider)
+        );
+        activityObservable.subscribe(testSubscriber);
+
+        DetectedActivity detectedActivity = new DetectedActivity(DetectedActivity.UNKNOWN,100);
+        provider.fakeEmitActivity(detectedActivity);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertReceivedOnNext(Collections.singletonList(detectedActivity));
+    }
+
     private SmartLocation.ActivityRecognitionControl createActivityRecognitionControl() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation smartLocation = new SmartLocation.Builder(context).preInitialize(false).build();
-        SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activityRecognition();
-        activityRecognitionControl.provider(mockProvider);
+        SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activity(mockProvider);
         return activityRecognitionControl;
     }
 

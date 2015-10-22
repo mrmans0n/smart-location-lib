@@ -13,7 +13,7 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:3.0.11'
+compile 'io.nlopez.smartlocation:library:3.2.0'
 ```
 
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
@@ -64,6 +64,9 @@ SmartLocation.with(context).location().state().isNetworkAvailable();
 
 // Check if the passive provider is available
 SmartLocation.with(context).location().state().isPassiveAvailable();
+
+// Check if the location is mocked
+SmartLocation.with(context).location().state().isMockSettingEnabled();
 ````
 
 ### Location strategy
@@ -92,8 +95,7 @@ You can implement your own if you want. That's ideal if you wanted to use a mock
 Example:
 
 ````java
-SmartLocation.with(context).location()
-    .provider(new LocationBasedOnActivityProvider(callback))
+SmartLocation.with(context).location(new LocationBasedOnActivityProvider(callback))
     .start(new OnLocationUpdatedListener() { ... });
 ````
 
@@ -200,13 +202,29 @@ This will launch a new call to the callbacks everytime one of the geofence looku
 
 You should invoke the stop method whenever the calling activity/fragment or whatever is going to be destroyed, for cleanup purposes.
 
+## RxJava / RxAndroid support
+
+You can wrap the calls with ObservableFactory methods to retrieve an Observable object. You won't need to call start, just subscribe to the observable to get the updates.
+
+For example, for location:
+
+```java
+Observable<Location> locationObservable = ObservableFactory.from(SmartLocation.with(context).location());
+locationObservable.subscribe(new Action1<Location>() {
+    @Override
+    public void call(Location location) {
+        // Do your stuff here :)
+    }
+});
+```
+
 Common issues
 -------------
 
 If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
 
 ```groovy
-compile ('io.nlopez.smartlocation:library:3.0.11') {
+compile ('io.nlopez.smartlocation:library:3.2.0') {
 	transitive = false
 }
 ```
