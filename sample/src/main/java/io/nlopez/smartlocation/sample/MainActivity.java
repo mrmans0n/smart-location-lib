@@ -102,7 +102,7 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
 
         SmartLocation smartLocation = new SmartLocation.Builder(this).logging(true).build();
 
-        smartLocation.location().provider(provider).start(this);
+        smartLocation.location(provider).start(this);
         smartLocation.activity().start(this);
 
         // Create some geofences

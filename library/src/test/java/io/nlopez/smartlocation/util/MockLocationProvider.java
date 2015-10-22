@@ -12,6 +12,9 @@ import io.nlopez.smartlocation.utils.Logger;
  * Created by mrm on 8/1/15.
  */
 public class MockLocationProvider implements LocationProvider {
+
+    private OnLocationUpdatedListener listener;
+
     @Override
     public void init(Context context, Logger logger) {
 
@@ -19,7 +22,7 @@ public class MockLocationProvider implements LocationProvider {
 
     @Override
     public void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
-
+        this.listener = listener;
     }
 
     @Override
@@ -30,5 +33,10 @@ public class MockLocationProvider implements LocationProvider {
     @Override
     public Location getLastLocation() {
         return null;
+    }
+
+
+    public void fakeEmitLocation(Location location) {
+        listener.onLocationUpdated(location);
     }
 }
