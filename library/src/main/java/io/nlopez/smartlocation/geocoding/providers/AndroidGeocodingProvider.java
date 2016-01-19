@@ -163,7 +163,12 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
         @Override
         protected void onHandleIntent(Intent intent) {
             final Locale locale = (Locale) intent.getSerializableExtra(LOCALE_ID);
-            geocoder = new Geocoder(this, locale);
+
+            if (locale == null) {
+                geocoder = new Geocoder(this);
+            } else {
+                geocoder = new Geocoder(this, locale);
+            }
 
             if (intent.hasExtra(DIRECT_GEOCODING_ID)) {
                 final HashMap<String, Integer> nameList = (HashMap<String, Integer>) intent.getSerializableExtra(DIRECT_GEOCODING_ID);
