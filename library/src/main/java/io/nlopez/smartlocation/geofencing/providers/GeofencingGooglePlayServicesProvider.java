@@ -236,7 +236,7 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
         @Override
         protected void onHandleIntent(Intent intent) {
             GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
-            if (!geofencingEvent.hasError()) {
+            if (geofencingEvent != null && !geofencingEvent.hasError()) {
                 int transition = geofencingEvent.getGeofenceTransition();
 
                 // Broadcast an intent containing the geofencing info
