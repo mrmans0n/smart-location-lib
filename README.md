@@ -16,6 +16,8 @@ You should add this to your dependencies:
 compile 'io.nlopez.smartlocation:library:3.2.0'
 ```
 
+For Google Play Services: 8.1
+
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
 
 ## Location
