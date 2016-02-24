@@ -226,7 +226,7 @@ Common issues
 If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
 
 ```groovy
-compile ('io.nlopez.smartlocation:library:3.2.0') {
+compile ('io.nlopez.smartlocation:library:3.2.1') {
 	transitive = false
 }
 ```
