@@ -96,6 +96,7 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
                 break;
             case LOW:
             case LOWEST:
+            default:
                 criteria.setAccuracy(Criteria.ACCURACY_COARSE);
                 criteria.setHorizontalAccuracy(Criteria.ACCURACY_LOW);
                 criteria.setVerticalAccuracy(Criteria.ACCURACY_LOW);
