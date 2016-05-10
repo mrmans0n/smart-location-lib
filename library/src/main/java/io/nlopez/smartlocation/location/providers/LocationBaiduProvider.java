@@ -27,7 +27,8 @@ import io.nlopez.smartlocation.utils.Logger;
  *
  * @author abkaplan07
  */
-public class LocationBaiduProvider implements LocationProvider, BDLocationListener, BaiduServicesListener {
+public class LocationBaiduProvider implements LocationProvider, BDLocationListener,
+        BaiduServicesListener {
 
     private Logger logger;
     private Context context;
@@ -49,6 +50,7 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
 
     /**
      * Creates a Baidu Location Services provider.
+     *
      * @param initBaiduSdk - if <code>true</code>, initializes the Baidu SDK.
      */
     public LocationBaiduProvider(boolean initBaiduSdk) {
@@ -57,6 +59,7 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
 
     /**
      * Creates a Baidu Location Services provider. The provider initializes the Baidu SDK.
+     *
      * @param baiduListener - a listener for Baidu SDK messages.
      */
     public LocationBaiduProvider(BaiduServicesListener baiduListener) {
@@ -242,21 +245,23 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (listener != null) {
-                if (intent.getAction().equals(SDKInitializer
-                        .SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_OK)) {
-                    context.unregisterReceiver(this);
+            if (intent.getAction().equals(SDKInitializer
+                    .SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_OK)) {
+                context.unregisterReceiver(this);
+                if (listener != null) {
                     listener.onConnected();
-                } else if (intent.getAction().equals(SDKInitializer
-                        .SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR)) {
-                    int errCode = intent.getIntExtra(SDKInitializer
-                            .SDK_BROADTCAST_INTENT_EXTRA_INFO_KEY_ERROR_CODE, 0);
-                    context.unregisterReceiver(this);
-                    listener.onPermissionDenied(errCode);
-                } else if (intent.getAction().equals(SDKInitializer
-                        .SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR)) {
-                    listener.onConnectFailed();
                 }
+            } else if (intent.getAction().equals(SDKInitializer
+                    .SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR)) {
+                int errCode = intent.getIntExtra(SDKInitializer
+                        .SDK_BROADTCAST_INTENT_EXTRA_INFO_KEY_ERROR_CODE, 0);
+                context.unregisterReceiver(this);
+                if (listener != null) {
+                    listener.onPermissionDenied(errCode);
+                }
+            } else if (intent.getAction().equals(SDKInitializer
+                    .SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR) && listener != null) {
+                listener.onConnectFailed();
             }
         }
     }
