@@ -245,11 +245,13 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
             if (listener != null) {
                 if (intent.getAction().equals(SDKInitializer
                         .SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_OK)) {
+                    context.unregisterReceiver(this);
                     listener.onConnected();
                 } else if (intent.getAction().equals(SDKInitializer
                         .SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR)) {
                     int errCode = intent.getIntExtra(SDKInitializer
                             .SDK_BROADTCAST_INTENT_EXTRA_INFO_KEY_ERROR_CODE, 0);
+                    context.unregisterReceiver(this);
                     listener.onPermissionDenied(errCode);
                 } else if (intent.getAction().equals(SDKInitializer
                         .SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR)) {
