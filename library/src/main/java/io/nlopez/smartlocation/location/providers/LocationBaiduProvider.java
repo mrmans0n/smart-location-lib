@@ -22,9 +22,20 @@ import io.nlopez.smartlocation.utils.BaiduServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**
- * Baidu Maps Location Provider. <p>To use this as a location provider, a valid Baidu API key must
- * be added to the application manifest.</p>
- *
+ * Baidu Maps Location Provider.
+ * <br/><br/>
+ * To use this as a location provider, a valid Baidu API key must be added to the application
+ * manifest. This provider by default initializes the Baidu SDK and checks if the application has
+ * permission to use Baidu services. However, this can only be done <strong>once</strong> during
+ * runtime.
+ * <br/><br/>
+ * Use the following code to create the provider without initializing the Baidu SDK:
+ * <pre>
+ *     LocationProvider baidu = new LocationBaiduProvider(false, false)
+ *     ...
+ *     // Baidu Broadcast Receiver
+ *     baidu.setBaiduConnected(true)
+ * </pre>
  * @author abkaplan07
  */
 public class LocationBaiduProvider implements LocationProvider, BDLocationListener,
@@ -46,7 +57,7 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
      * Creates a Baidu Location Services provider. The provider initializes the Baidu SDK.
      */
     public LocationBaiduProvider() {
-        this(true, null);
+        this(true, false, null);
     }
 
     /**
@@ -55,7 +66,16 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
      * @param initBaiduSdk - if <code>true</code>, initializes the Baidu SDK.
      */
     public LocationBaiduProvider(boolean initBaiduSdk) {
-        this(initBaiduSdk, null);
+        this(initBaiduSdk, !initBaiduSdk, null);
+    }
+
+    /**
+     * Creates a Baidu Location Services provider.
+     * @param initBaiduSdk - if <code>true</code>, attempt to initialize the Baidu SDK.
+     * @param baiduConnected - if <code>true</code>, indicates that we are connected to Baidu Services.
+     */
+    public LocationBaiduProvider(boolean initBaiduSdk, boolean baiduConnected) {
+        this(initBaiduSdk, baiduConnected, null);
     }
 
     /**
@@ -64,13 +84,13 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
      * @param baiduListener - a listener for Baidu SDK messages.
      */
     public LocationBaiduProvider(BaiduServicesListener baiduListener) {
-        this(true, baiduListener);
+        this(true, false, baiduListener);
     }
 
-    LocationBaiduProvider(boolean initBaiduSdk, BaiduServicesListener baiduListener) {
+    LocationBaiduProvider(boolean initBaiduSdk, boolean baiduConnected, BaiduServicesListener
+            baiduListener) {
         this.initBaiduSdk = initBaiduSdk;
-        // Assume that if we aren't initializing Baidu services, we are "connected"
-        this.baiduConnected = !initBaiduSdk;
+        this.baiduConnected = baiduConnected;
         this.baiduListener = baiduListener;
     }
 
@@ -190,6 +210,18 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
             if (this.listener != null) {
                 this.listener.onLocationUpdated(toAndroidLocation(bdLocation));
             }
+        }
+    }
+
+    /**
+     * Sets the state of the Baidu connection. If connected, the provider will start location
+     * updates if they have been queued.
+     * @param baiduConnected - the status of the Baidu Services connection.
+     */
+    public void setBaiduConnected(boolean baiduConnected) {
+        this.baiduConnected = baiduConnected;
+        if (baiduConnected && shouldStart) {
+            startUpdates(locationOptions);
         }
     }
 
