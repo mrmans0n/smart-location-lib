@@ -40,6 +40,7 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
     private LocationClientOption locationOptions;
     private boolean baiduConnected;
     private boolean shouldStart = false;
+    private BroadcastReceiver sdkReceiver;
 
     /**
      * Creates a Baidu Location Services provider. The provider initializes the Baidu SDK.
@@ -88,8 +89,8 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
             filter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_OK);
             filter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
             filter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
-            BaiduSDKReceiver receiver = new BaiduSDKReceiver(this);
-            context.registerReceiver(receiver, filter);
+            this.sdkReceiver = new BaiduSDKReceiver(this);
+            context.registerReceiver(sdkReceiver, filter);
             SDKInitializer.initialize(context.getApplicationContext());
         }
     }
@@ -155,9 +156,16 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
 
     @Override
     public void stop() {
-        this.locationClient.unRegisterLocationListener(this);
-        this.locationClient.stop();
+        locationClient.unRegisterLocationListener(this);
+        locationClient.stop();
+        clearSdkReceiver();
+    }
 
+    private void clearSdkReceiver() {
+        if (sdkReceiver != null) {
+            context.unregisterReceiver(sdkReceiver);
+            sdkReceiver = null;
+        }
     }
 
     @Override
@@ -247,7 +255,7 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(SDKInitializer
                     .SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_OK)) {
-                context.unregisterReceiver(this);
+                clearSdkReceiver();
                 if (listener != null) {
                     listener.onConnected();
                 }
@@ -255,13 +263,16 @@ public class LocationBaiduProvider implements LocationProvider, BDLocationListen
                     .SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR)) {
                 int errCode = intent.getIntExtra(SDKInitializer
                         .SDK_BROADTCAST_INTENT_EXTRA_INFO_KEY_ERROR_CODE, 0);
-                context.unregisterReceiver(this);
+                clearSdkReceiver();
                 if (listener != null) {
                     listener.onPermissionDenied(errCode);
                 }
             } else if (intent.getAction().equals(SDKInitializer
-                    .SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR) && listener != null) {
-                listener.onConnectFailed();
+                    .SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR)) {
+                clearSdkReceiver();
+                if (listener != null) {
+                    listener.onConnectFailed();
+                }
             }
         }
     }
