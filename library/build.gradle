@@ -16,6 +16,13 @@ apply plugin: 'signing'
 version '3.2.2'
 group 'io.nlopez.smartlocation'
 
+ext {
+    sonatypeRepo = ""
+    sonatypeSnapshotRepo = ""
+    sonatypeUsername = ""
+    sonatypePassword = ""
+}
+
 dependencies {
     repositories {
         mavenCentral()
