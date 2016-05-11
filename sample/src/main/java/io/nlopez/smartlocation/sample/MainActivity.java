@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -24,6 +25,8 @@ import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
+import io.nlopez.smartlocation.location.LocationProvider;
+import io.nlopez.smartlocation.location.providers.LocationBaiduProvider;
 import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProvider;
 
 public class MainActivity extends Activity implements OnLocationUpdatedListener, OnActivityUpdatedListener, OnGeofencingTransitionListener {
@@ -32,11 +35,14 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
     private TextView activityText;
     private TextView geofenceText;
 
-    private LocationGooglePlayServicesProvider provider;
+    private LocationProvider provider;
 
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+        if (BuildConfig.DEBUG) {
+            StrictMode.enableDefaults();
+        }
         setContentView(R.layout.activity_main);
 
         // Bind event clicks
@@ -63,12 +69,12 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
 
         // Keep the screen always on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        provider = new LocationBaiduProvider();
         showLast();
     }
 
     private void showLast() {
-        Location lastLocation = SmartLocation.with(this).location().getLastLocation();
+        Location lastLocation = SmartLocation.with(this).location(provider).getLastLocation();
         if (lastLocation != null) {
             locationText.setText(
                     String.format("[From Cache] Latitude %.6f, Longitude %.6f",
@@ -90,16 +96,16 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (provider != null) {
-            provider.onActivityResult(requestCode, resultCode, data);
+        if (provider != null && provider instanceof LocationGooglePlayServicesProvider) {
+            ((LocationGooglePlayServicesProvider) provider).onActivityResult(requestCode,
+                    resultCode, data);
         }
     }
 
     private void startLocation() {
-
-        provider = new LocationGooglePlayServicesProvider();
-        provider.setCheckLocationSettings(true);
-
+        LocationGooglePlayServicesProvider googleProvider = new LocationGooglePlayServicesProvider();
+        googleProvider.setCheckLocationSettings(true);
+        provider = googleProvider;
         SmartLocation smartLocation = new SmartLocation.Builder(this).logging(true).build();
 
         smartLocation.location(provider).start(this);
@@ -111,7 +117,7 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
     }
 
     private void stopLocation() {
-        SmartLocation.with(this).location().stop();
+        SmartLocation.with(this).location(provider).stop();
         locationText.setText("Location stopped!");
 
         SmartLocation.with(this).activity().stop();
