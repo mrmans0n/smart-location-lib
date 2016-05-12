@@ -98,6 +98,11 @@ public class MultiFallbackProvider implements LocationProvider {
         return providers;
     }
 
+    /**
+     * Gets the current <code>LocationProvider</code> instance in use.
+     *
+     * @return the underlying <code>LocationProvider</code> used for location services.
+     */
     LocationProvider getCurrentProvider() {
         if (currentProvider == null && !providers.isEmpty()) {
             currentProvider = providers.poll();
@@ -105,6 +110,11 @@ public class MultiFallbackProvider implements LocationProvider {
         return currentProvider;
     }
 
+    /**
+     * Fetches the next location provider in the fallback list, and initializes it. If location
+     * updates have already been started, this restarts location updates.<br/><br/>If there are no
+     * location providers left, no action occurs.
+     */
     void fallbackProvider() {
         if (!providers.isEmpty()) {
             currentProvider = providers.poll();
