@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import io.nlopez.smartlocation.CustomTestRunner;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
@@ -17,6 +18,7 @@ import io.nlopez.smartlocation.utils.Logger;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -88,13 +90,17 @@ public class MultiFallbackProviderTest {
             LocationProvider>... expectedProviders) {
         Collection<LocationProvider> providers = subject.getProviders();
         assertEquals(expectedProviders.length, providers.size());
-        int i = 0;
-        for (LocationProvider provider : providers) {
+        Iterator<LocationProvider> providerIt = providers.iterator();
+        for (int i = 0; i < expectedProviders.length; i++) {
             Class<? extends LocationProvider> expected = expectedProviders[i];
-            assertTrue("provider instance class " + provider.getClass().getName() + " does not " +
-                    "match expected value " + expected.getName(), provider.getClass()
+            if (!providerIt.hasNext()) {
+                fail("providers list did not have expected value " + expected.getName());
+            }
+            LocationProvider actual = providerIt.next();
+            assertTrue("provider instance class " + actual.getClass().getName() + " does not " +
+                    "match expected value " + expected.getName(), actual.getClass()
                     .isAssignableFrom(expected));
-            i++;
+
         }
     }
 
