@@ -16,13 +16,6 @@ apply plugin: 'signing'
 version '3.2.2'
 group 'io.nlopez.smartlocation'
 
-ext {
-    sonatypeRepo = ""
-    sonatypeSnapshotRepo = ""
-    sonatypeUsername = ""
-    sonatypePassword = ""
-}
-
 dependencies {
     repositories {
         mavenCentral()
@@ -78,18 +71,34 @@ signing {
     sign configurations.archives
 }
 
+def getSonatypeRepo() {
+    return hasProperty('sonatypeRepo') ? sonatypeRepo : ""
+}
+
+def getSonatypeSnapshotRepo() {
+    return hasProperty('sonatypeSnapshotRepo') ? sonatypeSnapshotRepo : ""
+}
+
+def getSonatypeUsername() {
+    return hasProperty('sonatypeUsername') ? sonatypeUsername : ""
+}
+
+def getSonatypePassword() {
+    return hasProperty('sonatypePassword') ? sonatypePassword : ""
+}
+
 uploadArchives {
     configuration = configurations.archives
     repositories.mavenDeployer {
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-        repository(url: sonatypeRepo) {
-            authentication(userName: sonatypeUsername,
-                    password: sonatypePassword)
+        repository(url: getSonatypeRepo()) {
+            authentication(userName: getSonatypeUsername(),
+                    password: getSonatypePassword())
         }
-        snapshotRepository(url: sonatypeSnapshotRepo) {
-            authentication(userName: sonatypeUsername,
-                    password: sonatypePassword)
+        snapshotRepository(url: getSonatypeSnapshotRepo()) {
+            authentication(userName: getSonatypeUsername(),
+                    password: getSonatypePassword())
         }
 
         pom.project {
