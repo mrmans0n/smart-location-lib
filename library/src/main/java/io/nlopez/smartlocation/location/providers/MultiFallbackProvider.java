@@ -17,9 +17,8 @@ import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**
- * A {@link LocationProvider} that allows multiple location services to be used.
- * <br/><br/>
- * New instances of <code>MultiFallbackProvider</code> must be initialized via the Builder class:
+ * A {@link LocationProvider} that allows multiple location services to be used. <br/><br/> New
+ * instances of <code>MultiFallbackProvider</code> must be initialized via the Builder class:
  * <pre>
  * LocationProvider provider = new MultiLocationProvider.Builder()
  *         .withGooglePlayServicesProvider()
@@ -28,9 +27,8 @@ import io.nlopez.smartlocation.utils.Logger;
  * </pre>
  * <code>MultiFallbackProvider</code> will attempt to use the location services in the order they
  * were added to the builder.  If the provider fails to connect to the underlying service, the next
- * provider in the list is used.
- * <br/><br/>
- * If no providers are added to the builder, the {@link LocationManagerProvider} is used by default.
+ * provider in the list is used. <br/><br/> If no providers are added to the builder, the {@link
+ * LocationManagerProvider} is used by default.
  *
  * @author abkaplan07
  */
@@ -97,12 +95,12 @@ public class MultiFallbackProvider implements LocationProvider {
     }
 
     Collection<LocationProvider> getProviders() {
-        return this.providers;
+        return providers;
     }
 
     LocationProvider getCurrentProvider() {
         if (currentProvider == null && !providers.isEmpty()) {
-            this.currentProvider = providers.poll();
+            currentProvider = providers.poll();
         }
         return currentProvider;
     }
@@ -140,28 +138,36 @@ public class MultiFallbackProvider implements LocationProvider {
 
                 @Override
                 public void onConnectionSuspended(int i) {
-                    builtProvider.fallbackProvider();
+                    runFallback();
                 }
 
                 @Override
                 public void onConnectionFailed(ConnectionResult connectionResult) {
-                    builtProvider.fallbackProvider();
+                    runFallback();
+                }
+
+                private void runFallback() {
+                    LocationProvider current = builtProvider.getCurrentProvider();
+                    if (current != null && current instanceof LocationGooglePlayServicesProvider) {
+                        builtProvider.fallbackProvider();
+                    }
                 }
             };
             LocationGooglePlayServicesProvider googleProvider = new
                     LocationGooglePlayServicesProvider(googleListener);
-            return this.withProvider(googleProvider);
+            return withProvider(googleProvider);
         }
 
         /**
          * Adds the built-in Android Location Manager as a provider.
          */
         public Builder withDefaultProvider() {
-            return this.withProvider(new LocationManagerProvider());
+            return withProvider(new LocationManagerProvider());
         }
 
         /**
          * Adds the given {@link LocationProvider} as a provider.
+         *
          * @param provider a <code>LocationProvider</code> instance.
          */
         public Builder withProvider(LocationProvider provider) {
@@ -169,6 +175,10 @@ public class MultiFallbackProvider implements LocationProvider {
             return this;
         }
 
+        /**
+         * Builds a {@link MultiFallbackProvider} instance. If no providers were added to the
+         * builder, the built-in Android Location Manager is used.
+         */
         public MultiFallbackProvider build() {
             // Always ensure we have the default provider
             if (builtProvider.providers.isEmpty()) {
