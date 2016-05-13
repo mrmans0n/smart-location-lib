@@ -114,6 +114,9 @@ public class MultiFallbackProvider implements LocationProvider {
      */
     void fallbackProvider() {
         if (!providers.isEmpty()) {
+            // Stop the current provider if it is running
+            currentProvider.stop();
+            // Fetch the next provider in the list.
             currentProvider = providers.poll();
             currentProvider.init(context, logger);
             if (shouldStart) {

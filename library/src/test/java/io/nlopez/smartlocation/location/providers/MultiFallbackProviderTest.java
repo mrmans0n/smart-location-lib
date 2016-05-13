@@ -79,6 +79,7 @@ public class MultiFallbackProviderTest {
         testServiceProvider.simulateFailure();
         // Ensure that our 1st listener from the test service provider was invoked.
         verify(mockListener).onConnectionFailed();
+        assertEquals(1, testServiceProvider.getStopCount());
         // Verify that the backup provider is initialized and started.
         verify(backupProvider).init(any(Context.class), any(Logger.class));
         verify(backupProvider).start(listenerMock, paramsMock, false);
@@ -86,7 +87,7 @@ public class MultiFallbackProviderTest {
         // Test that we're now using the fallback provider to stop.
         subject.stop();
         verify(backupProvider).stop();
-        assertEquals(0, testServiceProvider.getStopCount());
+        assertEquals(1, testServiceProvider.getStopCount());
 
         // Test that we're now using the fallback provider to get the last location
         Location mockLocation = mock(Location.class);
