@@ -5,6 +5,7 @@ import android.location.Location;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.Config;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,8 +13,10 @@ import java.util.Iterator;
 import io.nlopez.smartlocation.CustomTestRunner;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
+import io.nlopez.smartlocation.location.ServiceLocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.utils.Logger;
+import io.nlopez.smartlocation.utils.ServiceConnectionListener;
 
 
 import static junit.framework.Assert.assertEquals;
@@ -29,6 +32,7 @@ import static org.mockito.Mockito.verify;
  * Unit tests for the {@link MultiFallbackProvider}
  */
 @RunWith(CustomTestRunner.class)
+@Config(manifest=Config.NONE)
 public class MultiFallbackProviderTest {
 
     @Test
@@ -54,23 +58,23 @@ public class MultiFallbackProviderTest {
 
     @Test
     public void testMultiProviderRun() {
-        LocationProvider providerMock = mock(LocationProvider.class);
+        TestServiceProvider testServiceProvider = new TestServiceProvider();
         LocationProvider backupProvider = mock(LocationProvider.class);
-        MultiFallbackProvider subject = new MultiFallbackProvider.Builder().withProvider
-                (providerMock).withProvider(backupProvider).build();
+        MultiFallbackProvider subject = new MultiFallbackProvider.Builder().withServiceProvider
+                (testServiceProvider).withProvider(backupProvider).build();
 
         // Test initialization passes through to first provider
         subject.init(mock(Context.class), mock(Logger.class));
-        verify(providerMock).init(any(Context.class), any(Logger.class));
+        assertEquals(1, testServiceProvider.getInitCount());
 
         // Test starting location updates passes through to first provider
         OnLocationUpdatedListener listenerMock = mock(OnLocationUpdatedListener.class);
         LocationParams paramsMock = mock(LocationParams.class);
         subject.start(listenerMock, paramsMock, false);
-        verify(providerMock).start(listenerMock, paramsMock, false);
+        assertEquals(1, testServiceProvider.getStartCount());
 
         // Test that falling back initializes and starts the backup provider
-        subject.fallbackProvider();
+        testServiceProvider.simulateFailure();
         verify(backupProvider).init(any(Context.class), any(Logger.class));
         verify(backupProvider).start(listenerMock, paramsMock, false);
 
@@ -82,7 +86,8 @@ public class MultiFallbackProviderTest {
         Location mockLocation = mock(Location.class);
         when(backupProvider.getLastLocation()).thenReturn(mockLocation);
         assertEquals(mockLocation, subject.getLastLocation());
-        verifyNoMoreInteractions(providerMock);
+        assertEquals(0, testServiceProvider.getStopCount());
+        assertEquals(0, testServiceProvider.getLastLocCount());
     }
 
     @SafeVarargs
@@ -101,6 +106,69 @@ public class MultiFallbackProviderTest {
                     "match expected value " + expected.getName(), actual.getClass()
                     .isAssignableFrom(expected));
 
+        }
+    }
+
+    public static class TestServiceProvider implements ServiceLocationProvider {
+
+        private ServiceConnectionListener listener;
+        private int initCount;
+        private int startCount;
+        private int stopCount;
+        private int lastLocCount;
+
+        @Override
+        public ServiceConnectionListener getServiceListener() {
+            return listener;
+        }
+
+        @Override
+        public void setServiceListener(ServiceConnectionListener listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public void init(Context context, Logger logger) {
+            initCount++;
+        }
+
+        @Override
+        public void start(OnLocationUpdatedListener listener, LocationParams params, boolean
+                singleUpdate) {
+            startCount++;
+        }
+
+        @Override
+        public void stop() {
+            stopCount++;
+        }
+
+        @Override
+        public Location getLastLocation() {
+            lastLocCount++;
+            return null;
+        }
+
+        public int getInitCount() {
+            return initCount;
+        }
+
+        public int getStartCount() {
+            return startCount;
+        }
+
+        public int getStopCount() {
+            return stopCount;
+        }
+
+        public int getLastLocCount() {
+            return lastLocCount;
+        }
+
+        public void simulateFailure() {
+            if (listener != null) {
+                listener.onConnectionFailed();
+            }
         }
     }
 
