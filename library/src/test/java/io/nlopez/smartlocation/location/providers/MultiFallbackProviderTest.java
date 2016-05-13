@@ -28,6 +28,8 @@ import static org.mockito.Mockito.verify;
 
 /**
  * Unit tests for the {@link MultiFallbackProvider}
+ *
+ * @author abkaplan07
  */
 @RunWith(CustomTestRunner.class)
 @Config(manifest=Config.NONE)

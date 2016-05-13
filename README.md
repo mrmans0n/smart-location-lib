@@ -106,6 +106,7 @@ SmartLocation.with(context).location(new LocationBasedOnActivityProvider(callbac
 
 The `MultiFallbackProvider` lets you create your own provider that utilizes multiple underlying location services.
 The provider will use the location services in the order in which they are added to its `Builder`, which has convenience methods for setting up the Google Play Services provider and the default `LocationManager` provider.
+Providers must implement the `ServiceLocationProvider` interface to enable the fallback behavior.
 Example:
 
 ````java

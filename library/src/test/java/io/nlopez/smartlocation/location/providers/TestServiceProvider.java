@@ -11,6 +11,8 @@ import io.nlopez.smartlocation.utils.ServiceConnectionListener;
 
 /**
  * Test double for a {@link ServiceLocationProvider}.
+ *
+ * @author abkaplan07
  */
 public class TestServiceProvider implements ServiceLocationProvider {
 

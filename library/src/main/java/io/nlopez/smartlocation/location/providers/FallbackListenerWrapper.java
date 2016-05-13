@@ -7,7 +7,10 @@ import io.nlopez.smartlocation.location.ServiceLocationProvider;
 import io.nlopez.smartlocation.utils.ServiceConnectionListener;
 
 /**
- * Created by findyr-akaplan on 5/12/16.
+ * A decorator for a {@link ServiceConnectionListener} used to execute the {@link
+ * MultiFallbackProvider}'s failover.
+ *
+ * @author abkaplan07
  */
 class FallbackListenerWrapper implements ServiceConnectionListener {
 
@@ -16,7 +19,8 @@ class FallbackListenerWrapper implements ServiceConnectionListener {
     private final ServiceLocationProvider childProvider;
 
 
-    public FallbackListenerWrapper(@NonNull MultiFallbackProvider parentProvider, ServiceLocationProvider childProvider) {
+    public FallbackListenerWrapper(@NonNull MultiFallbackProvider parentProvider,
+                                   ServiceLocationProvider childProvider) {
         this.fallbackProvider = parentProvider;
         this.childProvider = childProvider;
         this.listener = childProvider.getServiceListener();
