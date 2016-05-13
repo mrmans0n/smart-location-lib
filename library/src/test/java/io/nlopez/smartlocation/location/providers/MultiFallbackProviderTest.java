@@ -13,7 +13,6 @@ import java.util.Iterator;
 import io.nlopez.smartlocation.CustomTestRunner;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
-import io.nlopez.smartlocation.location.ServiceLocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.ServiceConnectionListener;
@@ -24,7 +23,6 @@ import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
@@ -59,6 +57,8 @@ public class MultiFallbackProviderTest {
     @Test
     public void testMultiProviderRun() {
         TestServiceProvider testServiceProvider = new TestServiceProvider();
+        ServiceConnectionListener mockListener = mock(ServiceConnectionListener.class);
+        testServiceProvider.setServiceListener(mockListener);
         LocationProvider backupProvider = mock(LocationProvider.class);
         MultiFallbackProvider subject = new MultiFallbackProvider.Builder().withServiceProvider
                 (testServiceProvider).withProvider(backupProvider).build();
@@ -75,18 +75,21 @@ public class MultiFallbackProviderTest {
 
         // Test that falling back initializes and starts the backup provider
         testServiceProvider.simulateFailure();
+        // Ensure that our 1st listener from the test service provider was invoked.
+        verify(mockListener).onConnectionFailed();
+        // Verify that the backup provider is initialized and started.
         verify(backupProvider).init(any(Context.class), any(Logger.class));
         verify(backupProvider).start(listenerMock, paramsMock, false);
 
         // Test that we're now using the fallback provider to stop.
         subject.stop();
         verify(backupProvider).stop();
+        assertEquals(0, testServiceProvider.getStopCount());
 
         // Test that we're now using the fallback provider to get the last location
         Location mockLocation = mock(Location.class);
         when(backupProvider.getLastLocation()).thenReturn(mockLocation);
         assertEquals(mockLocation, subject.getLastLocation());
-        assertEquals(0, testServiceProvider.getStopCount());
         assertEquals(0, testServiceProvider.getLastLocCount());
     }
 
@@ -106,69 +109,6 @@ public class MultiFallbackProviderTest {
                     "match expected value " + expected.getName(), actual.getClass()
                     .isAssignableFrom(expected));
 
-        }
-    }
-
-    public static class TestServiceProvider implements ServiceLocationProvider {
-
-        private ServiceConnectionListener listener;
-        private int initCount;
-        private int startCount;
-        private int stopCount;
-        private int lastLocCount;
-
-        @Override
-        public ServiceConnectionListener getServiceListener() {
-            return listener;
-        }
-
-        @Override
-        public void setServiceListener(ServiceConnectionListener listener) {
-            this.listener = listener;
-        }
-
-        @Override
-        public void init(Context context, Logger logger) {
-            initCount++;
-        }
-
-        @Override
-        public void start(OnLocationUpdatedListener listener, LocationParams params, boolean
-                singleUpdate) {
-            startCount++;
-        }
-
-        @Override
-        public void stop() {
-            stopCount++;
-        }
-
-        @Override
-        public Location getLastLocation() {
-            lastLocCount++;
-            return null;
-        }
-
-        public int getInitCount() {
-            return initCount;
-        }
-
-        public int getStartCount() {
-            return startCount;
-        }
-
-        public int getStopCount() {
-            return stopCount;
-        }
-
-        public int getLastLocCount() {
-            return lastLocCount;
-        }
-
-        public void simulateFailure() {
-            if (listener != null) {
-                listener.onConnectionFailed();
-            }
         }
     }
 
