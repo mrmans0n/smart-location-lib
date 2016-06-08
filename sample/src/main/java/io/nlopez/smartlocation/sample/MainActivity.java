@@ -1,10 +1,15 @@
 package io.nlopez.smartlocation.sample;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,6 +39,8 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
 
     private LocationGooglePlayServicesProvider provider;
 
+    private static final int LOCATION_PERMISSION_ID = 1001;
+
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -44,6 +51,11 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         startLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Location permission not granted
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_ID);
+                    return;
+                }
                 startLocation();
             }
         });
@@ -65,6 +77,13 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         showLast();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == LOCATION_PERMISSION_ID && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startLocation();
+        }
     }
 
     private void showLast() {
