@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
-
 import com.google.android.gms.location.DetectedActivity;
 
 import io.nlopez.smartlocation.common.Store;

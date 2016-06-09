@@ -151,7 +151,7 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         logger.d("onConnectionFailed");
         if (googlePlayServicesListener != null) {
             googlePlayServicesListener.onConnectionFailed(connectionResult);
@@ -200,7 +200,7 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
     }
 
     @Override
-    public void onResult(Status status) {
+    public void onResult(@NonNull Status status) {
         if (status.isSuccess()) {
             logger.d("Activity update request successful");
         } else if (status.hasResolution() && context instanceof Activity) {

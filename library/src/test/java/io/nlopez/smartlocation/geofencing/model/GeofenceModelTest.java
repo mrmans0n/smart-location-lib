@@ -1,11 +1,13 @@
 package io.nlopez.smartlocation.geofencing.model;
 
 import com.google.android.gms.location.Geofence;
-import io.nlopez.smartlocation.CustomTestRunner;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
+
+import io.nlopez.smartlocation.CustomTestRunner;
 
 /**
  * Created by mrm on 10/1/15.
