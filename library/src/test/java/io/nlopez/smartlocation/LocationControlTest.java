@@ -3,6 +3,14 @@ package io.nlopez.smartlocation;
 import android.content.Context;
 import android.location.Location;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
+
+import java.util.Collections;
+
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.rx.ObservableFactory;
 import io.nlopez.smartlocation.util.MockLocationProvider;
@@ -10,18 +18,12 @@ import io.nlopez.smartlocation.utils.Logger;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
-
-import java.util.Arrays;
-import java.util.Collections;
-
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(CustomTestRunner.class)
 @Config(manifest = Config.NONE)

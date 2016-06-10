@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.support.v4.util.ArrayMap;
 
 import java.io.IOException;
 import java.util.ArrayList;

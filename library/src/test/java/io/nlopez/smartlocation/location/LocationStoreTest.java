@@ -3,13 +3,15 @@ package io.nlopez.smartlocation.location;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
-import io.nlopez.smartlocation.CustomTestRunner;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+
+import io.nlopez.smartlocation.CustomTestRunner;
 
 /**
  * Created by nacho on 1/9/15.
