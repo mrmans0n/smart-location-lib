@@ -16,7 +16,7 @@ You should add this to your dependencies:
 compile 'io.nlopez.smartlocation:library:3.2.4'
 ```
 
-Google Play Services compatible version: 9.0.1
+Google Play Services compatible version: 9.0.2
 
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
 
