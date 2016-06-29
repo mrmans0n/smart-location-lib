@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 23
     buildToolsVersion '24.0.0'
 
     defaultConfig {
         applicationId "io.nlopez.smartlocation"
         minSdkVersion 9
-        targetSdkVersion 24
+        targetSdkVersion 23
         versionCode 100
         versionName "1.0.0"
     }
