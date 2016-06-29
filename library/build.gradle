@@ -34,7 +34,7 @@ dependencies {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '24.0.0'
+    buildToolsVersion '23.0.2'
 
     buildTypes {
         defaultConfig {
