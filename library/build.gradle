@@ -21,7 +21,7 @@ dependencies {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:9.0.2'
+    compile 'com.google.android.gms:play-services-location:9.2.0'
     compile 'com.android.support:support-annotations:23.4.0'
 
     provided 'io.reactivex:rxjava:1.1.5'
@@ -34,7 +34,7 @@ dependencies {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion '23.0.2'
 
     buildTypes {
         defaultConfig {
