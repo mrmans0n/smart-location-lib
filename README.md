@@ -13,10 +13,10 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:3.2.3'
+compile 'io.nlopez.smartlocation:library:3.2.4'
 ```
 
-Google Play Services compatible version: 9.0
+Google Play Services compatible version: 9.0.2
 
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
 
@@ -226,7 +226,7 @@ Common issues
 If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
 
 ```groovy
-compile ('io.nlopez.smartlocation:library:3.2.3') {
+compile ('io.nlopez.smartlocation:library:3.2.4') {
 	transitive = false
 }
 ```
@@ -262,7 +262,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2013-2015 Nacho Lopez
+Copyright (c) 2013-2016 Nacho Lopez
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
