@@ -21,15 +21,15 @@ dependencies {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:9.2.0'
+    compile 'com.google.android.gms:play-services-location:9.2.1'
     compile 'com.android.support:support-annotations:23.4.0'
 
-    provided 'io.reactivex:rxjava:1.1.5'
+    provided 'io.reactivex:rxjava:1.1.7'
     provided 'io.reactivex:rxandroid:1.2.0'
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.1'
     testCompile 'org.robolectric:robolectric-shadows:3.1'
-    testCompile 'org.mockito:mockito-core:2.0.54-beta'
+    testCompile 'org.mockito:mockito-core:2.0.86-beta'
 }
 
 android {
