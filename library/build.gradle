@@ -72,19 +72,19 @@ signing {
 }
 
 def getSonatypeRepo() {
-    return hasProperty('sonatypeRepo') ? sonatypeRepo : ""
+    return project.hasProperty('sonatypeRepo') ? sonatypeRepo : ""
 }
 
 def getSonatypeSnapshotRepo() {
-    return hasProperty('sonatypeSnapshotRepo') ? sonatypeSnapshotRepo : ""
+    return project.hasProperty('sonatypeSnapshotRepo') ? sonatypeSnapshotRepo : ""
 }
 
 def getSonatypeUsername() {
-    return hasProperty('sonatypeUsername') ? sonatypeUsername : ""
+    return project.hasProperty('sonatypeUsername') ? sonatypeUsername : ""
 }
 
 def getSonatypePassword() {
-    return hasProperty('sonatypePassword') ? sonatypePassword : ""
+    return project.hasProperty('sonatypePassword') ? sonatypePassword : ""
 }
 
 uploadArchives {
