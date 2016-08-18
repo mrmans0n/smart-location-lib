@@ -38,11 +38,8 @@ public class LocationParams {
 
         LocationParams that = (LocationParams) o;
 
-        if (Float.compare(that.distance, distance) != 0) return false;
-        if (interval != that.interval) return false;
-        if (accuracy != that.accuracy) return false;
+        return Float.compare(that.distance, distance) == 0 && interval == that.interval && accuracy == that.accuracy;
 
-        return true;
     }
 
     @Override

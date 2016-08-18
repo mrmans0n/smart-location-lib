@@ -24,9 +24,8 @@ public class ActivityParams {
 
         ActivityParams that = (ActivityParams) o;
 
-        if (interval != that.interval) return false;
+        return interval == that.interval;
 
-        return true;
     }
 
     @Override
