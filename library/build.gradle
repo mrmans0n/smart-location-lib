@@ -71,34 +71,18 @@ signing {
     sign configurations.archives
 }
 
-def getSonatypeRepo() {
-    return project.hasProperty('sonatypeRepo') ? sonatypeRepo : ""
-}
-
-def getSonatypeSnapshotRepo() {
-    return project.hasProperty('sonatypeSnapshotRepo') ? sonatypeSnapshotRepo : ""
-}
-
-def getSonatypeUsername() {
-    return project.hasProperty('sonatypeUsername') ? sonatypeUsername : ""
-}
-
-def getSonatypePassword() {
-    return project.hasProperty('sonatypePassword') ? sonatypePassword : ""
-}
-
 uploadArchives {
     configuration = configurations.archives
     repositories.mavenDeployer {
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-        repository(url: getSonatypeRepo()) {
-            authentication(userName: getSonatypeUsername(),
-                    password: getSonatypePassword())
+        repository(url: sonatypeRepo) {
+            authentication(userName: sonatypeUsername,
+                    password: sonatypePassword)
         }
-        snapshotRepository(url: getSonatypeSnapshotRepo()) {
-            authentication(userName: getSonatypeUsername(),
-                    password: getSonatypePassword())
+        snapshotRepository(url: sonatypeSnapshotRepo) {
+            authentication(userName: sonatypeUsername,
+                    password: sonatypePassword)
         }
 
         pom.project {
