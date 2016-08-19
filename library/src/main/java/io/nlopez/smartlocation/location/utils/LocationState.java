@@ -1,7 +1,6 @@
 package io.nlopez.smartlocation.location.utils;
 
 import android.content.Context;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
@@ -30,6 +29,7 @@ public class LocationState {
 
     /**
      * Indicates if location services are enabled for the device.
+     *
      * @return <code>true</code> if the user has turned on location services.
      */
     public boolean locationServicesEnabled() {
@@ -53,6 +53,7 @@ public class LocationState {
 
     /**
      * Indicates if any <em>active</em> location provider is enabled.
+     *
      * @return <code>true</code> if an active location provider (network, GPS) is enabled.
      */
     public boolean isAnyProviderAvailable() {
@@ -61,6 +62,7 @@ public class LocationState {
 
     /**
      * Indicates if GPS location updates are enabled.
+     *
      * @return <code>true</code> if GPS location updates are enabled.
      */
     public boolean isGpsAvailable() {
@@ -69,6 +71,7 @@ public class LocationState {
 
     /**
      * Indicates if location updates from mobile network signals are enabled.
+     *
      * @return <code>true</code> if location can be determined from mobile network signals.
      */
     public boolean isNetworkAvailable() {
@@ -77,6 +80,7 @@ public class LocationState {
 
     /**
      * Indicates if the "passive" location provider is enabled.
+     *
      * @return <code>true</code> if location updates from other applications are enabled.
      */
     public boolean isPassiveAvailable() {
@@ -85,13 +89,15 @@ public class LocationState {
 
     /**
      * Indicates if the device allows mock locations.
+     *
      * @return <code>true</code> if mock locations are enabled for the entire device.
-     * @deprecated use {@link Location#isFromMockProvider()} instead for Android KitKat devices
-     * and higher.
+     * @deprecated use {@link android.location.Location#isFromMockProvider()} instead for Android
+     * KitKat devices and higher.
      */
     @Deprecated
     public boolean isMockSettingEnabled() {
-        return !("0".equals(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION)));
+        return !("0".equals(Settings.Secure.getString(context.getContentResolver(), Settings
+                .Secure.ALLOW_MOCK_LOCATION)));
     }
 
 }
