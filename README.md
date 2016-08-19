@@ -91,6 +91,7 @@ There are some providers shipped with the library.
 * `LocationManagerProvider` This is the legacy implementation that uses LocationManager.
 * `LocationBasedOnActivityProvider` This allows you to use the activity recognition system to modify the location strategy depending on the activity changes (if the user is walking, running, on a car, a bike...).
 * `LocationGooglePlayServicesWithFallbackProvider` This one will use the Fused Location Provider if it's present, or the LocationManager as fallback if it's not.
+* `MultiFallbackLocationProvider` This lets you create your own "fallback provider" if the underlying location service is not available. See "Multiple Fallback Provider" below for details.
 
 You can implement your own if you want. That's ideal if you wanted to use a mock one for testing or something like that, or add support to another possible provider.
 
@@ -99,6 +100,18 @@ Example:
 ````java
 SmartLocation.with(context).location(new LocationBasedOnActivityProvider(callback))
     .start(new OnLocationUpdatedListener() { ... });
+````
+
+### Multiple Fallback Provider
+
+The `MultiFallbackProvider` lets you create your own provider that utilizes multiple underlying location services.
+The provider will use the location services in the order in which they are added to its `Builder`, which has convenience methods for setting up the Google Play Services provider and the default `LocationManager` provider.
+Example:
+
+````java
+LocationProvider myProvider = new MyLocationProvider();
+LocationProvider fallbackProvider = new MultiFallbackProvider.Builder()
+    .withGooglePlayServicesProvider().withProvider(myProvider).build();
 ````
 
 ## Activity
