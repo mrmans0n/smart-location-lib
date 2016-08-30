@@ -66,6 +66,10 @@ def isReleaseBuild() {
     return version.contains("SNAPSHOT") == false
 }
 
+def getProperty(project, property) {
+    return project.hasProperty(property) ? project.property(property) : ""
+}
+
 signing {
     required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
     sign configurations.archives
@@ -76,13 +80,13 @@ uploadArchives {
     repositories.mavenDeployer {
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-        repository(url: sonatypeRepo) {
-            authentication(userName: sonatypeUsername,
-                    password: sonatypePassword)
+        repository(url: getProperty(project, "sonatypeRepo")) {
+            authentication(userName: getProperty(project, "sonatypeUsername"),
+                    password: getProperty(project, "sonatypePassword"))
         }
-        snapshotRepository(url: sonatypeSnapshotRepo) {
-            authentication(userName: sonatypeUsername,
-                    password: sonatypePassword)
+        snapshotRepository(url: getProperty(project, "sonatypeSnapshotRepo")) {
+            authentication(userName: getProperty(project, "sonatypeUsername"),
+                    password: getProperty(project, "sonatypePassword"))
         }
 
         pom.project {
