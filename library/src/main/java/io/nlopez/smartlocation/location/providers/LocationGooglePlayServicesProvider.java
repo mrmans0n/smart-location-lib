@@ -47,6 +47,7 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
     private ServiceConnectionListener serviceListener;
     private boolean checkLocationSettings;
     private boolean fulfilledCheckLocationSettings;
+    private boolean alwaysShow = true;
 
     public LocationGooglePlayServicesProvider() {
         checkLocationSettings =  false;
@@ -146,7 +147,7 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
     }
 
     private void checkLocationSettings() {
-        LocationSettingsRequest request = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest).build();
+        LocationSettingsRequest request = new LocationSettingsRequest.Builder().setAlwaysShow(alwaysShow).addLocationRequest(locationRequest).build();
         LocationServices.SettingsApi.checkLocationSettings(client, request).setResultCallback(settingsResultCallback);
     }
 
@@ -270,6 +271,16 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
      */
     public void setCheckLocationSettings(boolean allowingLocationSettings) {
         this.checkLocationSettings = allowingLocationSettings;
+    }
+
+
+    /**
+     * Sets whether or not we should show location settings dialog with NEVER button
+     *
+     * @param alwaysShow TRUE to show dialog without NEVER button, FALSE - with NEVER button (default)
+     */
+    public void setLocationSettingsAlwaysShow(boolean alwaysShow) {
+        this.alwaysShow = alwaysShow;
     }
 
     /**

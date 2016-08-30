@@ -1,7 +1,6 @@
 package io.nlopez.smartlocation;
 
 import android.content.Context;
-import android.location.Location;
 
 import com.google.android.gms.location.DetectedActivity;
 
@@ -9,18 +8,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
+
+import java.util.Collections;
 
 import io.nlopez.smartlocation.activity.config.ActivityParams;
 import io.nlopez.smartlocation.rx.ObservableFactory;
 import io.nlopez.smartlocation.util.MockActivityRecognitionProvider;
-import io.nlopez.smartlocation.util.MockLocationProvider;
 import io.nlopez.smartlocation.utils.Logger;
 import rx.Observable;
 import rx.observers.TestSubscriber;
-
-import org.robolectric.annotation.Config;
-
-import java.util.Collections;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;

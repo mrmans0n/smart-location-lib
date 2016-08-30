@@ -2,13 +2,16 @@ package io.nlopez.smartlocation.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import com.google.android.gms.location.DetectedActivity;
-import io.nlopez.smartlocation.CustomTestRunner;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+
+import io.nlopez.smartlocation.CustomTestRunner;
 
 /**
  * Created by nacho on 1/9/15.
