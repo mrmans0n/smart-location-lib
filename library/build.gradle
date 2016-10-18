@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.1'
+        classpath 'com.android.tools.build:gradle:2.1.3'
     }
 }
 
@@ -13,7 +13,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '3.2.7'
+version '3.2.8'
 group 'io.nlopez.smartlocation'
 
 dependencies {
@@ -39,7 +39,7 @@ android {
         defaultConfig {
             minSdkVersion 9
             targetSdkVersion 23
-            versionCode 20005
+            versionCode 20006
             versionName version
         }
     }
