@@ -25,10 +25,5 @@
         <service
             android:name=".geocoding.providers.AndroidGeocodingProvider$AndroidGeocodingService"
             android:exported="false" />
-
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="6587000"
-            tools:replace="android:value" />
     </application>
 </manifest>
