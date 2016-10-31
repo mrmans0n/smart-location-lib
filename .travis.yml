@@ -1,3 +1,4 @@
+#bump
 language: android
 jdk: oraclejdk7
 sudo: false
@@ -16,3 +17,4 @@ android:
 script:
     - cp gradle.properties.example gradle.properties
     - ./gradlew clean assembleDebug testDebug
+    
