@@ -1,4 +1,3 @@
-#bump
 language: android
 jdk: oraclejdk7
 sudo: false
