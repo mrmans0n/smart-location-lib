@@ -1,16 +1,23 @@
 language: android
-jdk: oraclejdk7
+jdk: oraclejdk8
 sudo: false
 
 android:
   components:
     - tools
-    - build-tools-23.0.2
-    - android-23
+    - platform-tools
+    - tools
+    - build-tools-25.0.0
+    - android-25
     - extra-android-m2repository
     - extra-google-m2repository
     - extra-google-google_play_services
-
+  licenses:
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
 script:
     - cp gradle.properties.example gradle.properties
     - ./gradlew clean assembleDebug testDebug
+
+// From Travis support: "NB: please note that `tools` is listed twice. My understanding is that the first 
+// `tools` gets an xml containing a repository address, the second uses this repo to install the newer components."

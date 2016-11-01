@@ -1,11 +1,15 @@
 package io.nlopez.smartlocation.location.providers;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -133,7 +137,20 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
             return;
         }
         if (client.isConnected()) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(client, request, this).setResultCallback(this);
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+
+            LocationServices.FusedLocationApi.requestLocationUpdates(client, request, this, Looper.getMainLooper()).setResultCallback(this);
         } else {
             logger.w("startUpdating executed without the GoogleApiClient being connected!!");
         }
@@ -159,7 +176,19 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     @Override
     public Location getLastLocation() {
         if (client != null && client.isConnected()) {
-            Location location =  LocationServices.FusedLocationApi.getLastLocation(client);
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return null;
+            }
+            Location location = LocationServices.FusedLocationApi.getLastLocation(client);
             if (location != null) {
                 return location;
             }
