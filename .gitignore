@@ -42,4 +42,4 @@ out/
 *lint-results.*
 build/
 
-gradle.properties
+#gradle.properties

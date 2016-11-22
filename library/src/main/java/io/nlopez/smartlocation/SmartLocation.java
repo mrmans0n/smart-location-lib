@@ -222,18 +222,23 @@ public class SmartLocation {
         private GeocodingProvider provider;
         private boolean directAdded = false;
         private boolean reverseAdded = false;
+        private boolean once;
 
         public GeocodingControl(@NonNull SmartLocation smartLocation, @NonNull GeocodingProvider geocodingProvider) {
             this.smartLocation = smartLocation;
-
-            if (!MAPPING.containsKey(smartLocation.context)) {
-                MAPPING.put(smartLocation.context, geocodingProvider);
-            }
-            provider = MAPPING.get(smartLocation.context);
-
+            this.once = false;
             if (smartLocation.preInitialize) {
+                if (!MAPPING.containsKey(smartLocation.context)) {
+                    MAPPING.put(smartLocation.context, new AndroidGeocodingProvider());
+                }
+                provider = MAPPING.get(smartLocation.context);
                 provider.init(smartLocation.context, smartLocation.logger);
             }
+        }
+
+        public GeocodingControl once() {
+            this.once = true;
+            return this;
         }
 
         public GeocodingControl get() {
@@ -299,7 +304,7 @@ public class SmartLocation {
                 smartLocation.logger.w("Some places were added for reverse geocoding but the listener was not specified!");
             }
 
-            provider.start(geocodingListener, reverseGeocodingListener);
+            provider.start(geocodingListener, reverseGeocodingListener, once);
         }
 
         /**

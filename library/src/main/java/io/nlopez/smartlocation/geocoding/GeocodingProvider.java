@@ -17,7 +17,7 @@ public interface GeocodingProvider {
 
     void addLocation(Location location, int maxResults);
 
-    void start(OnGeocodingListener geocodingListener, OnReverseGeocodingListener reverseGeocodingListener);
+    void start(OnGeocodingListener geocodingListener, OnReverseGeocodingListener reverseGeocodingListener, boolean singleUpdate);
 
     void stop();
 
