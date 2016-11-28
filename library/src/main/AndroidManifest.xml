@@ -2,9 +2,7 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="io.nlopez.smartlocation"
-    android:versionCode="1"
-    android:versionName="1.0">
+    package="io.nlopez.smartlocation">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,9 +10,6 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
-    <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="23" />
     <application>
         <service
             android:name=".activity.providers.ActivityGooglePlayServicesProvider$ActivityRecognitionService"
@@ -25,10 +20,5 @@
         <service
             android:name=".geocoding.providers.AndroidGeocodingProvider$AndroidGeocodingService"
             android:exported="false" />
-
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="6587000"
-            tools:replace="android:value" />
     </application>
 </manifest>

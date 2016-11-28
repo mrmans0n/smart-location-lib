@@ -13,7 +13,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '3.2.6'
+version '3.2.9'
 group 'io.nlopez.smartlocation'
 
 dependencies {
@@ -21,8 +21,8 @@ dependencies {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:9.6.1'
-    compile 'com.android.support:support-annotations:24.2.1'
+    compile 'com.google.android.gms:play-services-location:9.8.0'
+    compile 'com.android.support:support-annotations:25.0.0'
     provided 'io.reactivex:rxjava:1.1.7'
     provided 'io.reactivex:rxandroid:1.2.0'
     testCompile 'junit:junit:4.12'
@@ -32,14 +32,14 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '24.0.2'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.0'
 
     buildTypes {
         defaultConfig {
             minSdkVersion 9
-            targetSdkVersion 23
-            versionCode 20005
+            targetSdkVersion 25
+            versionCode 20006
             versionName version
         }
     }
