@@ -6,13 +6,16 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
+import io.nlopez.smartlocation.location.config.ScheduledOnLocationUpdateListener;
 import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
 
@@ -38,9 +41,7 @@ public class MultiFallbackProvider implements LocationProvider {
     private LocationProvider currentProvider;
     private Context context;
     private Logger logger;
-    private OnLocationUpdatedListener locationListener;
-    private LocationParams locationParams;
-    private boolean singleUpdate;
+    private List<ScheduledOnLocationUpdateListener> listeners = new ArrayList<>();
     private boolean shouldStart;
 
 
@@ -56,19 +57,56 @@ public class MultiFallbackProvider implements LocationProvider {
         if (current != null) {
             current.init(context, logger);
         }
-
     }
 
     @Override
-    public void start(OnLocationUpdatedListener listener, LocationParams params, boolean
-            singleUpdate) {
-        this.shouldStart = true;
-        this.locationListener = listener;
-        this.locationParams = params;
-        this.singleUpdate = singleUpdate;
+    public void start(OnLocationUpdatedListener listener, LocationParams params,
+                      boolean singleUpdate) {
+        this.listeners = new ArrayList<>();
+        addListener(listener, params, singleUpdate);
+    }
+
+    @Override
+    public void start(List<ScheduledOnLocationUpdateListener> scheduledListeners) {
         LocationProvider current = getCurrentProvider();
         if (current != null) {
-            current.start(listener, params, singleUpdate);
+            current.start(scheduledListeners);
+        }
+    }
+
+    @Override
+    public void addListener(OnLocationUpdatedListener listener,
+                            LocationParams params, boolean singleUpdate) {
+        if (listener != null) {
+            this.listeners.add(
+                    new ScheduledOnLocationUpdateListener(listener, params, singleUpdate));
+        }
+
+        this.shouldStart = true;
+        LocationProvider current = getCurrentProvider();
+        if (current != null) {
+            current.addListener(listener, params, singleUpdate);
+        }
+    }
+
+    @Override
+    public boolean removeListener(OnLocationUpdatedListener listener) {
+        ScheduledOnLocationUpdateListener scheduledListenerToRemove = null;
+
+        for (ScheduledOnLocationUpdateListener scheduledListener : listeners) {
+            if (scheduledListener.getListener() == listener) {
+                scheduledListenerToRemove = scheduledListener;
+                break;
+            }
+        }
+
+        if (scheduledListenerToRemove != null) {
+            listeners.remove(scheduledListenerToRemove);
+
+            LocationProvider current = getCurrentProvider();
+            return current != null && current.removeListener(listener);
+        } else {
+            return false;
         }
     }
 
@@ -78,7 +116,6 @@ public class MultiFallbackProvider implements LocationProvider {
         if (current != null) {
             current.stop();
         }
-
     }
 
     @Override
@@ -120,7 +157,7 @@ public class MultiFallbackProvider implements LocationProvider {
             currentProvider = providers.poll();
             currentProvider.init(context, logger);
             if (shouldStart) {
-                currentProvider.start(locationListener, locationParams, singleUpdate);
+                currentProvider.start(listeners);
             }
         }
     }

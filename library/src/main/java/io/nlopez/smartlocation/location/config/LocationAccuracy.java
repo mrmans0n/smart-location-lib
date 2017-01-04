@@ -7,5 +7,11 @@ public enum LocationAccuracy {
     LOWEST,
     LOW,
     MEDIUM,
-    HIGH
+    HIGH;
+
+    public static LocationAccuracy moreEffort(LocationAccuracy locationAccuracy1,
+                                              LocationAccuracy locationAccuracy2) {
+        return locationAccuracy1.ordinal() > locationAccuracy2.ordinal() ?
+                locationAccuracy1 :locationAccuracy2;
+    }
 }

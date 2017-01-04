@@ -22,10 +22,17 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.LocationStore;
+import io.nlopez.smartlocation.location.config.LocationAccuracy;
 import io.nlopez.smartlocation.location.config.LocationParams;
+import io.nlopez.smartlocation.location.config.ScheduledOnLocationUpdateListener;
 import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
 
@@ -40,11 +47,13 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
 
     private GoogleApiClient client;
     private Logger logger;
-    private OnLocationUpdatedListener listener;
+    private Map<OnLocationUpdatedListener, Long> listenersIntervals = new HashMap<>();
+    private int locationUpdateCounter = 0;
     private boolean shouldStart = false;
     private boolean stopped = false;
     private LocationStore locationStore;
     private LocationRequest locationRequest;
+    boolean singleUpdate = true;
     private Context context;
     private final GooglePlayServicesListener googlePlayServicesListener;
     private boolean checkLocationSettings;
@@ -81,26 +90,46 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
         }
     }
 
-    private LocationRequest createRequest(LocationParams params, boolean singleUpdate) {
-        LocationRequest request = LocationRequest.create()
-                .setFastestInterval(params.getInterval())
-                .setInterval(params.getInterval())
-                .setSmallestDisplacement(params.getDistance());
+    private void setMoreEffortRequest(LocationParams params, boolean singleUpdate) {
+        long mostEffortInterval;
+        float mostEffortDistance;
+        int mostEffortPriority;
 
-        switch (params.getAccuracy()) {
-            case HIGH:
-                request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                break;
-            case MEDIUM:
-                request.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-                break;
-            case LOW:
-                request.setPriority(LocationRequest.PRIORITY_LOW_POWER);
-                break;
-            case LOWEST:
-                request.setPriority(LocationRequest.PRIORITY_NO_POWER);
-                break;
+        int priorityFromParams = convertToPriority(params.getAccuracy());
+
+        if (locationRequest == null){
+            // First time the request is being built.
+            mostEffortInterval = params.getInterval();
+            mostEffortDistance = params.getDistance();
+            mostEffortPriority = priorityFromParams;
+        } else {
+            // Reconfigure location request.
+            if (singleUpdate) {
+                mostEffortInterval = locationRequest.getInterval();
+            } else {
+                mostEffortInterval = Math.min(locationRequest.getInterval(),
+                        params.getInterval());
+            }
+            mostEffortDistance = Math.min(locationRequest.getSmallestDisplacement(),
+                    params.getDistance());
+            // Lower int value of priority is used for higher priority.
+            mostEffortPriority = Math.min(locationRequest.getPriority(), priorityFromParams);
         }
+
+        if (!singleUpdate) {
+            this.singleUpdate = false;
+        }
+        locationRequest = buildRequest(mostEffortInterval, mostEffortDistance,
+                mostEffortPriority, this.singleUpdate);
+    }
+
+    private static LocationRequest buildRequest(long interval, float distance, int priority,
+                                         boolean singleUpdate) {
+        LocationRequest request = LocationRequest.create()
+                .setFastestInterval(interval)
+                .setInterval(interval)
+                .setSmallestDisplacement(distance)
+                .setPriority(priority);
 
         if (singleUpdate) {
             request.setNumUpdates(1);
@@ -109,14 +138,63 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
         return request;
     }
 
+    private static int convertToPriority(LocationAccuracy locationAccuracy) {
+        switch (locationAccuracy) {
+            case HIGH:
+                return LocationRequest.PRIORITY_HIGH_ACCURACY;
+            case MEDIUM:
+                return LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+            case LOW:
+                return LocationRequest.PRIORITY_LOW_POWER;
+            case LOWEST:
+                return LocationRequest.PRIORITY_NO_POWER;
+            default:
+                return -1;
+        }
+    }
+
     @Override
     public void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
-        this.listener = listener;
+        this.listenersIntervals = new HashMap<>();
+        addListener(listener, params, singleUpdate);
+    }
+
+    @Override
+    public void start(List<ScheduledOnLocationUpdateListener> scheduledListeners) {
+        for (ScheduledOnLocationUpdateListener scheduledListener : scheduledListeners) {
+            addListenerSoftly(scheduledListener.getListener(), scheduledListener.getParams(),
+                    scheduledListener.isSingleUpdate());
+        }
+        restartUpdating();
+    }
+
+    @Override
+    public void addListener(OnLocationUpdatedListener listener, LocationParams params,
+                            boolean singleUpdate) {
+        addListenerSoftly(listener, params, singleUpdate);
+        restartUpdating();
+    }
+
+    private void addListenerSoftly(OnLocationUpdatedListener listener, LocationParams params,
+                                   boolean singleUpdate) {
         if (listener == null) {
             logger.d("Listener is null, you sure about this?");
+        } else {
+            addListenerIntervalSoftly(listener, params.getInterval(), singleUpdate);
         }
-        locationRequest = createRequest(params, singleUpdate);
 
+        setMoreEffortRequest(params, singleUpdate);
+    }
+
+    private void addListenerIntervalSoftly(OnLocationUpdatedListener listener, long interval,
+                                           boolean singleUpdate) {
+        if (singleUpdate) {
+            interval = -1L;
+        }
+        listenersIntervals.put(listener, interval);
+    }
+
+    private void restartUpdating() {
         if (client.isConnected()) {
             startUpdating(locationRequest);
         } else if (stopped) {
@@ -127,6 +205,11 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
             shouldStart = true;
             logger.d("still not connected - scheduled start when connection is ok");
         }
+    }
+
+    @Override
+    public boolean removeListener(OnLocationUpdatedListener listener) {
+        return listenersIntervals.remove(listener) != null;
     }
 
     private void startUpdating(LocationRequest request) {
@@ -148,6 +231,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
                 return;
             }
 
+            locationUpdateCounter = 0;
             LocationServices.FusedLocationApi.requestLocationUpdates(client, request, this, Looper.getMainLooper()).setResultCallback(this);
         } else {
             logger.w("startUpdating executed without the GoogleApiClient being connected!!");
@@ -228,8 +312,31 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     public void onLocationChanged(Location location) {
         logger.d("onLocationChanged", location);
 
-        if (listener != null) {
-            listener.onLocationUpdated(location);
+        locationUpdateCounter++;
+        long currentInterval = locationRequest.getInterval();
+
+        List<OnLocationUpdatedListener> singleUpdateListeners = new ArrayList<>();
+        for (Map.Entry<OnLocationUpdatedListener, Long> entry : listenersIntervals.entrySet()) {
+            OnLocationUpdatedListener listener = entry.getKey();
+            long listenerInterval = entry.getValue();
+            boolean singleUpdate = listenerInterval == -1L;
+
+            if (singleUpdate) {
+                listener.onLocationUpdated(location);
+                singleUpdateListeners.add(listener);
+            } else if (currentInterval == 0) {
+                listener.onLocationUpdated(location);
+            } else {
+                boolean timeToUpdate = locationUpdateCounter % (listenerInterval / currentInterval) == 0;
+
+                if (timeToUpdate) {
+                    listener.onLocationUpdated(location);
+                }
+            }
+        }
+
+        for (OnLocationUpdatedListener singleUpdateListener : singleUpdateListeners) {
+            removeListener(singleUpdateListener);
         }
 
         if (locationStore != null) {
