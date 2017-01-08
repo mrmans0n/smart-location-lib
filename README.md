@@ -13,7 +13,7 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:3.2.10'
+compile 'io.nlopez.smartlocation:library:3.2.11'
 ```
 
 Google Play Services compatible version: 10.0.1
@@ -240,7 +240,7 @@ Common issues
 If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
 
 ```groovy
-compile ('io.nlopez.smartlocation:library:3.2.10') {
+compile ('io.nlopez.smartlocation:library:3.2.11') {
 	transitive = false
 }
 ```
