@@ -10,7 +10,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '3.2.9'
+version '3.2.11'
 group 'io.nlopez.smartlocation'
 
 dependencies {
@@ -18,8 +18,8 @@ dependencies {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:9.8.0'
-    compile 'com.android.support:support-annotations:25.0.0'
+    compile 'com.google.android.gms:play-services-location:10.0.1'
+    compile 'com.android.support:support-annotations:25.1.0'
     provided 'io.reactivex:rxjava:1.1.7'
     provided 'io.reactivex:rxandroid:1.2.0'
     testCompile 'junit:junit:4.12'
@@ -62,6 +62,10 @@ def isReleaseBuild() {
     return version.contains("SNAPSHOT") == false
 }
 
+def getProperty(project, property) {
+    return project.hasProperty(property) ? project.property(property) : ""
+}
+
 signing {
     required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
     sign configurations.archives
@@ -72,13 +76,13 @@ uploadArchives {
     repositories.mavenDeployer {
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-        repository(url: sonatypeRepo) {
-            authentication(userName: sonatypeUsername,
-                    password: sonatypePassword)
+        repository(url: getProperty(project, "sonatypeRepo")) {
+            authentication(userName: getProperty(project, "sonatypeUsername"),
+                    password: getProperty(project, "sonatypePassword"))
         }
-        snapshotRepository(url: sonatypeSnapshotRepo) {
-            authentication(userName: sonatypeUsername,
-                    password: sonatypePassword)
+        snapshotRepository(url: getProperty(project, "sonatypeSnapshotRepo")) {
+            authentication(userName: getProperty(project, "sonatypeUsername"),
+                    password: getProperty(project, "sonatypePassword"))
         }
 
         pom.project {

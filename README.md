@@ -13,10 +13,10 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:3.2.9'
+compile 'io.nlopez.smartlocation:library:3.2.11'
 ```
 
-Google Play Services compatible version: 9.8.0
+Google Play Services compatible version: 10.0.1
 
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
 
@@ -106,6 +106,7 @@ SmartLocation.with(context).location(new LocationBasedOnActivityProvider(callbac
 
 The `MultiFallbackProvider` lets you create your own provider that utilizes multiple underlying location services.
 The provider will use the location services in the order in which they are added to its `Builder`, which has convenience methods for setting up the Google Play Services provider and the default `LocationManager` provider.
+Providers must implement the `ServiceLocationProvider` interface to enable the fallback behavior.
 Example:
 
 ````java
@@ -239,7 +240,7 @@ Common issues
 If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
 
 ```groovy
-compile ('io.nlopez.smartlocation:library:3.2.9') {
+compile ('io.nlopez.smartlocation:library:3.2.11') {
 	transitive = false
 }
 ```

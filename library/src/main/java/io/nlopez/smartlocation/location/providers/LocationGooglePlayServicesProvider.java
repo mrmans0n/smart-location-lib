@@ -28,18 +28,19 @@ import java.util.List;
 import java.util.Map;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
-import io.nlopez.smartlocation.location.LocationProvider;
-import io.nlopez.smartlocation.location.LocationStore;
+import io.nlopez.smartlocation.location.LocationStore; 
 import io.nlopez.smartlocation.location.config.LocationAccuracy;
+import io.nlopez.smartlocation.location.ServiceLocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.location.config.ScheduledOnLocationUpdateListener;
 import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
+import io.nlopez.smartlocation.utils.ServiceConnectionListener;
 
 /**
  * Created by mrm on 20/12/14.
  */
-public class LocationGooglePlayServicesProvider implements LocationProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
+public class LocationGooglePlayServicesProvider implements ServiceLocationProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
 
     public static final int REQUEST_START_LOCATION_FIX = 10001;
     public static final int REQUEST_CHECK_SETTINGS = 20001;
@@ -55,19 +56,25 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     private LocationRequest locationRequest;
     boolean singleUpdate = true;
     private Context context;
-    private final GooglePlayServicesListener googlePlayServicesListener;
+    private GooglePlayServicesListener googlePlayServicesListener;
+    private ServiceConnectionListener serviceListener;
     private boolean checkLocationSettings;
     private boolean fulfilledCheckLocationSettings;
     private boolean alwaysShow = true;
 
     public LocationGooglePlayServicesProvider() {
-        this(null);
+        checkLocationSettings =  false;
+        fulfilledCheckLocationSettings = false;
     }
 
     public LocationGooglePlayServicesProvider(GooglePlayServicesListener playServicesListener) {
+        this();
         googlePlayServicesListener = playServicesListener;
-        checkLocationSettings = false;
-        fulfilledCheckLocationSettings = false;
+    }
+
+    public LocationGooglePlayServicesProvider(ServiceConnectionListener serviceListener) {
+        this();
+        this.serviceListener = serviceListener;
     }
 
     @Override
@@ -282,6 +289,16 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     }
 
     @Override
+    public ServiceConnectionListener getServiceListener() {
+        return serviceListener;
+    }
+
+    @Override
+    public void setServiceListener(ServiceConnectionListener listener) {
+        serviceListener = listener;
+    }
+
+    @Override
     public void onConnected(Bundle bundle) {
         logger.d("onConnected");
         if (shouldStart) {
@@ -289,6 +306,9 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
         }
         if (googlePlayServicesListener != null) {
             googlePlayServicesListener.onConnected(bundle);
+        }
+        if (serviceListener != null) {
+            serviceListener.onConnected();
         }
     }
 
@@ -298,6 +318,9 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
         if (googlePlayServicesListener != null) {
             googlePlayServicesListener.onConnectionSuspended(i);
         }
+        if (serviceListener != null) {
+            serviceListener.onConnectionSuspended();
+        }
     }
 
     @Override
@@ -305,6 +328,9 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
         logger.d("onConnectionFailed " + connectionResult.toString());
         if (googlePlayServicesListener != null) {
             googlePlayServicesListener.onConnectionFailed(connectionResult);
+        }
+        if (serviceListener != null) {
+            serviceListener.onConnectionFailed();
         }
     }
 
