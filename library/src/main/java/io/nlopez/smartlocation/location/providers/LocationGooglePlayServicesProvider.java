@@ -356,7 +356,7 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
                     startUpdating(locationRequest);
                     break;
                 case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                    logger.w("Location settings are not satisfied. Show the user a dialog to" +
+                    logger.w("Location settings are not satisfied. Show the user a dialog to " +
                             "upgrade location settings. You should hook into the Activity onActivityResult and call this provider onActivityResult method for continuing this call flow. ");
 
                     if (context instanceof Activity) {
