@@ -271,7 +271,7 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
 
         } else if (status.hasResolution() && context instanceof Activity) {
             logger.w(
-                    "Unable to register, but we can solve this - will startActivityForResult. You should hook into the Activity onActivityResult and call this provider onActivityResult method for continuing this call flow.");
+                    "Unable to register, but we can solve this - will startActivityForResult. You should hook into the Activity onActivityResult and call this provider's onActivityResult method for continuing this call flow.");
             try {
                 status.startResolutionForResult((Activity) context, REQUEST_START_LOCATION_FIX);
             } catch (IntentSender.SendIntentException e) {
@@ -357,7 +357,7 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
                     break;
                 case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                     logger.w("Location settings are not satisfied. Show the user a dialog to " +
-                            "upgrade location settings. You should hook into the Activity onActivityResult and call this provider onActivityResult method for continuing this call flow. ");
+                            "upgrade location settings. You should hook into the Activity onActivityResult and call this provider's onActivityResult method for continuing this call flow. ");
 
                     if (context instanceof Activity) {
                         try {
@@ -369,7 +369,7 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
                         }
 
                     } else {
-                        logger.w("Provided context is not the context of an activity, therefore we cant launch the resolution activity.");
+                        logger.w("Provided context is not the context of an activity, therefore we can't launch the resolution activity.");
                     }
                     break;
                 case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
