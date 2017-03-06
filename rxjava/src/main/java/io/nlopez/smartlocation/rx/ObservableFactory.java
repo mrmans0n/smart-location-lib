@@ -16,9 +16,10 @@ import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.geocoding.utils.LocationAddress;
 import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action0;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.functions.Action;
 
 /**
  * Creates RxJava Observables for all the library calls.
@@ -37,25 +38,22 @@ public class ObservableFactory {
      * @return Observable for Location changes
      */
     public static Observable<Location> from(final SmartLocation.LocationControl locationControl) {
-        Observable<Location> result = Observable.create(new Observable.OnSubscribe<Location>() {
+        return Observable.create(new ObservableOnSubscribe<Location>() {
             @Override
-            public void call(final Subscriber<? super Location> subscriber) {
+            public void subscribe(final ObservableEmitter<Location> emitter) throws Exception {
                 locationControl.start(new OnLocationUpdatedListener() {
                     @Override
                     public void onLocationUpdated(Location location) {
-                        subscriber.onNext(location);
+                        emitter.onNext(location);
                     }
                 });
-                // TODO find a way to send back an onError message when necessary
             }
-        }).doOnUnsubscribe(new Action0() {
+        }).doOnDispose(new Action() {
             @Override
-            public void call() {
+            public void run() throws Exception {
                 locationControl.stop();
             }
         });
-
-        return result;
     }
 
     /**
@@ -65,24 +63,22 @@ public class ObservableFactory {
      * @return Observable for Activity changes
      */
     public static Observable<DetectedActivity> from(final SmartLocation.ActivityRecognitionControl activityControl) {
-        Observable<DetectedActivity> result = Observable.create(new Observable.OnSubscribe<DetectedActivity>() {
+        return Observable.create(new ObservableOnSubscribe<DetectedActivity>() {
             @Override
-            public void call(final Subscriber<? super DetectedActivity> subscriber) {
+            public void subscribe(final ObservableEmitter<DetectedActivity> emitter) throws Exception {
                 activityControl.start(new OnActivityUpdatedListener() {
                     @Override
                     public void onActivityUpdated(DetectedActivity detectedActivity) {
-                        subscriber.onNext(detectedActivity);
+                        emitter.onNext(detectedActivity);
                     }
                 });
-                // TODO find a way to send back an onError message when necessary
             }
-        }).doOnUnsubscribe(new Action0() {
+        }).doOnDispose(new Action() {
             @Override
-            public void call() {
+            public void run() {
                 activityControl.stop();
             }
         });
-        return result;
     }
 
     /**
@@ -92,23 +88,22 @@ public class ObservableFactory {
      * @return Observable for Geofence transitions (enter, exit, dwell)
      */
     public static Observable<TransitionGeofence> from(final SmartLocation.GeofencingControl geofencingControl) {
-        Observable<TransitionGeofence> result = Observable.create(new Observable.OnSubscribe<TransitionGeofence>() {
+        return Observable.create(new ObservableOnSubscribe<TransitionGeofence>() {
             @Override
-            public void call(final Subscriber<? super TransitionGeofence> subscriber) {
+            public void subscribe(final ObservableEmitter<TransitionGeofence> emitter) {
                 geofencingControl.start(new OnGeofencingTransitionListener() {
                     @Override
                     public void onGeofenceTransition(TransitionGeofence transitionGeofence) {
-                        subscriber.onNext(transitionGeofence);
+                        emitter.onNext(transitionGeofence);
                     }
                 });
             }
-        }).doOnUnsubscribe(new Action0() {
+        }).doOnDispose(new Action() {
             @Override
-            public void call() {
+            public void run() {
                 geofencingControl.stop();
             }
         });
-        return result;
     }
 
     /**
@@ -117,23 +112,22 @@ public class ObservableFactory {
      * @param context    caller context
      * @param address    address or name of the place we want to get the location of
      * @param maxResults max number of coincidences to return
-     * @return Observable for results
+     * @return Observable for results. Gets a terminal event after the response.
      */
     public static Observable<List<LocationAddress>> fromAddress(final Context context, final String address, final int maxResults) {
-        Observable<List<LocationAddress>> result = Observable.create(new Observable.OnSubscribe<List<LocationAddress>>() {
+        return Observable.create(new ObservableOnSubscribe<List<LocationAddress>>() {
             @Override
-            public void call(final Subscriber<? super List<LocationAddress>> subscriber) {
+            public void subscribe(final ObservableEmitter<List<LocationAddress>> emitter) {
                 SmartLocation.with(context).geocoding().add(address, maxResults).start(new OnGeocodingListener() {
                     @Override
                     public void onLocationResolved(String name, List<LocationAddress> results) {
-                        subscriber.onNext(results);
-                        subscriber.onCompleted();
+                        emitter.onNext(results);
+                        emitter.onComplete();
                     }
                 });
 
             }
         });
-        return result;
     }
 
     /**
@@ -142,22 +136,21 @@ public class ObservableFactory {
      * @param context    caller context
      * @param location   location we want to know the address od
      * @param maxResults max number of coincidences to return
-     * @return Observable for results
+     * @return Observable for results. Gets a terminal event after the response
      */
     public static Observable<List<Address>> fromLocation(final Context context, final Location location, final int maxResults) {
-        Observable<List<Address>> result = Observable.create(new Observable.OnSubscribe<List<Address>>() {
+        return Observable.create(new ObservableOnSubscribe<List<Address>>() {
             @Override
-            public void call(final Subscriber<? super List<Address>> subscriber) {
+            public void subscribe(final ObservableEmitter<List<Address>> emitter) {
                 SmartLocation.with(context).geocoding().add(location, maxResults).start(new OnReverseGeocodingListener() {
                     @Override
                     public void onAddressResolved(Location original, List<Address> results) {
-                        subscriber.onNext(results);
-                        subscriber.onCompleted();
+                        emitter.onNext(results);
+                        emitter.onComplete();
                     }
                 });
             }
         });
-        return result;
     }
 
 }

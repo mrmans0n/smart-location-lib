@@ -5,7 +5,7 @@ Smart Location Library
 
 Android library project that intends to simplify the usage of location providers and activity recognition with a nice fluid API.
 
-**Supported Android versions**: Android 2.3+
+**Supported Android versions**: Android 4.0+
 
 Adding to your project
 ----------------------
@@ -13,10 +13,16 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:3.2.11'
+compile 'io.nlopez.smartlocation:library:3.3.0'
 ```
 
-Google Play Services compatible version: 10.0.1
+Google Play Services compatible version: 10.2.0
+
+If you want the rxjava wrappers, these are now in a separate dependency. Just add this new dependency as well:
+
+```groovy
+compile 'io.nlopez.smartlocation:rx:3.3.0'
+```
 
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
 
@@ -240,7 +246,7 @@ Common issues
 If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
 
 ```groovy
-compile ('io.nlopez.smartlocation:library:3.2.11') {
+compile ('io.nlopez.smartlocation:library:3.3.0') {
 	transitive = false
 }
 ```
