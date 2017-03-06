@@ -14,7 +14,7 @@ import org.robolectric.annotation.Config;
 import io.nlopez.smartlocation.CustomTestRunner;
 
 /**
- * Created by nacho on 1/9/15.
+ * Tests {@link ActivityStore}
  */
 @RunWith(CustomTestRunner.class)
 @Config(manifest = Config.NONE)
@@ -34,7 +34,6 @@ public class ActivityStoreTest {
         DetectedActivity storedActivity = store.get(TEST_ACTIVITY_ID);
         Assert.assertEquals(storedActivity.getConfidence(), TEST_ACTIVITY.getConfidence());
         Assert.assertEquals(storedActivity.getType(), TEST_ACTIVITY.getType());
-        Assert.assertEquals(storedActivity.getVersionCode(), TEST_ACTIVITY.getVersionCode());
 
         store.remove(TEST_ACTIVITY_ID);
         Assert.assertNull(store.get(TEST_ACTIVITY_ID));

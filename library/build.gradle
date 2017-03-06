@@ -10,7 +10,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-version '3.2.11'
+version '3.2.12'
 group 'io.nlopez.smartlocation'
 
 dependencies {
@@ -18,10 +18,10 @@ dependencies {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:10.0.1'
-    compile 'com.android.support:support-annotations:25.1.0'
-    provided 'io.reactivex:rxjava:1.1.7'
-    provided 'io.reactivex:rxandroid:1.2.0'
+    compile 'com.google.android.gms:play-services-location:10.2.0'
+    compile 'com.android.support:support-annotations:25.2.0'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.6'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.1'
     testCompile 'org.robolectric:robolectric-shadows:3.1'
@@ -30,11 +30,11 @@ dependencies {
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '25.0.2'
 
     buildTypes {
         defaultConfig {
-            minSdkVersion 9
+            minSdkVersion 14
             targetSdkVersion 25
             versionCode 20006
             versionName version

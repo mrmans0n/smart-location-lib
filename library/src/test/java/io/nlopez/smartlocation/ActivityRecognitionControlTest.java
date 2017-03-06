@@ -10,14 +10,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.util.Collections;
-
 import io.nlopez.smartlocation.activity.config.ActivityParams;
 import io.nlopez.smartlocation.rx.ObservableFactory;
 import io.nlopez.smartlocation.util.MockActivityRecognitionProvider;
 import io.nlopez.smartlocation.utils.Logger;
-import rx.Observable;
-import rx.observers.TestSubscriber;
+import io.reactivex.observers.TestObserver;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
@@ -79,18 +76,16 @@ public class ActivityRecognitionControlTest {
 
     @Test
     public void test_observable_activity() {
-        TestSubscriber<DetectedActivity> testSubscriber = new TestSubscriber<>();
         MockActivityRecognitionProvider provider = new MockActivityRecognitionProvider();
-        Observable<DetectedActivity> activityObservable = ObservableFactory.from(
+        TestObserver<DetectedActivity> testObserver = ObservableFactory.from(
                 SmartLocation.with(RuntimeEnvironment.application.getApplicationContext())
                         .activity(provider)
-        );
-        activityObservable.subscribe(testSubscriber);
+        ).test();
 
         DetectedActivity detectedActivity = new DetectedActivity(DetectedActivity.UNKNOWN,100);
         provider.fakeEmitActivity(detectedActivity);
-        testSubscriber.assertNoErrors();
-        testSubscriber.assertReceivedOnNext(Collections.singletonList(detectedActivity));
+        testObserver.assertNoErrors();
+        testObserver.assertValue(detectedActivity);
     }
 
     private SmartLocation.ActivityRecognitionControl createActivityRecognitionControl() {
