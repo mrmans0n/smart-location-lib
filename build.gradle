@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.smartLocationVersion = "3.2.12-SNAPSHOT"
+    ext.smartLocationVersion = "3.3.0"
     repositories {
         mavenCentral()
         jcenter()
