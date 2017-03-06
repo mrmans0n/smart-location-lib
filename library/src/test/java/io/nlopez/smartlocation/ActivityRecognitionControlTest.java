@@ -2,8 +2,6 @@ package io.nlopez.smartlocation;
 
 import android.content.Context;
 
-import com.google.android.gms.location.DetectedActivity;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,10 +9,8 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import io.nlopez.smartlocation.activity.config.ActivityParams;
-import io.nlopez.smartlocation.rx.ObservableFactory;
 import io.nlopez.smartlocation.util.MockActivityRecognitionProvider;
 import io.nlopez.smartlocation.utils.Logger;
-import io.reactivex.observers.TestObserver;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
@@ -72,20 +68,6 @@ public class ActivityRecognitionControlTest {
         activityRecognitionControl.stop();
 
         verify(mockProvider).stop();
-    }
-
-    @Test
-    public void test_observable_activity() {
-        MockActivityRecognitionProvider provider = new MockActivityRecognitionProvider();
-        TestObserver<DetectedActivity> testObserver = ObservableFactory.from(
-                SmartLocation.with(RuntimeEnvironment.application.getApplicationContext())
-                        .activity(provider)
-        ).test();
-
-        DetectedActivity detectedActivity = new DetectedActivity(DetectedActivity.UNKNOWN,100);
-        provider.fakeEmitActivity(detectedActivity);
-        testObserver.assertNoErrors();
-        testObserver.assertValue(detectedActivity);
     }
 
     private SmartLocation.ActivityRecognitionControl createActivityRecognitionControl() {

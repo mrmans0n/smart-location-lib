@@ -18,6 +18,12 @@ compile 'io.nlopez.smartlocation:library:3.2.12'
 
 Google Play Services compatible version: 10.2.0
 
+If you want the rxjava wrappers, these are now in a separate dependency. Just add this new dependency as well:
+
+```groovy
+compile 'io.nlopez.smartlocation:rx:3.2.12'
+```
+
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
 
 ## Location
