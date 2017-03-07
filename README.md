@@ -13,7 +13,7 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:3.3.0'
+compile 'io.nlopez.smartlocation:library:3.3.1'
 ```
 
 Google Play Services compatible version: 10.2.0
@@ -21,7 +21,7 @@ Google Play Services compatible version: 10.2.0
 If you want the rxjava wrappers, these are now in a separate dependency. Just add this new dependency as well:
 
 ```groovy
-compile 'io.nlopez.smartlocation:rx:3.3.0'
+compile 'io.nlopez.smartlocation:rx:3.3.1'
 ```
 
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
@@ -226,6 +226,12 @@ You should invoke the stop method whenever the calling activity/fragment or what
 
 ## RxJava / RxAndroid support
 
+The wrappers to rxjava2 are located in this package.
+
+```groovy
+compile 'io.nlopez.smartlocation:rx:3.3.1'
+```
+
 You can wrap the calls with ObservableFactory methods to retrieve an Observable object. You won't need to call start, just subscribe to the observable to get the updates.
 
 For example, for location:
@@ -246,7 +252,7 @@ Common issues
 If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
 
 ```groovy
-compile ('io.nlopez.smartlocation:library:3.3.0') {
+compile ('io.nlopez.smartlocation:library:3.3.1') {
 	transitive = false
 }
 ```
