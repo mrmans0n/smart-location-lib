@@ -7,9 +7,13 @@ import android.os.Bundle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
+import io.nlopez.smartlocation.location.config.ScheduledOnLocationUpdateListener;
 import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
 
@@ -19,13 +23,10 @@ import io.nlopez.smartlocation.utils.Logger;
 public class LocationGooglePlayServicesWithFallbackProvider implements LocationProvider, GooglePlayServicesListener {
 
     private Logger logger;
-    private OnLocationUpdatedListener listener;
-    private boolean shouldStart = false;
     private Context context;
-    private LocationParams params;
-    private boolean singleUpdate = false;
 
     private LocationProvider provider;
+    private List<ScheduledOnLocationUpdateListener> listeners = new ArrayList<>();
 
     public LocationGooglePlayServicesWithFallbackProvider(Context context) {
         if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
@@ -47,17 +48,48 @@ public class LocationGooglePlayServicesWithFallbackProvider implements LocationP
 
     @Override
     public void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
-        shouldStart = true;
-        this.listener = listener;
-        this.params = params;
-        this.singleUpdate = singleUpdate;
-        provider.start(listener, params, singleUpdate);
+        this.listeners = new ArrayList<>();
+        addListener(listener, params, singleUpdate);
+    }
+
+    @Override
+    public void start(List<ScheduledOnLocationUpdateListener> scheduledListeners) {
+        provider.start(scheduledListeners);
+    }
+
+    @Override
+    public void addListener(OnLocationUpdatedListener listener, LocationParams params,
+                            boolean singleUpdate) {
+        if (listener != null) {
+            this.listeners.add(
+                    new ScheduledOnLocationUpdateListener(listener, params, singleUpdate));
+        }
+        provider.addListener(listener, params, singleUpdate);
+    }
+
+    @Override
+    public boolean removeListener(OnLocationUpdatedListener listener) {
+        ScheduledOnLocationUpdateListener scheduledListenerToRemove = null;
+
+        for (ScheduledOnLocationUpdateListener scheduledListener : listeners) {
+            if (scheduledListener.getListener() == listener) {
+                scheduledListenerToRemove = scheduledListener;
+                break;
+            }
+        }
+
+        if (scheduledListenerToRemove != null) {
+            listeners.remove(scheduledListenerToRemove);
+            return provider.removeListener(listener);
+        } else {
+            return false;
+        }
     }
 
     @Override
     public void stop() {
         provider.stop();
-        shouldStart = false;
+        listeners = new ArrayList<>();
     }
 
     @Override
@@ -84,8 +116,8 @@ public class LocationGooglePlayServicesWithFallbackProvider implements LocationP
         logger.d("FusedLocationProvider not working, falling back and using LocationManager");
         provider = new LocationManagerProvider();
         provider.init(context, logger);
-        if (shouldStart) {
-            provider.start(listener, params, singleUpdate);
+        if (listeners.size() >= 0) {
+            provider.start(listeners);
         }
     }
 }

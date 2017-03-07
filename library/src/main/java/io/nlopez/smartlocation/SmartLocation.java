@@ -209,6 +209,26 @@ public class SmartLocation {
             provider.start(listener, params, oneFix);
         }
 
+        public void addListener(OnLocationUpdatedListener listener) {
+            addListener(listener, params, false);
+        }
+
+        public void addSingleLocationListener(OnLocationUpdatedListener listener) {
+            addListener(listener, params, true);
+        }
+
+        private void addListener(OnLocationUpdatedListener listener, LocationParams params,
+                                 boolean singleLocation) {
+            if (provider == null) {
+                throw new RuntimeException("A provider must be initialized");
+            }
+            provider.addListener(listener, params, singleLocation);
+        }
+
+        public boolean removeListener(OnLocationUpdatedListener listener) {
+            return provider.removeListener(listener);
+        }
+
         public void stop() {
             provider.stop();
         }
