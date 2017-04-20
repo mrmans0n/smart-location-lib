@@ -1,11 +1,14 @@
 package io.nlopez.smartlocation.location.providers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
@@ -28,8 +31,38 @@ public class LocationGooglePlayServicesWithFallbackProvider implements LocationP
     private LocationProvider provider;
 
     public LocationGooglePlayServicesWithFallbackProvider(Context context) {
-        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
             provider = new LocationGooglePlayServicesProvider(this);
+        } else {
+            provider = new LocationManagerProvider();
+        }
+    }
+
+    public LocationGooglePlayServicesWithFallbackProvider(@NonNull Fragment fragment, Context context) {
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
+            provider = new LocationGooglePlayServicesProvider(fragment, this);
+        } else {
+            provider = new LocationManagerProvider();
+        }
+    }
+
+    public LocationGooglePlayServicesWithFallbackProvider(Context context, boolean checkLocationSettings, boolean alwaysShow) {
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
+            LocationGooglePlayServicesProvider locationGooglePlayServicesProvider = new LocationGooglePlayServicesProvider(this);
+            locationGooglePlayServicesProvider.setCheckLocationSettings(checkLocationSettings);
+            locationGooglePlayServicesProvider.setLocationSettingsAlwaysShow(alwaysShow);
+            provider = locationGooglePlayServicesProvider;
+        } else {
+            provider = new LocationManagerProvider();
+        }
+    }
+
+    public LocationGooglePlayServicesWithFallbackProvider(@NonNull Fragment fragment, Context context, boolean checkLocationSettings, boolean alwaysShow) {
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
+            LocationGooglePlayServicesProvider locationGooglePlayServicesProvider = new LocationGooglePlayServicesProvider(fragment, this);
+            locationGooglePlayServicesProvider.setCheckLocationSettings(checkLocationSettings);
+            locationGooglePlayServicesProvider.setLocationSettingsAlwaysShow(alwaysShow);
+            provider = locationGooglePlayServicesProvider;
         } else {
             provider = new LocationManagerProvider();
         }
@@ -78,6 +111,12 @@ public class LocationGooglePlayServicesWithFallbackProvider implements LocationP
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         fallbackToLocationManager();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (provider instanceof LocationGooglePlayServicesProvider) {
+            ((LocationGooglePlayServicesProvider) provider).onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void fallbackToLocationManager() {
