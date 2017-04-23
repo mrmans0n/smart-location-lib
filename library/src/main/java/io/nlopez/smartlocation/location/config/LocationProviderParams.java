@@ -10,13 +10,22 @@ public class LocationProviderParams {
             .interval(500)
             .runOnlyOnce(false)
             .build();
+    public static final LocationProviderParams NAVIGATION_ONCE = new Builder()
+            .accuracy(LocationAccuracy.HIGH)
+            .distance(0)
+            .interval(500)
+            .runOnlyOnce(true)
+            .build();
     public static final LocationProviderParams BEST_EFFORT = new Builder()
             .accuracy(LocationAccuracy.MEDIUM)
             .distance(150)
             .interval(2500)
             .runOnlyOnce(false)
             .build();
-    public static final LocationProviderParams BEST_EFFORT_ONCE = new Builder(BEST_EFFORT)
+    public static final LocationProviderParams BEST_EFFORT_ONCE = new Builder()
+            .accuracy(LocationAccuracy.MEDIUM)
+            .distance(150)
+            .interval(2500)
             .runOnlyOnce(true)
             .build();
     public static final LocationProviderParams LAZY = new Builder()
@@ -25,11 +34,16 @@ public class LocationProviderParams {
             .interval(5000)
             .runOnlyOnce(false)
             .build();
+    public static final LocationProviderParams LAZY_ONCE = new Builder()
+            .accuracy(LocationAccuracy.LOW)
+            .distance(500)
+            .interval(5000)
+            .runOnlyOnce(true)
+            .build();
 
     public long interval;
     public float distance;
-    @LocationAccuracy
-    public int accuracy;
+    public LocationAccuracy accuracy;
     public boolean runOnlyOnce;
     public boolean checkLocationSettings;
 
@@ -50,45 +64,34 @@ public class LocationProviderParams {
 
         if (interval != that.interval) return false;
         if (Float.compare(that.distance, distance) != 0) return false;
-        if (accuracy != that.accuracy) return false;
         if (runOnlyOnce != that.runOnlyOnce) return false;
-        return checkLocationSettings == that.checkLocationSettings;
+        if (checkLocationSettings != that.checkLocationSettings) return false;
+        return accuracy == that.accuracy;
     }
 
     @Override
     public int hashCode() {
         int result = (int) (interval ^ (interval >>> 32));
         result = 31 * result + (distance != +0.0f ? Float.floatToIntBits(distance) : 0);
-        result = 31 * result + accuracy;
+        result = 31 * result + accuracy.hashCode();
         result = 31 * result + (runOnlyOnce ? 1 : 0);
         result = 31 * result + (checkLocationSettings ? 1 : 0);
         return result;
     }
 
     public static class Builder {
-        @LocationAccuracy
-        int accuracy = LAZY.accuracy;
-        long interval = LAZY.interval;
-        float distance = LAZY.distance;
+        LocationAccuracy accuracy = LocationAccuracy.LOWEST;
+        long interval = 500;
+        float distance = 5000;
         boolean runOnlyOnce = false;
         boolean checkLocationSettings = false;
-
-        public Builder() {
-        }
-
-        public Builder(@NonNull LocationProviderParams params) {
-            accuracy = params.accuracy;
-            interval = params.interval;
-            distance = params.distance;
-            runOnlyOnce = params.runOnlyOnce;
-        }
 
         public Builder runOnlyOnce(boolean value) {
             runOnlyOnce = value;
             return this;
         }
 
-        public Builder accuracy(@LocationAccuracy int accuracy) {
+        public Builder accuracy(LocationAccuracy accuracy) {
             this.accuracy = accuracy;
             return this;
         }

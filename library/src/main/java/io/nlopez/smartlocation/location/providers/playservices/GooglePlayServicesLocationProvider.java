@@ -55,33 +55,37 @@ public class GooglePlayServicesLocationProvider
     private final FusedLocationApiProxy mFusedLocationApiProxy;
     @NonNull
     private final GooglePlayServicesLocationSettingsManager mLocationSettingsManager;
+    @NonNull
+    private Context mContext;
     @Nullable
     private GoogleApiClient mClient;
     @Nullable
     private OnLocationUpdatedListener mListener;
     @Nullable
     private LocationRequest mLocationRequest;
-    @Nullable
-    private Context mContext;
+
     @Nullable
     private LocationProviderParams mParams;
 
     public GooglePlayServicesLocationProvider(
+            @NonNull Context context,
             @NonNull StatusListener statusListener,
             @NonNull Store<Location> locationStore,
             @NonNull Logger logger,
             @NonNull LocationPermissionsManager permissionsManager) {
-        this(statusListener, locationStore, logger, permissionsManager, GooglePlayServicesLocationSettingsManager.get(), new FusedLocationApiProxy());
+        this(context, statusListener, locationStore, logger, permissionsManager, GooglePlayServicesLocationSettingsManager.get(), new FusedLocationApiProxy());
     }
 
     @VisibleForTesting
     GooglePlayServicesLocationProvider(
+            @NonNull Context context,
             @NonNull StatusListener statusListener,
             @NonNull Store<Location> locationStore,
             @NonNull Logger logger,
             @NonNull LocationPermissionsManager permissionsManager,
             @NonNull GooglePlayServicesLocationSettingsManager locationSettingsManager,
             @NonNull FusedLocationApiProxy fusedLocationApiProxy) {
+        mContext = context;
         mStatusListener = statusListener;
         mLocationStore = locationStore;
         mLogger = logger;
@@ -92,12 +96,11 @@ public class GooglePlayServicesLocationProvider
     }
 
     @Override
-    public void start(@NonNull Context context, @NonNull OnLocationUpdatedListener listener, @NonNull LocationProviderParams params) {
+    public void start(@NonNull OnLocationUpdatedListener listener, @NonNull LocationProviderParams params) {
         mListener = listener;
         mParams = params;
-        mContext = context;
         mLocationRequest = createRequestFromParams(params);
-        mClient = new GoogleApiClient.Builder(context)
+        mClient = new GoogleApiClient.Builder(mContext)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -217,6 +220,7 @@ public class GooglePlayServicesLocationProvider
         if (mClient != null && mClient.isConnected()) {
             mClient.disconnect();
         }
+        mListener = null;
     }
 
     @Override

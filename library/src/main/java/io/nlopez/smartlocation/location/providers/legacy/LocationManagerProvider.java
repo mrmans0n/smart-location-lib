@@ -18,11 +18,9 @@ import io.nlopez.smartlocation.location.config.LocationAccuracy;
 import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.utils.Logger;
 
-import static io.nlopez.smartlocation.location.config.LocationAccuracy.HIGH;
-import static io.nlopez.smartlocation.location.config.LocationAccuracy.LOW;
-import static io.nlopez.smartlocation.location.config.LocationAccuracy.LOWEST;
-import static io.nlopez.smartlocation.location.config.LocationAccuracy.MEDIUM;
-
+/**
+ * Location provider that uses Android's LocationManager as a source for updates
+ */
 public class LocationManagerProvider implements LocationProvider, LocationListener {
     private static final String LOCATIONMANAGERPROVIDER_ID = "LMP";
     @NonNull
@@ -37,10 +35,12 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
     private Context mContext;
 
     public LocationManagerProvider(
+            @NonNull Context context,
             @NonNull StatusListener statusListener,
             @NonNull Store<Location> locationStore,
             @NonNull Logger logger,
             @NonNull LocationPermissionsManager permissionsManager) {
+        mContext = context;
         mStatusListener = statusListener;
         mLocationStore = locationStore;
         mLogger = logger;
@@ -49,14 +49,14 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
 
     @SuppressLint("MissingPermission")
     @Override
-    public void start(@NonNull Context context, @NonNull OnLocationUpdatedListener listener, @NonNull LocationProviderParams params) {
-        mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    public void start(@NonNull OnLocationUpdatedListener listener, @NonNull LocationProviderParams params) {
+        mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         if (mLocationManager == null) {
             mStatusListener.onProviderFailed(this);
             return;
         }
         mListener = listener;
-        if (!mPermissionsManager.permissionsEnabledOrRequestPermissions(context)) {
+        if (!mPermissionsManager.permissionsEnabledOrRequestPermissions(mContext)) {
             mLogger.d("Permissions were not enabled. If the context was part of an activity, a permission request dialog would have been shown already.");
             return;
 
@@ -92,7 +92,7 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
     }
 
     private Criteria getProvider(LocationProviderParams params) {
-        @LocationAccuracy final int accuracy = params.accuracy;
+        final LocationAccuracy accuracy = params.accuracy;
         final Criteria criteria = new Criteria();
         switch (accuracy) {
             case HIGH:
@@ -150,6 +150,6 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
 
     @Override
     public void release() {
-
+        mListener = null;
     }
 }

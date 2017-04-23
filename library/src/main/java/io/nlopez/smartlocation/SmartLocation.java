@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.google.android.gms.location.DetectedActivity;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -19,9 +20,11 @@ import io.nlopez.smartlocation.geocoding.providers.AndroidGeocodingProvider;
 import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider;
-import io.nlopez.smartlocation.location.LocationProvider;
+import io.nlopez.smartlocation.location.LocationProviderController;
+import io.nlopez.smartlocation.location.LocationProviderFactory;
 import io.nlopez.smartlocation.location.config.LocationProviderParams;
-import io.nlopez.smartlocation.location.utils.LocationState;
+import io.nlopez.smartlocation.location.providers.legacy.LocationManagerProviderFactory;
+import io.nlopez.smartlocation.location.providers.playservices.GooglePlayServicesLocationProviderFactory;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
 
@@ -37,8 +40,8 @@ public class SmartLocation {
     /**
      * Creates the SmartLocation basic instance.
      *
-     * @param context       execution context
-     * @param logger        logger interface
+     * @param context execution context
+     * @param logger  logger interface
      */
     private SmartLocation(Context context, Logger logger) {
         this.context = context;
@@ -53,16 +56,17 @@ public class SmartLocation {
      * @return request handler for location operations
      */
     public LocationControl location() {
-        // TODO fix
-        return location(null);
+        return location(
+                new GooglePlayServicesLocationProviderFactory(),
+                new LocationManagerProviderFactory());
     }
 
     /**
-     * @param provider location provider we want to use
+     * @param providerFactories factories for the location provider we want to use, in order
      * @return request handler for location operations
      */
-    public LocationControl location(LocationProvider provider) {
-        return new LocationControl(this, provider);
+    public LocationControl location(LocationProviderFactory... providerFactories) {
+        return new LocationControl(this, providerFactories);
     }
 
     /**
@@ -136,62 +140,39 @@ public class SmartLocation {
 
     public static class LocationControl {
 
-        private static final Map<Context, LocationProvider> MAPPING = new WeakHashMap<>();
+        private static final Map<Context, List<LocationProviderFactory>> MAPPING = new WeakHashMap<>();
 
-        private final SmartLocation smartLocation;
-        private LocationProviderParams params;
-        private LocationProvider provider;
-        private boolean oneFix;
+        private final SmartLocation mParent;
+        private LocationProviderParams mParams;
+        private List<LocationProviderFactory> mProviderFactoryList;
+        private LocationProviderController mProviderController;
 
-        public LocationControl(@NonNull SmartLocation smartLocation, @NonNull LocationProvider locationProvider) {
-            this.smartLocation = smartLocation;
-            params = LocationProviderParams.BEST_EFFORT;
-            oneFix = false;
+        public LocationControl(@NonNull SmartLocation smartLocation, @NonNull LocationProviderFactory[] locationProviders) {
+            mParent = smartLocation;
+            mParams = LocationProviderParams.BEST_EFFORT;
 
             if (!MAPPING.containsKey(smartLocation.context)) {
-                MAPPING.put(smartLocation.context, locationProvider);
+                MAPPING.put(smartLocation.context, Arrays.asList(locationProviders));
             }
-            provider = MAPPING.get(smartLocation.context);
+            mProviderFactoryList = MAPPING.get(smartLocation.context);
         }
 
         public LocationControl config(@NonNull LocationProviderParams params) {
-            this.params = params;
+            this.mParams = params;
             return this;
-        }
-
-        public LocationControl oneFix() {
-            this.oneFix = true;
-            return this;
-        }
-
-        public LocationControl continuous() {
-            this.oneFix = false;
-            return this;
-        }
-
-        public LocationState state() {
-            return LocationState.with(smartLocation.context);
-        }
-
-        @Nullable
-        public Location getLastLocation() {
-            return provider.getLastLocation();
         }
 
         public LocationControl get() {
             return this;
         }
 
-        public void start(OnLocationUpdatedListener listener) {
-            if (provider == null) {
-                throw new RuntimeException("A provider must be initialized");
-            }
-            params = new LocationProviderParams.Builder(params).runOnlyOnce(this.oneFix).build();
-            provider.start(smartLocation.context, listener, params);
+        public LocationProviderController start(OnLocationUpdatedListener listener) {
+            mProviderController = new LocationProviderController(mParent.context, listener, mParams, mProviderFactoryList, mParent.logger);
+            return mProviderController.start();
         }
 
         public void stop() {
-            provider.stop();
+            mProviderController.stop();
         }
     }
 

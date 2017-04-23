@@ -58,7 +58,7 @@ public class LocationControlTest {
     @Test
     public void test_location_control_start_only_once() {
         SmartLocation.LocationControl locationControl = createLocationControl();
-        locationControl.oneFix();
+        locationControl.once();
 
         locationControl.start(locationUpdatedListener);
         verify(mockProvider).start(locationUpdatedListener, DEFAULT_PARAMS, true);
@@ -67,7 +67,7 @@ public class LocationControlTest {
     @Test
     public void test_location_control_start_continuous() {
         SmartLocation.LocationControl locationControl = createLocationControl();
-        locationControl.oneFix();
+        locationControl.once();
         locationControl.continuous();
         locationControl.start(locationUpdatedListener);
         verify(mockProvider).start(locationUpdatedListener, DEFAULT_PARAMS, false);

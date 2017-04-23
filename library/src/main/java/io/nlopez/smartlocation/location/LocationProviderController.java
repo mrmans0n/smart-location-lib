@@ -1,13 +1,16 @@
 package io.nlopez.smartlocation.location;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.common.Provider;
+import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.utils.Logger;
 
 public class LocationProviderController implements Provider.StatusListener {
@@ -17,6 +20,10 @@ public class LocationProviderController implements Provider.StatusListener {
     private final Logger mLogger;
     @NonNull
     private final Context mContext;
+    @NonNull
+    private final OnLocationUpdatedListener mUpdateListener;
+    @NonNull
+    private final LocationProviderParams mParams;
     @Nullable
     private LocationProvider mCurrentProvider;
     @Nullable
@@ -24,9 +31,13 @@ public class LocationProviderController implements Provider.StatusListener {
 
     public LocationProviderController(
             @NonNull Context context,
+            @NonNull OnLocationUpdatedListener updateListener,
+            @NonNull LocationProviderParams params,
             @NonNull List<LocationProviderFactory> providerList,
             @NonNull Logger logger) {
         mContext = context;
+        mUpdateListener = updateListener;
+        mParams = params;
         mLogger = logger;
         mProviderList = new LinkedList<>(providerList);
     }
@@ -34,6 +45,12 @@ public class LocationProviderController implements Provider.StatusListener {
     @Nullable
     public LocationProvider getCurrentProvider() {
         return mCurrentProvider;
+    }
+
+    @NonNull
+    public LocationProviderController start() {
+        startNext();
+        return this;
     }
 
     private void startNext() {
@@ -45,9 +62,16 @@ public class LocationProviderController implements Provider.StatusListener {
             }
             return;
         }
-        mCurrentProvider = providerFactory.create(this);
-        // mCurrentProvider.start();
-        // TODO start blah blah
+        mCurrentProvider = providerFactory.create(mContext, this);
+        mCurrentProvider.start(mUpdateListener, mParams);
+    }
+
+    @Nullable
+    public Location getLastLocation() {
+        if (mCurrentProvider == null) {
+            return null;
+        }
+        return mCurrentProvider.getLastLocation();
     }
 
     public void stop() {
@@ -56,8 +80,6 @@ public class LocationProviderController implements Provider.StatusListener {
         }
         mCurrentProvider.stop();
     }
-
-
 
     @Override
     public void onProviderFailed(@NonNull Provider provider) {

@@ -29,7 +29,7 @@ import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
-import io.nlopez.smartlocation.location.providers.playservices.LocationGooglePlayServicesProvider;
+import io.nlopez.smartlocation.location.LocationProviderController;
 
 public class MainActivity extends Activity implements OnLocationUpdatedListener, OnActivityUpdatedListener, OnGeofencingTransitionListener {
 
@@ -37,9 +37,8 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
     private TextView activityText;
     private TextView geofenceText;
 
-    private LocationGooglePlayServicesProvider provider;
-
     private static final int LOCATION_PERMISSION_ID = 1001;
+    private LocationProviderController mLocationProviderController;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -87,6 +86,8 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
     }
 
     private void showLast() {
+        // TODO make this accessible somehow
+/*
         Location lastLocation = SmartLocation.with(this).location().getLastLocation();
         if (lastLocation != null) {
             locationText.setText(
@@ -95,6 +96,7 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
                             lastLocation.getLongitude())
             );
         }
+*/
 
         DetectedActivity detectedActivity = SmartLocation.with(this).activity().getLastActivity();
         if (detectedActivity != null) {
@@ -109,17 +111,12 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (provider != null) {
-            provider.onActivityResult(requestCode, resultCode, data);
-        }
+        // TODO do this more comfortable
+        // mLocationProviderController.getCurrentProvider().onActivityResult(requestCode, resultCode, data);
     }
 
     private void startLocation() {
-
-        provider = new LocationGooglePlayServicesProvider();
-        provider.setCheckLocationSettings(true);
-
-        SmartLocation.with(this).location(provider).start(this);
+        mLocationProviderController = SmartLocation.with(this).location().start(this);
         SmartLocation.with(this).activity().start(this);
 
         // Create some geofences

@@ -15,19 +15,18 @@ public class GooglePlayServicesLocationProviderFactory implements LocationProvid
 
     private final Logger mLogger;
     private final LocationPermissionsManager mPermissionsManager;
-    private final Context mContext;
 
-    public GooglePlayServicesLocationProviderFactory(@NonNull Context context) {
-        mContext = context;
+    public GooglePlayServicesLocationProviderFactory() {
         mLogger = LoggerFactory.get();
         mPermissionsManager = LocationPermissionsManager.get();
     }
 
     @Override
-    public LocationProvider create(Provider.StatusListener statusListener) {
+    public LocationProvider create(Context context, Provider.StatusListener statusListener) {
         return new GooglePlayServicesLocationProvider(
+                context,
                 statusListener,
-                new LocationStore(mContext),
+                new LocationStore(context),
                 mLogger,
                 mPermissionsManager);
     }

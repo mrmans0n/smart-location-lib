@@ -1,7 +1,9 @@
 package io.nlopez.smartlocation.location;
 
-import io.nlopez.smartlocation.common.Factory1;
+import android.content.Context;
+
+import io.nlopez.smartlocation.common.Factory2;
 import io.nlopez.smartlocation.common.Provider;
 
-public interface LocationProviderFactory extends Factory1<LocationProvider, Provider.StatusListener> {
+public interface LocationProviderFactory extends Factory2<LocationProvider, Context, Provider.StatusListener> {
 }
