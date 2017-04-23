@@ -16,7 +16,7 @@ import io.nlopez.smartlocation.utils.LoggerFactory;
 public class LocationPermissionsManager {
     private static LocationPermissionsManager sInstance;
 
-    public static final int PERMISSIONS_REQUEST_CODE = 111111;
+    public static final int PERMISSIONS_REQUEST_CODE = 11111;
 
     @NonNull
     private final Logger mLogger;

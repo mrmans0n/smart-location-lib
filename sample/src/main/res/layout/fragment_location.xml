@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="io.nlopez.smartlocation.sample.MainActivity">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/container"
+    <TextView
+        android:id="@+id/location_text"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        />
+        android:gravity="center"/>
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
+    <Button
+        android:id="@+id/start_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
-        app:menu="@menu/navigation" />
+        android:layout_margin="12dp"
+        android:text="Start" />
+
+    <Button
+        android:id="@+id/stop_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:text="Stop" />
 
 </LinearLayout>

@@ -10,6 +10,7 @@ android {
         targetSdkVersion 25
         versionCode 100
         versionName "1.0.0"
+        vectorDrawables.useSupportLibrary = true
     }
 }
 
@@ -21,4 +22,8 @@ dependencies {
     compile project(':library')
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:support-vector-drawable:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }

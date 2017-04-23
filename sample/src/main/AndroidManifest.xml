@@ -6,17 +6,18 @@
     <application
         android:icon="@drawable/ic_launcher"
         android:label="SmartLocation Sample">
-
         <activity
-            android:name="io.nlopez.smartlocation.sample.MainActivity"
+            android:name=".MainActivity"
             android:label="SmartLocation Sample"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"

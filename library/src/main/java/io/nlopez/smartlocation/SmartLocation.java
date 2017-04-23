@@ -20,7 +20,7 @@ import io.nlopez.smartlocation.geocoding.providers.AndroidGeocodingProvider;
 import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider;
-import io.nlopez.smartlocation.location.LocationProviderController;
+import io.nlopez.smartlocation.location.LocationController;
 import io.nlopez.smartlocation.location.LocationProviderFactory;
 import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.location.providers.legacy.LocationManagerProviderFactory;
@@ -145,7 +145,7 @@ public class SmartLocation {
         private final SmartLocation mParent;
         private LocationProviderParams mParams;
         private List<LocationProviderFactory> mProviderFactoryList;
-        private LocationProviderController mProviderController;
+        private LocationController mProviderController;
 
         public LocationControl(@NonNull SmartLocation smartLocation, @NonNull LocationProviderFactory[] locationProviders) {
             mParent = smartLocation;
@@ -166,8 +166,8 @@ public class SmartLocation {
             return this;
         }
 
-        public LocationProviderController start(OnLocationUpdatedListener listener) {
-            mProviderController = new LocationProviderController(mParent.context, listener, mParams, mProviderFactoryList, mParent.logger);
+        public LocationController start(OnLocationUpdatedListener listener) {
+            mProviderController = new LocationController(mParent.context, listener, mParams, mProviderFactoryList, mParent.logger);
             return mProviderController.start();
         }
 
