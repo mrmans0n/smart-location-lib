@@ -1,4 +1,4 @@
-package io.nlopez.smartlocation.location.providers;
+package io.nlopez.smartlocation.location.providers.playservices;
 
 import android.Manifest;
 import android.app.Activity;
@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -25,10 +26,15 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationStore;
 import io.nlopez.smartlocation.location.ServiceLocationProvider;
-import io.nlopez.smartlocation.location.config.LocationParams;
+import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.ServiceConnectionListener;
+
+import static io.nlopez.smartlocation.location.config.LocationAccuracy.HIGH;
+import static io.nlopez.smartlocation.location.config.LocationAccuracy.LOW;
+import static io.nlopez.smartlocation.location.config.LocationAccuracy.LOWEST;
+import static io.nlopez.smartlocation.location.config.LocationAccuracy.MEDIUM;
 
 /**
  * Created by mrm on 20/12/14.
@@ -68,7 +74,6 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
         this.serviceListener = serviceListener;
     }
 
-    @Override
     public void init(Context context, Logger logger) {
         this.logger = logger;
         this.context = context;
@@ -88,13 +93,13 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
         }
     }
 
-    private LocationRequest createRequest(LocationParams params, boolean singleUpdate) {
+    private LocationRequest createRequest(LocationProviderParams params, boolean singleUpdate) {
         LocationRequest request = LocationRequest.create()
-                .setFastestInterval(params.getInterval())
-                .setInterval(params.getInterval())
-                .setSmallestDisplacement(params.getDistance());
+                .setFastestInterval(params.interval)
+                .setInterval(params.interval)
+                .setSmallestDisplacement(params.distance);
 
-        switch (params.getAccuracy()) {
+        switch (params.accuracy) {
             case HIGH:
                 request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                 break;
@@ -117,12 +122,12 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
     }
 
     @Override
-    public void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
+    public void start(@NonNull Context context, @NonNull OnLocationUpdatedListener listener, @NonNull LocationProviderParams params) {
         this.listener = listener;
         if (listener == null) {
             logger.d("Listener is null, you sure about this?");
         }
-        locationRequest = createRequest(params, singleUpdate);
+        locationRequest = createRequest(params, params.runOnlyOnce);
 
         if (client.isConnected()) {
             startUpdating(locationRequest);
@@ -381,4 +386,8 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
         }
     };
 
+    @Override
+    public void release() {
+
+    }
 }

@@ -2,13 +2,22 @@ package io.nlopez.smartlocation.utils;
 
 import android.util.Log;
 
-/**
- * Created by mrm on 20/12/14.
- */
-public class LoggerFactory {
+import io.nlopez.smartlocation.BuildConfig;
+import io.nlopez.smartlocation.common.Factory0;
 
-    public static Logger buildLogger(boolean loggingEnabled) {
-        return loggingEnabled ? new Blabber() : new Sssht();
+public class LoggerFactory implements Factory0<Logger> {
+    private static Logger sLogger;
+
+    public static Logger get() {
+        if (sLogger == null) {
+            sLogger = new LoggerFactory().create();
+        }
+        return sLogger;
+    }
+
+    @Override
+    public Logger create() {
+        return BuildConfig.DEBUG ? new Blabber() : new Sssht();
     }
 
     private static class Sssht implements Logger {

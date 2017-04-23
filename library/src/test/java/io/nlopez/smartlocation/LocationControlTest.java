@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import io.nlopez.smartlocation.location.config.LocationParams;
+import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.util.MockLocationProvider;
 import io.nlopez.smartlocation.utils.Logger;
 
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 @Config(manifest = Config.NONE)
 public class LocationControlTest {
 
-    private static final LocationParams DEFAULT_PARAMS = LocationParams.BEST_EFFORT;
+    private static final LocationProviderParams DEFAULT_PARAMS = LocationProviderParams.BEST_EFFORT;
     private static final boolean DEFAULT_SINGLE_UPDATE = false;
 
     private MockLocationProvider mockProvider;
@@ -76,10 +76,10 @@ public class LocationControlTest {
     @Test
     public void test_location_control_start_navigation() {
         SmartLocation.LocationControl locationControl = createLocationControl();
-        locationControl.config(LocationParams.NAVIGATION);
+        locationControl.config(LocationProviderParams.NAVIGATION);
 
         locationControl.start(locationUpdatedListener);
-        verify(mockProvider).start(eq(locationUpdatedListener), eq(LocationParams.NAVIGATION), anyBoolean());
+        verify(mockProvider).start(eq(locationUpdatedListener), eq(LocationProviderParams.NAVIGATION), anyBoolean());
     }
 
     @Test

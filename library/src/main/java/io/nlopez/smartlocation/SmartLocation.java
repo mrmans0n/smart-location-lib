@@ -20,8 +20,7 @@ import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider;
 import io.nlopez.smartlocation.location.LocationProvider;
-import io.nlopez.smartlocation.location.config.LocationParams;
-import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesWithFallbackProvider;
+import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.location.utils.LocationState;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
@@ -40,12 +39,10 @@ public class SmartLocation {
      *
      * @param context       execution context
      * @param logger        logger interface
-     * @param preInitialize TRUE (default) if we want to instantiate directly the default providers. FALSE if we want to initialize them ourselves.
      */
-    private SmartLocation(Context context, Logger logger, boolean preInitialize) {
+    private SmartLocation(Context context, Logger logger) {
         this.context = context;
         this.logger = logger;
-        this.preInitialize = preInitialize;
     }
 
     public static SmartLocation with(Context context) {
@@ -56,7 +53,8 @@ public class SmartLocation {
      * @return request handler for location operations
      */
     public LocationControl location() {
-        return location(new LocationGooglePlayServicesWithFallbackProvider(context));
+        // TODO fix
+        return location(null);
     }
 
     /**
@@ -125,27 +123,13 @@ public class SmartLocation {
 
     public static class Builder {
         private final Context context;
-        private boolean loggingEnabled;
-        private boolean preInitialize;
 
         public Builder(@NonNull Context context) {
             this.context = context;
-            this.loggingEnabled = false;
-            this.preInitialize = true;
-        }
-
-        public Builder logging(boolean enabled) {
-            this.loggingEnabled = enabled;
-            return this;
-        }
-
-        public Builder preInitialize(boolean enabled) {
-            this.preInitialize = enabled;
-            return this;
         }
 
         public SmartLocation build() {
-            return new SmartLocation(context, LoggerFactory.buildLogger(loggingEnabled), preInitialize);
+            return new SmartLocation(context, LoggerFactory.get());
         }
 
     }
@@ -155,26 +139,22 @@ public class SmartLocation {
         private static final Map<Context, LocationProvider> MAPPING = new WeakHashMap<>();
 
         private final SmartLocation smartLocation;
-        private LocationParams params;
+        private LocationProviderParams params;
         private LocationProvider provider;
         private boolean oneFix;
 
         public LocationControl(@NonNull SmartLocation smartLocation, @NonNull LocationProvider locationProvider) {
             this.smartLocation = smartLocation;
-            params = LocationParams.BEST_EFFORT;
+            params = LocationProviderParams.BEST_EFFORT;
             oneFix = false;
 
             if (!MAPPING.containsKey(smartLocation.context)) {
                 MAPPING.put(smartLocation.context, locationProvider);
             }
             provider = MAPPING.get(smartLocation.context);
-
-            if (smartLocation.preInitialize) {
-                provider.init(smartLocation.context, smartLocation.logger);
-            }
         }
 
-        public LocationControl config(@NonNull LocationParams params) {
+        public LocationControl config(@NonNull LocationProviderParams params) {
             this.params = params;
             return this;
         }
@@ -206,7 +186,8 @@ public class SmartLocation {
             if (provider == null) {
                 throw new RuntimeException("A provider must be initialized");
             }
-            provider.start(listener, params, oneFix);
+            params = new LocationProviderParams.Builder(params).runOnlyOnce(this.oneFix).build();
+            provider.start(smartLocation.context, listener, params);
         }
 
         public void stop() {

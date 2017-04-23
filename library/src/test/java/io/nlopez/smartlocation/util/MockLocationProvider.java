@@ -5,7 +5,7 @@ import android.location.Location;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
-import io.nlopez.smartlocation.location.config.LocationParams;
+import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**
@@ -21,7 +21,7 @@ public class MockLocationProvider implements LocationProvider {
     }
 
     @Override
-    public void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
+    public void start(OnLocationUpdatedListener listener, LocationProviderParams params, boolean singleUpdate) {
         this.listener = listener;
     }
 

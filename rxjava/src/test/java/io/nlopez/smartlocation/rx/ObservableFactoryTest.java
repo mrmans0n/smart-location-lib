@@ -18,7 +18,7 @@ import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.activity.ActivityProvider;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
 import io.nlopez.smartlocation.location.LocationProvider;
-import io.nlopez.smartlocation.location.config.LocationParams;
+import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.utils.Logger;
 import io.reactivex.observers.TestObserver;
 
@@ -103,7 +103,7 @@ public class ObservableFactoryTest {
         }
 
         @Override
-        public void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate) {
+        public void start(OnLocationUpdatedListener listener, LocationProviderParams params, boolean singleUpdate) {
             mListener = listener;
         }
 

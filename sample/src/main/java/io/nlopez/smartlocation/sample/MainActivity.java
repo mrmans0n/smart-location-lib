@@ -29,7 +29,7 @@ import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
-import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProvider;
+import io.nlopez.smartlocation.location.providers.playservices.LocationGooglePlayServicesProvider;
 
 public class MainActivity extends Activity implements OnLocationUpdatedListener, OnActivityUpdatedListener, OnGeofencingTransitionListener {
 
@@ -119,14 +119,12 @@ public class MainActivity extends Activity implements OnLocationUpdatedListener,
         provider = new LocationGooglePlayServicesProvider();
         provider.setCheckLocationSettings(true);
 
-        SmartLocation smartLocation = new SmartLocation.Builder(this).logging(true).build();
-
-        smartLocation.location(provider).start(this);
-        smartLocation.activity().start(this);
+        SmartLocation.with(this).location(provider).start(this);
+        SmartLocation.with(this).activity().start(this);
 
         // Create some geofences
         GeofenceModel mestalla = new GeofenceModel.Builder("1").setTransition(Geofence.GEOFENCE_TRANSITION_ENTER).setLatitude(39.47453120000001).setLongitude(-0.358065799999963).setRadius(500).build();
-        smartLocation.geofencing().add(mestalla).start(this);
+        SmartLocation.with(this).geofencing().add(mestalla).start(this);
     }
 
     private void stopLocation() {

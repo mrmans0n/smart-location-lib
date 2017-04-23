@@ -13,7 +13,9 @@ import java.util.Iterator;
 import io.nlopez.smartlocation.CustomTestRunner;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProvider;
-import io.nlopez.smartlocation.location.config.LocationParams;
+import io.nlopez.smartlocation.location.config.LocationProviderParams;
+import io.nlopez.smartlocation.location.providers.legacy.LocationManagerProvider;
+import io.nlopez.smartlocation.location.providers.playservices.LocationGooglePlayServicesProvider;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.ServiceConnectionListener;
 
@@ -71,7 +73,7 @@ public class MultiFallbackProviderTest {
 
         // Test starting location updates passes through to first provider
         OnLocationUpdatedListener listenerMock = mock(OnLocationUpdatedListener.class);
-        LocationParams paramsMock = mock(LocationParams.class);
+        LocationProviderParams paramsMock = mock(LocationProviderParams.class);
         subject.start(listenerMock, paramsMock, false);
         assertEquals(1, testServiceProvider.getStartCount());
 

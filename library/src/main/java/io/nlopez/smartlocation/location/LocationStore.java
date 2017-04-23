@@ -8,9 +8,6 @@ import android.support.annotation.VisibleForTesting;
 
 import io.nlopez.smartlocation.common.Store;
 
-/**
- * Created by mrm on 3/1/15.
- */
 public class LocationStore implements Store<Location> {
 
     public static final String PROVIDER = "LocationStore";

@@ -7,12 +7,9 @@ import org.robolectric.annotation.Config;
 
 import io.nlopez.smartlocation.CustomTestRunner;
 
-/**
- * Created by mrm on 10/1/15.
- */
 @RunWith(CustomTestRunner.class)
 @Config(manifest = Config.NONE)
-public class LocationParamsTest {
+public class LocationProviderParamsTest {
 
     private static final LocationAccuracy ACCURACY = LocationAccuracy.HIGH;
     private static final long INTERVAL = 1000;
@@ -21,11 +18,11 @@ public class LocationParamsTest {
 
     @Test
     public void test_location_params_builder() {
-        LocationParams locationParams = new LocationParams.Builder()
-                .setAccuracy(ACCURACY).setInterval(INTERVAL).setDistance(DISTANCE).build();
+        LocationProviderParams locationProviderParams = new LocationProviderParams.Builder()
+                .accuracy(ACCURACY).interval(INTERVAL).distance(DISTANCE).build();
 
-        Assert.assertEquals(locationParams.getAccuracy(), ACCURACY);
-        Assert.assertEquals(locationParams.getDistance(), DISTANCE, DELTA);
-        Assert.assertEquals(locationParams.getInterval(), INTERVAL);
+        Assert.assertEquals(locationProviderParams.accuracy, ACCURACY);
+        Assert.assertEquals(locationProviderParams.distance, DISTANCE, DELTA);
+        Assert.assertEquals(locationProviderParams.interval, INTERVAL);
     }
 }

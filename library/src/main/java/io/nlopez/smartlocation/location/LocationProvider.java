@@ -2,21 +2,16 @@ package io.nlopez.smartlocation.location;
 
 import android.content.Context;
 import android.location.Location;
+import android.support.annotation.NonNull;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
-import io.nlopez.smartlocation.location.config.LocationParams;
-import io.nlopez.smartlocation.utils.Logger;
+import io.nlopez.smartlocation.common.Provider;
+import io.nlopez.smartlocation.location.config.LocationProviderParams;
 
-/**
- * Created by mrm on 20/12/14.
- */
-public interface LocationProvider {
-    void init(Context context, Logger logger);
-
-    void start(OnLocationUpdatedListener listener, LocationParams params, boolean singleUpdate);
+public interface LocationProvider extends Provider {
+    void start(@NonNull Context context, @NonNull OnLocationUpdatedListener listener, @NonNull LocationProviderParams params);
 
     void stop();
 
     Location getLastLocation();
-
 }

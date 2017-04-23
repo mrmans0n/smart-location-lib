@@ -1,8 +1,5 @@
 package io.nlopez.smartlocation.utils;
 
-/**
- * Created by mrm on 20/12/14.
- */
 public interface Logger {
     void v(String message, Object... args);
 

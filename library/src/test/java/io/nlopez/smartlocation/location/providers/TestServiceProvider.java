@@ -5,7 +5,7 @@ import android.location.Location;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.location.ServiceLocationProvider;
-import io.nlopez.smartlocation.location.config.LocationParams;
+import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.ServiceConnectionListener;
 
@@ -38,7 +38,7 @@ public class TestServiceProvider implements ServiceLocationProvider {
     }
 
     @Override
-    public void start(OnLocationUpdatedListener listener, LocationParams params, boolean
+    public void start(OnLocationUpdatedListener listener, LocationProviderParams params, boolean
             singleUpdate) {
         startCount++;
     }
