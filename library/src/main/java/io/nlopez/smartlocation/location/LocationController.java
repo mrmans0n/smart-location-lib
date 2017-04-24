@@ -28,6 +28,7 @@ public class LocationController implements Provider.StatusListener {
     private final OnLocationUpdatedListener mUpdateListener;
     @NonNull
     private final LocationProviderParams mParams;
+    private final long mTimeout;
     @Nullable
     private LocationProvider mCurrentProvider;
     @Nullable
@@ -37,11 +38,13 @@ public class LocationController implements Provider.StatusListener {
             @NonNull Context context,
             @NonNull OnLocationUpdatedListener updateListener,
             @NonNull LocationProviderParams params,
+            long timeout,
             @NonNull List<LocationProviderFactory> providerList,
             @NonNull Logger logger) {
         mContext = context;
         mUpdateListener = updateListener;
         mParams = params;
+        mTimeout = timeout;
         mLogger = logger;
         mProviderList = new LinkedList<>(providerList);
     }
@@ -81,7 +84,7 @@ public class LocationController implements Provider.StatusListener {
                         startNext();
                     }
                 },
-                5000,
+                mTimeout,
                 new Handler(Looper.getMainLooper()));
         mCurrentProvider.start(updateListener, mParams);
         updateListener.onProviderStarted();

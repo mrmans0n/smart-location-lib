@@ -21,6 +21,7 @@ import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider;
 import io.nlopez.smartlocation.location.LocationController;
+import io.nlopez.smartlocation.location.LocationListener;
 import io.nlopez.smartlocation.location.LocationProviderFactory;
 import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.location.providers.legacy.LocationManagerProviderFactory;
@@ -55,7 +56,7 @@ public class SmartLocation {
     /**
      * @return request handler for location operations
      */
-    public LocationControl location() {
+    public LocationBuilder location() {
         return location(
                 new GooglePlayServicesLocationProviderFactory(),
                 new LocationManagerProviderFactory());
@@ -65,8 +66,8 @@ public class SmartLocation {
      * @param providerFactories factories for the location provider we want to use, in order
      * @return request handler for location operations
      */
-    public LocationControl location(LocationProviderFactory... providerFactories) {
-        return new LocationControl(this, providerFactories);
+    public LocationBuilder location(LocationProviderFactory... providerFactories) {
+        return new LocationBuilder(this, providerFactories);
     }
 
     /**
@@ -138,41 +139,59 @@ public class SmartLocation {
 
     }
 
-    public static class LocationControl {
+    public static class LocationBuilder {
 
-        private static final Map<Context, List<LocationProviderFactory>> MAPPING = new WeakHashMap<>();
+        private static final Map<Context, LocationController> CONTROLLER_MAPPING = new WeakHashMap<>();
 
         private final SmartLocation mParent;
         private LocationProviderParams mParams;
         private List<LocationProviderFactory> mProviderFactoryList;
         private LocationController mProviderController;
+        private long mTimeout = LocationController.NO_TIMEOUT;
 
-        public LocationControl(@NonNull SmartLocation smartLocation, @NonNull LocationProviderFactory[] locationProviders) {
+        public LocationBuilder(
+                @NonNull SmartLocation smartLocation,
+                @NonNull LocationProviderFactory[] locationProviders) {
             mParent = smartLocation;
             mParams = LocationProviderParams.BEST_EFFORT;
-
-            if (!MAPPING.containsKey(smartLocation.context)) {
-                MAPPING.put(smartLocation.context, Arrays.asList(locationProviders));
-            }
-            mProviderFactoryList = MAPPING.get(smartLocation.context);
+            mProviderFactoryList = Arrays.asList(locationProviders);
         }
 
-        public LocationControl config(@NonNull LocationProviderParams params) {
-            this.mParams = params;
+        public LocationBuilder config(@NonNull LocationProviderParams params) {
+            mParams = params;
             return this;
         }
 
-        public LocationControl get() {
+        public LocationBuilder timeout(long timeout) {
+            mTimeout = timeout;
             return this;
         }
 
-        public LocationController start(OnLocationUpdatedListener listener) {
-            mProviderController = new LocationController(mParent.context, listener, mParams, mProviderFactoryList, mParent.logger);
+        public LocationBuilder get() {
+            return this;
+        }
+
+        public LocationController start(@NonNull LocationListener listener) {
+            mProviderController = new LocationController(
+                    mParent.context,
+                    listener,
+                    mParams,
+                    mTimeout,
+                    mProviderFactoryList,
+                    mParent.logger);
+            CONTROLLER_MAPPING.put(mParent.context, mProviderController);
             return mProviderController.start();
         }
 
         public void stop() {
-            mProviderController.stop();
+            if (mProviderController != null) {
+                mProviderController.stop();
+            } else if (CONTROLLER_MAPPING.containsKey(mParent.context)) {
+                LocationController controller = CONTROLLER_MAPPING.get(mParent.context);
+                controller.stop();
+            } else {
+                mParent.logger.d("Controller not found, nothing to stop. Please store the result of the start() method for accessing the rest of the controls");
+            }
         }
     }
 

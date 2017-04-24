@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(CustomTestRunner.class)
 @Config(manifest = Config.NONE)
-public class LocationControlTest {
+public class LocationBuilderTest {
 
     private static final LocationProviderParams DEFAULT_PARAMS = LocationProviderParams.BEST_EFFORT;
     private static final boolean DEFAULT_SINGLE_UPDATE = false;
@@ -39,70 +39,70 @@ public class LocationControlTest {
     public void test_location_control_init() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation smartLocation = new SmartLocation.Builder(context).logging(false).preInitialize(false).build();
-        SmartLocation.LocationControl locationControl = smartLocation.location(mockProvider);
+        SmartLocation.LocationBuilder locationBuilder = smartLocation.location(mockProvider);
         verifyZeroInteractions(mockProvider);
 
         smartLocation = new SmartLocation.Builder(context).logging(false).build();
-        locationControl = smartLocation.location(mockProvider);
+        locationBuilder = smartLocation.location(mockProvider);
         verify(mockProvider).init(eq(context), any(Logger.class));
     }
 
     @Test
     public void test_location_control_start_defaults() {
-        SmartLocation.LocationControl locationControl = createLocationControl();
+        SmartLocation.LocationBuilder locationBuilder = createLocationControl();
 
-        locationControl.start(locationUpdatedListener);
+        locationBuilder.start(locationUpdatedListener);
         verify(mockProvider).start(locationUpdatedListener, DEFAULT_PARAMS, DEFAULT_SINGLE_UPDATE);
     }
 
     @Test
     public void test_location_control_start_only_once() {
-        SmartLocation.LocationControl locationControl = createLocationControl();
-        locationControl.once();
+        SmartLocation.LocationBuilder locationBuilder = createLocationControl();
+        locationBuilder.once();
 
-        locationControl.start(locationUpdatedListener);
+        locationBuilder.start(locationUpdatedListener);
         verify(mockProvider).start(locationUpdatedListener, DEFAULT_PARAMS, true);
     }
 
     @Test
     public void test_location_control_start_continuous() {
-        SmartLocation.LocationControl locationControl = createLocationControl();
-        locationControl.once();
-        locationControl.continuous();
-        locationControl.start(locationUpdatedListener);
+        SmartLocation.LocationBuilder locationBuilder = createLocationControl();
+        locationBuilder.once();
+        locationBuilder.continuous();
+        locationBuilder.start(locationUpdatedListener);
         verify(mockProvider).start(locationUpdatedListener, DEFAULT_PARAMS, false);
     }
 
     @Test
     public void test_location_control_start_navigation() {
-        SmartLocation.LocationControl locationControl = createLocationControl();
-        locationControl.config(LocationProviderParams.NAVIGATION);
+        SmartLocation.LocationBuilder locationBuilder = createLocationControl();
+        locationBuilder.config(LocationProviderParams.NAVIGATION);
 
-        locationControl.start(locationUpdatedListener);
+        locationBuilder.start(locationUpdatedListener);
         verify(mockProvider).start(eq(locationUpdatedListener), eq(LocationProviderParams.NAVIGATION), anyBoolean());
     }
 
     @Test
     public void test_location_control_get_last_location() {
-        SmartLocation.LocationControl locationControl = createLocationControl();
-        locationControl.getLastLocation();
+        SmartLocation.LocationBuilder locationBuilder = createLocationControl();
+        locationBuilder.getLastLocation();
 
         verify(mockProvider).getLastLocation();
     }
 
     @Test
     public void test_location_control_stop() {
-        SmartLocation.LocationControl locationControl = createLocationControl();
-        locationControl.stop();
+        SmartLocation.LocationBuilder locationBuilder = createLocationControl();
+        locationBuilder.stop();
 
         verify(mockProvider).stop();
     }
 
-    private SmartLocation.LocationControl createLocationControl() {
+    private SmartLocation.LocationBuilder createLocationControl() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation smartLocation = new SmartLocation.Builder(context).logging(false).preInitialize(false).build();
-        SmartLocation.LocationControl locationControl = smartLocation.location(mockProvider);
-        return locationControl;
+        SmartLocation.LocationBuilder locationBuilder = smartLocation.location(mockProvider);
+        return locationBuilder;
     }
 
 }

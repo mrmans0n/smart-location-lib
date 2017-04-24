@@ -25,6 +25,7 @@ public class LocationFragment extends Fragment {
             mController = SmartLocation.with(getContext())
                     .location()
                     .start(mLocationUpdated);
+
             mController.setListener(new LocationController.Listener() {
                 @Override
                 public void onAllProvidersFailed() {
