@@ -1,27 +1,24 @@
 package io.nlopez.smartlocation.location.utils;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 
-public class LocationState {
-    // Safe to suppress because this is always an application context
-    @SuppressLint("StaticFieldLeak")
-    private static LocationState instance;
+public class LocationHelpers {
+    private static LocationHelpers instance;
     private Context context;
     private LocationManager locationManager;
 
-    private LocationState(Context context) {
+    private LocationHelpers(Context context) {
         this.context = context;
         this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
-    public static LocationState with(Context context) {
+    public static LocationHelpers with(Context context) {
         if (instance == null) {
-            instance = new LocationState(context.getApplicationContext());
+            instance = new LocationHelpers(context.getApplicationContext());
         }
         return instance;
     }

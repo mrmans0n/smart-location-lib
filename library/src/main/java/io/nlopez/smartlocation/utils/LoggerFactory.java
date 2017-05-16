@@ -7,21 +7,7 @@ import io.nlopez.smartlocation.common.Factory0;
 
 public class LoggerFactory implements Factory0<Logger> {
     private static Logger sLogger;
-
-    public static Logger get() {
-        if (sLogger == null) {
-            sLogger = new LoggerFactory().create();
-        }
-        return sLogger;
-    }
-
-    @Override
-    public Logger create() {
-        return BuildConfig.DEBUG ? new Blabber() : new Sssht();
-    }
-
-    private static class Sssht implements Logger {
-
+    private static final Logger MUTED = new Logger() {
         @Override
         public void v(String message, Object... args) {
 
@@ -71,10 +57,9 @@ public class LoggerFactory implements Factory0<Logger> {
         public void e(Throwable t, String message, Object... args) {
 
         }
-    }
+    };
 
-    private static class Blabber implements Logger {
-
+    private static final Logger ANDROID_LOGGER = new Logger() {
         private String getTag() {
             return new Exception().getStackTrace()[3].getMethodName();
         }
@@ -139,5 +124,17 @@ public class LoggerFactory implements Factory0<Logger> {
         public void e(Throwable t, String message, Object... args) {
             Log.e(getTag(), formatMessage(message, args), t);
         }
+    };
+
+    public static Logger get() {
+        if (sLogger == null) {
+            sLogger = new LoggerFactory().create();
+        }
+        return sLogger;
+    }
+
+    @Override
+    public Logger create() {
+        return BuildConfig.DEBUG ? ANDROID_LOGGER : MUTED;
     }
 }

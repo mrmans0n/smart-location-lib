@@ -2,6 +2,9 @@ package io.nlopez.smartlocation.common;
 
 import android.support.annotation.NonNull;
 
+/**
+ * Common set of actions for all providers, regardless of them being for location, activity, geocoding, etc.
+ */
 public interface Provider {
     void release();
 
