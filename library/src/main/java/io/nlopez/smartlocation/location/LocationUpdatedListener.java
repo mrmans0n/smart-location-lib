@@ -5,7 +5,7 @@ import io.nlopez.smartlocation.OnLocationUpdatedListener;
 /**
  * Basic listener for location updates.
  */
-public abstract class LocationListener implements OnLocationUpdatedListener, LocationController.Listener {
+public abstract class LocationUpdatedListener implements OnLocationUpdatedListener, LocationController.Listener {
 
     @Override
     public void onAllProvidersFailed() {

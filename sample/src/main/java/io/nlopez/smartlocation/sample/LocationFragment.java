@@ -13,6 +13,7 @@ import android.widget.TextView;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.LocationController;
+import io.nlopez.smartlocation.location.LocationUpdatedListener;
 
 public class LocationFragment extends Fragment {
 
@@ -49,7 +50,7 @@ public class LocationFragment extends Fragment {
         }
     };
 
-    final OnLocationUpdatedListener mLocationUpdated = new OnLocationUpdatedListener() {
+    final LocationUpdatedListener mLocationUpdated = new LocationUpdatedListener() {
         @Override
         public void onLocationUpdated(Location location) {
             mText.setText("Location: "+location.toString());

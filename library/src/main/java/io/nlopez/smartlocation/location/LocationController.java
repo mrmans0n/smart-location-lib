@@ -70,16 +70,16 @@ public class LocationController implements Provider.StatusListener {
             return;
         }
         mCurrentProvider = providerFactory.create(mContext, this);
-        final TimeoutUpdateListener updateListener = new TimeoutUpdateListener(
+        final TimeoutableLocationUpdateListener updateListener = new TimeoutableLocationUpdateListener(
                 mCurrentProvider,
                 mUpdateListener,
                 new ProviderTimeoutListener() {
                     @Override
                     public void onProviderTimeout(@NonNull Provider provider) {
-                        mLogger.d(provider + " timed out.");
                         if (mCurrentProvider != provider) {
                             return;
                         }
+                        mLogger.d(provider + " timed out.");
                         provider.release();
                         startNext();
                     }
@@ -120,6 +120,7 @@ public class LocationController implements Provider.StatusListener {
         if (mCurrentProvider != provider) {
             return;
         }
+        mLogger.d(provider + " failed.");
         provider.release();
         startNext();
     }
@@ -135,11 +136,10 @@ public class LocationController implements Provider.StatusListener {
         void onProviderTimeout(@NonNull Provider provider);
     }
 
-
     /**
-     * Handles timeouts for providers
+     * Handles the dispatch of location updates, and allows extra features on top like timeouts.
      */
-    private static class TimeoutUpdateListener implements OnLocationUpdatedListener, Runnable {
+    private static class TimeoutableLocationUpdateListener implements OnLocationUpdatedListener, Runnable {
 
         private final OnLocationUpdatedListener mListener;
         private final Handler mHandler;
@@ -147,8 +147,9 @@ public class LocationController implements Provider.StatusListener {
         private final ProviderTimeoutListener mTimeoutListener;
         private final LocationProvider mProvider;
         private boolean locationReceived = false;
+        private boolean cancelled = false;
 
-        TimeoutUpdateListener(
+        TimeoutableLocationUpdateListener(
                 @NonNull LocationProvider provider,
                 @NonNull OnLocationUpdatedListener listener,
                 @NonNull ProviderTimeoutListener timeoutListener,
@@ -167,14 +168,17 @@ public class LocationController implements Provider.StatusListener {
 
         @Override
         public void onLocationUpdated(Location location) {
-            locationReceived = true;
-            mListener.onLocationUpdated(location);
+            if (!cancelled) {
+                locationReceived = true;
+                mListener.onLocationUpdated(location);
+            }
         }
 
         @Override
         public void run() {
             if (!locationReceived) {
                 mTimeoutListener.onProviderTimeout(mProvider);
+                cancelled = true;
             }
         }
     }

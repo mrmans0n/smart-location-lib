@@ -21,7 +21,7 @@ import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider;
 import io.nlopez.smartlocation.location.LocationController;
-import io.nlopez.smartlocation.location.LocationListener;
+import io.nlopez.smartlocation.location.LocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProviderFactory;
 import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.location.providers.legacy.LocationManagerProviderFactory;
@@ -171,7 +171,7 @@ public class SmartLocation {
             return this;
         }
 
-        public LocationController start(@NonNull LocationListener listener) {
+        public LocationController start(@NonNull LocationUpdatedListener listener) {
             mProviderController = new LocationController(
                     mParent.context,
                     listener,
@@ -187,7 +187,7 @@ public class SmartLocation {
             if (mProviderController != null) {
                 mProviderController.stop();
             } else if (CONTROLLER_MAPPING.containsKey(mParent.context)) {
-                LocationController controller = CONTROLLER_MAPPING.get(mParent.context);
+                final LocationController controller = CONTROLLER_MAPPING.get(mParent.context);
                 controller.stop();
             } else {
                 mParent.logger.d("Controller not found, nothing to stop. Please store the result of the start() method for accessing the rest of the controls");
