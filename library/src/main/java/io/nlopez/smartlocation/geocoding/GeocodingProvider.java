@@ -1,24 +1,17 @@
 package io.nlopez.smartlocation.geocoding;
 
-import android.content.Context;
 import android.location.Location;
+import android.support.annotation.NonNull;
 
 import io.nlopez.smartlocation.OnGeocodingListener;
 import io.nlopez.smartlocation.OnReverseGeocodingListener;
-import io.nlopez.smartlocation.utils.Logger;
+import io.nlopez.smartlocation.common.Provider;
 
 /**
- * Created by mrm on 20/12/14.
+ * Describes all the functionality needed for a geocoder
  */
-public interface GeocodingProvider {
-    void init(Context context, Logger logger);
+public interface GeocodingProvider extends Provider {
+    void findLocationByName(@NonNull String name, @NonNull OnGeocodingListener listener, int maxResults);
 
-    void addName(String name, int maxResults);
-
-    void addLocation(Location location, int maxResults);
-
-    void start(OnGeocodingListener geocodingListener, OnReverseGeocodingListener reverseGeocodingListener);
-
-    void stop();
-
+    void findNameByLocation(@NonNull Location location, @NonNull OnReverseGeocodingListener listener, int maxResults);
 }

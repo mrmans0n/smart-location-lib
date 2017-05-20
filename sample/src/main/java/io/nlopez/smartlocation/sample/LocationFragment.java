@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.LocationController;
 import io.nlopez.smartlocation.location.LocationUpdatedListener;
@@ -26,14 +25,6 @@ public class LocationFragment extends Fragment {
             mController = SmartLocation.with(getContext())
                     .location()
                     .start(mLocationUpdated);
-
-            mController.setListener(new LocationController.Listener() {
-                @Override
-                public void onAllProvidersFailed() {
-                    mText.setText("All providers failed");
-                    updateUi(false);
-                }
-            });
             updateUi(true);
             mText.setText("Searching location...");
         }
@@ -54,6 +45,12 @@ public class LocationFragment extends Fragment {
         @Override
         public void onLocationUpdated(Location location) {
             mText.setText("Location: "+location.toString());
+        }
+
+        @Override
+        public void onAllProvidersFailed() {
+            mText.setText("All providers failed");
+            updateUi(false);
         }
     };
     private Button mStartButton;

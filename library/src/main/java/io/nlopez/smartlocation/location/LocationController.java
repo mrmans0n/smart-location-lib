@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
+import io.nlopez.smartlocation.common.OnAllProvidersFailed;
 import io.nlopez.smartlocation.common.Provider;
 import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.utils.Logger;
@@ -29,14 +30,15 @@ public class LocationController implements Provider.StatusListener {
     @NonNull
     private final LocationProviderParams mParams;
     private final long mTimeout;
+    @NonNull
+    private final OnAllProvidersFailed mListener;
     @Nullable
     private LocationProvider mCurrentProvider;
-    @Nullable
-    private Listener mListener;
 
     public LocationController(
             @NonNull Context context,
             @NonNull OnLocationUpdatedListener updateListener,
+            @NonNull OnAllProvidersFailed listener,
             @NonNull LocationProviderParams params,
             long timeout,
             @NonNull List<LocationProviderFactory> providerList,
@@ -44,6 +46,7 @@ public class LocationController implements Provider.StatusListener {
         mContext = context;
         mUpdateListener = updateListener;
         mParams = params;
+        mListener = listener;
         mTimeout = timeout;
         mLogger = logger;
         mProviderList = new LinkedList<>(providerList);
@@ -111,10 +114,6 @@ public class LocationController implements Provider.StatusListener {
         }
     }
 
-    public void setListener(@Nullable Listener listener) {
-        mListener = listener;
-    }
-
     @Override
     public void onProviderFailed(@NonNull Provider provider) {
         if (mCurrentProvider != provider) {
@@ -123,13 +122,6 @@ public class LocationController implements Provider.StatusListener {
         mLogger.d(provider + " failed.");
         provider.release();
         startNext();
-    }
-
-    public interface Listener {
-        /**
-         * All providers have failed to initialize
-         */
-        void onAllProvidersFailed();
     }
 
     public interface ProviderTimeoutListener {

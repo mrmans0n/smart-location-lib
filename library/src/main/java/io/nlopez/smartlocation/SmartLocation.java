@@ -15,19 +15,22 @@ import java.util.WeakHashMap;
 import io.nlopez.smartlocation.activity.ActivityProvider;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
 import io.nlopez.smartlocation.activity.providers.ActivityGooglePlayServicesProvider;
-import io.nlopez.smartlocation.geocoding.GeocodingProvider;
-import io.nlopez.smartlocation.geocoding.providers.AndroidGeocodingProvider;
+import io.nlopez.smartlocation.common.OnAllProvidersFailed;
+import io.nlopez.smartlocation.geocoding.GeocodingController;
+import io.nlopez.smartlocation.geocoding.GeocodingProviderFactory;
+import io.nlopez.smartlocation.geocoding.ReverseGeocodingController;
+import io.nlopez.smartlocation.geocoding.providers.android.AndroidGeocodingProviderFactory;
 import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider;
 import io.nlopez.smartlocation.location.LocationController;
-import io.nlopez.smartlocation.location.LocationUpdatedListener;
 import io.nlopez.smartlocation.location.LocationProviderFactory;
 import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.location.providers.legacy.LocationManagerProviderFactory;
 import io.nlopez.smartlocation.location.providers.playservices.GooglePlayServicesLocationProviderFactory;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
+import io.nlopez.smartlocation.utils.NullUtils;
 
 /**
  * Managing class for SmartLocation library.
@@ -114,16 +117,16 @@ public class SmartLocation {
     /**
      * @return request handler for geocoding operations
      */
-    public GeocodingControl geocoding() {
-        return geocoding(new AndroidGeocodingProvider());
+    public GeocodingBuilder geocoding() {
+        return geocoding(new AndroidGeocodingProviderFactory());
     }
 
     /**
-     * @param geocodingProvider geocoding provider we want to use
+     * @param providerFactories provider factories we want to use, in order
      * @return request handler for geocoding operations
      */
-    public GeocodingControl geocoding(GeocodingProvider geocodingProvider) {
-        return new GeocodingControl(this, geocodingProvider);
+    public GeocodingBuilder geocoding(GeocodingProviderFactory... providerFactories) {
+        return new GeocodingBuilder(this, providerFactories);
     }
 
     public static class Builder {
@@ -148,6 +151,7 @@ public class SmartLocation {
         private List<LocationProviderFactory> mProviderFactoryList;
         private LocationController mProviderController;
         private long mTimeout = LocationController.NO_TIMEOUT;
+        private OnAllProvidersFailed mOnAllProvidersFailed;
 
         public LocationBuilder(
                 @NonNull SmartLocation smartLocation,
@@ -167,14 +171,20 @@ public class SmartLocation {
             return this;
         }
 
+        public LocationBuilder whenAllProvidersFailed(@NonNull OnAllProvidersFailed onAllProvidersFailed) {
+            mOnAllProvidersFailed = onAllProvidersFailed;
+            return this;
+        }
+
         public LocationBuilder get() {
             return this;
         }
 
-        public LocationController start(@NonNull LocationUpdatedListener listener) {
+        public LocationController start(@NonNull OnLocationUpdatedListener listener) {
             mProviderController = new LocationController(
                     mParent.context,
                     listener,
+                    NullUtils.getOrDefault(mOnAllProvidersFailed, OnAllProvidersFailed.EMPTY),
                     mParams,
                     mTimeout,
                     mProviderFactoryList,
@@ -195,99 +205,57 @@ public class SmartLocation {
         }
     }
 
-    public static class GeocodingControl {
+    public static class GeocodingBuilder {
+        static final int DEFAULT_MAX_RESULTS = 5;
 
-        private static final Map<Context, GeocodingProvider> MAPPING = new WeakHashMap<>();
+        private final SmartLocation mSmartLocation;
+        private final List<GeocodingProviderFactory> mGeocodingProviders;
+        private int mMaxResults = DEFAULT_MAX_RESULTS;
+        private OnAllProvidersFailed mOnAllProvidersFailed;
 
-        private final SmartLocation smartLocation;
-        private GeocodingProvider provider;
-        private boolean directAdded = false;
-        private boolean reverseAdded = false;
-
-        public GeocodingControl(@NonNull SmartLocation smartLocation, @NonNull GeocodingProvider geocodingProvider) {
-            this.smartLocation = smartLocation;
-
-            if (!MAPPING.containsKey(smartLocation.context)) {
-                MAPPING.put(smartLocation.context, geocodingProvider);
-            }
-            provider = MAPPING.get(smartLocation.context);
-
-            if (smartLocation.preInitialize) {
-                provider.init(smartLocation.context, smartLocation.logger);
-            }
+        public GeocodingBuilder(
+                @NonNull SmartLocation smartLocation,
+                @NonNull GeocodingProviderFactory[] geocodingProviders) {
+            mSmartLocation = smartLocation;
+            mGeocodingProviders = Arrays.asList(geocodingProviders);
         }
 
-        public GeocodingControl get() {
+        public GeocodingBuilder maxResults(int maxResults) {
+            mMaxResults = maxResults;
             return this;
         }
 
-        public void reverse(@NonNull Location location, @NonNull OnReverseGeocodingListener reverseGeocodingListener) {
-            add(location);
-            start(reverseGeocodingListener);
-        }
-
-        public void direct(@NonNull String name, @NonNull OnGeocodingListener geocodingListener) {
-            add(name);
-            start(geocodingListener);
-        }
-
-        public GeocodingControl add(@NonNull Location location) {
-            reverseAdded = true;
-            provider.addLocation(location, 1);
+        public GeocodingBuilder whenAllProvidersFailed(@NonNull OnAllProvidersFailed onAllProvidersFailed) {
+            mOnAllProvidersFailed = onAllProvidersFailed;
             return this;
         }
 
-        public GeocodingControl add(@NonNull Location location, int maxResults) {
-            reverseAdded = true;
-            provider.addLocation(location, maxResults);
-            return this;
+        public ReverseGeocodingController findNameByLocation(
+                @NonNull Location location,
+                @NonNull OnReverseGeocodingListener listener) {
+            final ReverseGeocodingController controller = new ReverseGeocodingController(
+                    mSmartLocation.context,
+                    location,
+                    mMaxResults,
+                    listener,
+                    NullUtils.getOrDefault(mOnAllProvidersFailed, OnAllProvidersFailed.EMPTY),
+                    mGeocodingProviders,
+                    mSmartLocation.logger);
+            return controller.start();
         }
 
-        public GeocodingControl add(@NonNull String name) {
-            directAdded = true;
-            provider.addName(name, 1);
-            return this;
-        }
-
-        public GeocodingControl add(@NonNull String name, int maxResults) {
-            directAdded = true;
-            provider.addName(name, maxResults);
-            return this;
-        }
-
-        public void start(OnGeocodingListener geocodingListener) {
-            start(geocodingListener, null);
-        }
-
-        public void start(OnReverseGeocodingListener reverseGeocodingListener) {
-            start(null, reverseGeocodingListener);
-        }
-
-        /**
-         * Starts the geocoder conversions, for either direct geocoding (name to location) and reverse geocoding (location to address).
-         *
-         * @param geocodingListener        will be called for name to location queries
-         * @param reverseGeocodingListener will be called for location to name queries
-         */
-        public void start(OnGeocodingListener geocodingListener, OnReverseGeocodingListener reverseGeocodingListener) {
-            if (provider == null) {
-                throw new RuntimeException("A provider must be initialized");
-            }
-            if (directAdded && geocodingListener == null) {
-                smartLocation.logger.w("Some places were added for geocoding but the listener was not specified!");
-            }
-            if (reverseAdded && reverseGeocodingListener == null) {
-                smartLocation.logger.w("Some places were added for reverse geocoding but the listener was not specified!");
-            }
-
-            provider.start(geocodingListener, reverseGeocodingListener);
-        }
-
-        /**
-         * Cleans up after the geocoder calls. Will be needed for avoiding possible leaks in registered receivers.
-         */
-        public void stop() {
-            provider.stop();
+        public GeocodingController findLocationByName(
+                @NonNull String name,
+                @NonNull OnGeocodingListener listener) {
+            final GeocodingController controller = new GeocodingController(
+                    mSmartLocation.context,
+                    name,
+                    mMaxResults,
+                    listener,
+                    NullUtils.getOrDefault(mOnAllProvidersFailed, OnAllProvidersFailed.EMPTY),
+                    mGeocodingProviders,
+                    mSmartLocation.logger);
+            return controller.start();
         }
     }
 
