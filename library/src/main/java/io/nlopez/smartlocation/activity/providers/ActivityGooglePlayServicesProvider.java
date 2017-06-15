@@ -171,10 +171,15 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
     private BroadcastReceiver activityReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (BROADCAST_INTENT_ACTION.equals(intent.getAction()) && intent.hasExtra(DETECTED_ACTIVITY_EXTRA_ID)) {
-                logger.d("sending new activity");
-                DetectedActivity detectedActivity = intent.getParcelableExtra(DETECTED_ACTIVITY_EXTRA_ID);
-                notifyActivity(detectedActivity);
+            try {
+                if (BROADCAST_INTENT_ACTION.equals(intent.getAction()) && intent.hasExtra(DETECTED_ACTIVITY_EXTRA_ID)) {
+                    logger.d("sending new activity");
+                    DetectedActivity detectedActivity = intent.getParcelableExtra(DETECTED_ACTIVITY_EXTRA_ID);
+                    if (detectedActivity != null)
+                        notifyActivity(detectedActivity);
+                }
+            } catch (Exception ignored) {
+                // Catch bad parcelable exception
             }
         }
     };
