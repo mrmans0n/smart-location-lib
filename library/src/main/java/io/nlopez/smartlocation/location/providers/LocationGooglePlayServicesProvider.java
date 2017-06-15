@@ -1,11 +1,15 @@
 package io.nlopez.smartlocation.location.providers;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -19,16 +23,17 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
-import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.LocationStore;
+import io.nlopez.smartlocation.location.ServiceLocationProvider;
 import io.nlopez.smartlocation.location.config.LocationParams;
 import io.nlopez.smartlocation.utils.GooglePlayServicesListener;
 import io.nlopez.smartlocation.utils.Logger;
+import io.nlopez.smartlocation.utils.ServiceConnectionListener;
 
 /**
  * Created by mrm on 20/12/14.
  */
-public class LocationGooglePlayServicesProvider implements LocationProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
+public class LocationGooglePlayServicesProvider implements ServiceLocationProvider, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
 
     public static final int REQUEST_START_LOCATION_FIX = 10001;
     public static final int REQUEST_CHECK_SETTINGS = 20001;
@@ -42,18 +47,25 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     private LocationStore locationStore;
     private LocationRequest locationRequest;
     private Context context;
-    private final GooglePlayServicesListener googlePlayServicesListener;
+    private GooglePlayServicesListener googlePlayServicesListener;
+    private ServiceConnectionListener serviceListener;
     private boolean checkLocationSettings;
     private boolean fulfilledCheckLocationSettings;
+    private boolean alwaysShow = true;
 
     public LocationGooglePlayServicesProvider() {
-        this(null);
+        checkLocationSettings =  false;
+        fulfilledCheckLocationSettings = false;
     }
 
     public LocationGooglePlayServicesProvider(GooglePlayServicesListener playServicesListener) {
+        this();
         googlePlayServicesListener = playServicesListener;
-        checkLocationSettings = false;
-        fulfilledCheckLocationSettings = false;
+    }
+
+    public LocationGooglePlayServicesProvider(ServiceConnectionListener serviceListener) {
+        this();
+        this.serviceListener = serviceListener;
     }
 
     @Override
@@ -132,14 +144,25 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
             return;
         }
         if (client.isConnected()) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(client, request, this).setResultCallback(this);
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                logger.i("Permission check failed. Please handle it in your app before setting up location");
+                // TODO: Consider calling ActivityCompat#requestPermissions here to request the
+                // missing permissions, and then overriding onRequestPermissionsResult
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+
+            LocationServices.FusedLocationApi.requestLocationUpdates(client, request, this, Looper.getMainLooper()).setResultCallback(this);
         } else {
             logger.w("startUpdating executed without the GoogleApiClient being connected!!");
         }
     }
 
     private void checkLocationSettings() {
-        LocationSettingsRequest request = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest).build();
+        LocationSettingsRequest request = new LocationSettingsRequest.Builder().setAlwaysShow(alwaysShow).addLocationRequest(locationRequest).build();
         LocationServices.SettingsApi.checkLocationSettings(client, request).setResultCallback(settingsResultCallback);
     }
 
@@ -158,7 +181,19 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     @Override
     public Location getLastLocation() {
         if (client != null && client.isConnected()) {
-            Location location =  LocationServices.FusedLocationApi.getLastLocation(client);
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return null;
+            }
+            Location location = LocationServices.FusedLocationApi.getLastLocation(client);
             if (location != null) {
                 return location;
             }
@@ -170,6 +205,16 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
     }
 
     @Override
+    public ServiceConnectionListener getServiceListener() {
+        return serviceListener;
+    }
+
+    @Override
+    public void setServiceListener(ServiceConnectionListener listener) {
+        serviceListener = listener;
+    }
+
+    @Override
     public void onConnected(Bundle bundle) {
         logger.d("onConnected");
         if (shouldStart) {
@@ -177,6 +222,9 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
         }
         if (googlePlayServicesListener != null) {
             googlePlayServicesListener.onConnected(bundle);
+        }
+        if (serviceListener != null) {
+            serviceListener.onConnected();
         }
     }
 
@@ -186,6 +234,9 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
         if (googlePlayServicesListener != null) {
             googlePlayServicesListener.onConnectionSuspended(i);
         }
+        if (serviceListener != null) {
+            serviceListener.onConnectionSuspended();
+        }
     }
 
     @Override
@@ -193,6 +244,9 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
         logger.d("onConnectionFailed " + connectionResult.toString());
         if (googlePlayServicesListener != null) {
             googlePlayServicesListener.onConnectionFailed(connectionResult);
+        }
+        if (serviceListener != null) {
+            serviceListener.onConnectionFailed();
         }
     }
 
@@ -217,7 +271,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
 
         } else if (status.hasResolution() && context instanceof Activity) {
             logger.w(
-                    "Unable to register, but we can solve this - will startActivityForResult. You should hook into the Activity onActivityResult and call this provider onActivityResult method for continuing this call flow.");
+                    "Unable to register, but we can solve this - will startActivityForResult. You should hook into the Activity onActivityResult and call this provider's onActivityResult method for continuing this call flow.");
             try {
                 status.startResolutionForResult((Activity) context, REQUEST_START_LOCATION_FIX);
             } catch (IntentSender.SendIntentException e) {
@@ -244,6 +298,16 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
      */
     public void setCheckLocationSettings(boolean allowingLocationSettings) {
         this.checkLocationSettings = allowingLocationSettings;
+    }
+
+
+    /**
+     * Sets whether or not we should show location settings dialog with NEVER button
+     *
+     * @param alwaysShow TRUE to show dialog without NEVER button, FALSE - with NEVER button (default)
+     */
+    public void setLocationSettingsAlwaysShow(boolean alwaysShow) {
+        this.alwaysShow = alwaysShow;
     }
 
     /**
@@ -292,8 +356,8 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
                     startUpdating(locationRequest);
                     break;
                 case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                    logger.w("Location settings are not satisfied. Show the user a dialog to" +
-                            "upgrade location settings. You should hook into the Activity onActivityResult and call this provider onActivityResult method for continuing this call flow. ");
+                    logger.w("Location settings are not satisfied. Show the user a dialog to " +
+                            "upgrade location settings. You should hook into the Activity onActivityResult and call this provider's onActivityResult method for continuing this call flow. ");
 
                     if (context instanceof Activity) {
                         try {
@@ -305,7 +369,7 @@ public class LocationGooglePlayServicesProvider implements LocationProvider, Goo
                         }
 
                     } else {
-                        logger.w("Provided context is not the context of an activity, therefore we cant launch the resolution activity.");
+                        logger.w("Provided context is not the context of an activity, therefore we can't launch the resolution activity.");
                     }
                     break;
                 case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:

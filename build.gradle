@@ -1,12 +1,19 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext.smartLocationVersion = "3.3.1"
+
+    // Common dependencies
+    ext.robolectricVersion = "3.1"
+    ext.mockitoVersion = "2.0.86-beta"
+    ext.junitVersion = "4.12"
+
     repositories {
         mavenCentral()
         jcenter()
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'com.android.tools.build:gradle:2.2.3'
     }
 }
-

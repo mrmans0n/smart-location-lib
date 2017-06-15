@@ -5,7 +5,7 @@ Smart Location Library
 
 Android library project that intends to simplify the usage of location providers and activity recognition with a nice fluid API.
 
-**Supported Android versions**: Android 2.3+
+**Supported Android versions**: Android 4.0+
 
 Adding to your project
 ----------------------
@@ -13,10 +13,16 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:3.2.4'
+compile 'io.nlopez.smartlocation:library:3.3.1'
 ```
 
-Google Play Services compatible version: 9.0.2
+Google Play Services compatible version: 10.2.0
+
+If you want the rxjava wrappers, these are now in a separate dependency. Just add this new dependency as well:
+
+```groovy
+compile 'io.nlopez.smartlocation:rx:3.3.1'
+```
 
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
 
@@ -91,6 +97,7 @@ There are some providers shipped with the library.
 * `LocationManagerProvider` This is the legacy implementation that uses LocationManager.
 * `LocationBasedOnActivityProvider` This allows you to use the activity recognition system to modify the location strategy depending on the activity changes (if the user is walking, running, on a car, a bike...).
 * `LocationGooglePlayServicesWithFallbackProvider` This one will use the Fused Location Provider if it's present, or the LocationManager as fallback if it's not.
+* `MultiFallbackLocationProvider` This lets you create your own "fallback provider" if the underlying location service is not available. See "Multiple Fallback Provider" below for details.
 
 You can implement your own if you want. That's ideal if you wanted to use a mock one for testing or something like that, or add support to another possible provider.
 
@@ -99,6 +106,19 @@ Example:
 ````java
 SmartLocation.with(context).location(new LocationBasedOnActivityProvider(callback))
     .start(new OnLocationUpdatedListener() { ... });
+````
+
+### Multiple Fallback Provider
+
+The `MultiFallbackProvider` lets you create your own provider that utilizes multiple underlying location services.
+The provider will use the location services in the order in which they are added to its `Builder`, which has convenience methods for setting up the Google Play Services provider and the default `LocationManager` provider.
+Providers must implement the `ServiceLocationProvider` interface to enable the fallback behavior.
+Example:
+
+````java
+LocationProvider myProvider = new MyLocationProvider();
+LocationProvider fallbackProvider = new MultiFallbackProvider.Builder()
+    .withGooglePlayServicesProvider().withProvider(myProvider).build();
 ````
 
 ## Activity
@@ -206,6 +226,12 @@ You should invoke the stop method whenever the calling activity/fragment or what
 
 ## RxJava / RxAndroid support
 
+The wrappers to rxjava2 are located in this package.
+
+```groovy
+compile 'io.nlopez.smartlocation:rx:3.3.1'
+```
+
 You can wrap the calls with ObservableFactory methods to retrieve an Observable object. You won't need to call start, just subscribe to the observable to get the updates.
 
 For example, for location:
@@ -226,7 +252,7 @@ Common issues
 If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
 
 ```groovy
-compile ('io.nlopez.smartlocation:library:3.2.4') {
+compile ('io.nlopez.smartlocation:library:3.3.1') {
 	transitive = false
 }
 ```

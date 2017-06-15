@@ -1,7 +1,6 @@
 package io.nlopez.smartlocation;
 
 import android.content.Context;
-import android.location.Location;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,14 +8,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.util.Collections;
-
 import io.nlopez.smartlocation.location.config.LocationParams;
-import io.nlopez.smartlocation.rx.ObservableFactory;
 import io.nlopez.smartlocation.util.MockLocationProvider;
 import io.nlopez.smartlocation.utils.Logger;
-import rx.Observable;
-import rx.observers.TestSubscriber;
 
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
@@ -102,22 +96,6 @@ public class LocationControlTest {
         locationControl.stop();
 
         verify(mockProvider).stop();
-    }
-
-    @Test
-    public void test_observable_location() {
-        TestSubscriber<Location> testSubscriber = new TestSubscriber<>();
-        MockLocationProvider provider = new MockLocationProvider();
-        Observable<Location> locationObservable = ObservableFactory.from(
-                SmartLocation.with(RuntimeEnvironment.application.getApplicationContext())
-                .location(provider)
-        );
-        locationObservable.subscribe(testSubscriber);
-
-        Location location = new Location("bleh");
-        provider.fakeEmitLocation(location);
-        testSubscriber.assertNoErrors();
-        testSubscriber.assertReceivedOnNext(Collections.singletonList(location));
     }
 
     private SmartLocation.LocationControl createLocationControl() {
