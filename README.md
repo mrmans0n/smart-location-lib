@@ -16,7 +16,7 @@ You should add this to your dependencies:
 compile 'io.nlopez.smartlocation:library:3.3.1'
 ```
 
-Google Play Services compatible version: 11.0.0
+Google Play Services compatible version: 11.0.1
 
 If you want the rxjava wrappers, these are now in a separate dependency. Just add this new dependency as well:
 
