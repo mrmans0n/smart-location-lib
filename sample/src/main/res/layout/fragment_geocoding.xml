@@ -37,14 +37,15 @@
         android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
         android:layout_marginTop="16dp"
-        android:padding="16dp"
         android:gravity="center"
-        tools:text="RESULT"
+        android:maxLines="3"
+        android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/direct_search"
         tools:layout_editor_absoluteX="163dp"
-        tools:layout_editor_absoluteY="91dp" />
+        tools:layout_editor_absoluteY="91dp"
+        tools:text="RESULT" />
 
     <Button
         android:id="@+id/direct_button"
@@ -55,9 +56,81 @@
         android:layout_marginTop="0dp"
         android:enabled="false"
         android:text="Search"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/direct_search"
         app:layout_constraintTop_toTopOf="@+id/direct_search"
         tools:layout_editor_absoluteY="33dp" />
+
+    <TextView
+        android:id="@+id/inverse_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="16dp"
+        android:text="Inverse Geocoding (location to name)"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/direct_result"
+        tools:layout_editor_absoluteX="163dp"
+        tools:layout_editor_absoluteY="184dp" />
+
+    <EditText
+        android:id="@+id/latitude_inverse"
+        android:layout_width="214dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Latitude"
+        android:inputType="numberDecimal"
+        app:layout_constraintStart_toStartOf="@+id/direct_search"
+        app:layout_constraintTop_toBottomOf="@+id/inverse_title" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <EditText
+        android:id="@+id/longitude_inverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Longitude"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="@+id/latitude_inverse"
+        app:layout_constraintStart_toStartOf="@+id/latitude_inverse"
+        app:layout_constraintTop_toBottomOf="@+id/latitude_inverse" />
+
+    <Button
+        android:id="@+id/inverse_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Search"
+        app:layout_constraintBottom_toBottomOf="@+id/longitude_inverse"
+        app:layout_constraintEnd_toEndOf="@+id/direct_button"
+        app:layout_constraintStart_toStartOf="@+id/direct_button"
+        app:layout_constraintTop_toTopOf="@+id/longitude_inverse" />
+
+    <TextView
+        android:id="@+id/inverse_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:maxLines="3"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inverse_button"
+        tools:layout_editor_absoluteX="163dp"
+        tools:layout_editor_absoluteY="91dp"
+        tools:text="RESULT" />
 </android.support.constraint.ConstraintLayout>
