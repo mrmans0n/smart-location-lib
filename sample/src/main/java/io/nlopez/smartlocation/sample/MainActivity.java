@@ -23,9 +23,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_dashboard:
                     mPager.setCurrentItem(1);
                     return true;
-                case R.id.navigation_notifications:
-                    mPager.setCurrentItem(2);
-                    return true;
             }
             return false;
         }

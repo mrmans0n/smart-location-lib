@@ -15,7 +15,7 @@ public class LocationAddress implements Parcelable {
 
     public LocationAddress(@NonNull Address address) {
         mAddress = address;
-        mLocation = new Location(LocationAddress.class.getCanonicalName());
+        mLocation = new Location(LocationAddress.class.getSimpleName());
         mLocation.setLatitude(address.getLatitude());
         mLocation.setLongitude(address.getLongitude());
     }

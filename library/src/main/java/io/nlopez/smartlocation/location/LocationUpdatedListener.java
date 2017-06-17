@@ -6,10 +6,12 @@ import io.nlopez.smartlocation.common.OnAllProvidersFailed;
 /**
  * Basic listener for location updates.
  */
-public abstract class LocationUpdatedListener implements OnLocationUpdatedListener, OnAllProvidersFailed {
+public interface LocationUpdatedListener extends OnLocationUpdatedListener, OnAllProvidersFailed {
 
-    @Override
-    public void onAllProvidersFailed() {
-        // Override if you want to do something if all providers failed
+    abstract class SimpleLocationUpdatedListener implements io.nlopez.smartlocation.location.LocationUpdatedListener {
+        @Override
+        public void onAllProvidersFailed() {
+            // implement if you want to get notified of this event
+        }
     }
 }

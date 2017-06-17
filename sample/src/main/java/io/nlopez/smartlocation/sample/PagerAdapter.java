@@ -6,8 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class PagerAdapter extends FragmentPagerAdapter {
     private final LocationFragment mLocationFragment = new LocationFragment();
-    private final LocationFragment mLocationFragment2 = new LocationFragment();
-    private final LocationFragment mLocationFragment3 = new LocationFragment();
+    private final GeocodingFragment mGeocodingFragment = new GeocodingFragment();
 
     public PagerAdapter(FragmentManager fm) {
         super(fm);
@@ -19,15 +18,25 @@ public class PagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return mLocationFragment;
             case 1:
-                return mLocationFragment2;
-            case 2:
-                return mLocationFragment3;
+                return mGeocodingFragment;
         }
         return null;
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
+            case 0:
+                return "Location";
+            case 1:
+                return "Geocoding";
+            default:
+                return "Not implemented";
+        }
     }
 }

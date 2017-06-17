@@ -18,19 +18,21 @@ import io.nlopez.smartlocation.activity.providers.ActivityGooglePlayServicesProv
 import io.nlopez.smartlocation.common.OnAllProvidersFailed;
 import io.nlopez.smartlocation.geocoding.GeocodingController;
 import io.nlopez.smartlocation.geocoding.GeocodingProviderFactory;
+import io.nlopez.smartlocation.geocoding.GeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.ReverseGeocodingController;
+import io.nlopez.smartlocation.geocoding.ReverseGeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.providers.android.AndroidGeocodingProviderFactory;
 import io.nlopez.smartlocation.geofencing.GeofencingProvider;
 import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
 import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider;
 import io.nlopez.smartlocation.location.LocationController;
 import io.nlopez.smartlocation.location.LocationProviderFactory;
+import io.nlopez.smartlocation.location.LocationUpdatedListener;
 import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.location.providers.legacy.LocationManagerProviderFactory;
 import io.nlopez.smartlocation.location.providers.playservices.GooglePlayServicesLocationProviderFactory;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
-import io.nlopez.smartlocation.utils.NullUtils;
 
 /**
  * Managing class for SmartLocation library.
@@ -180,11 +182,11 @@ public class SmartLocation {
             return this;
         }
 
-        public LocationController start(@NonNull OnLocationUpdatedListener listener) {
+        public LocationController start(@NonNull LocationUpdatedListener listener) {
             mProviderController = new LocationController(
                     mParent.context,
                     listener,
-                    NullUtils.getOrDefault(mOnAllProvidersFailed, OnAllProvidersFailed.EMPTY),
+                    listener,
                     mParams,
                     mTimeout,
                     mProviderFactoryList,
@@ -211,7 +213,6 @@ public class SmartLocation {
         private final SmartLocation mSmartLocation;
         private final List<GeocodingProviderFactory> mGeocodingProviders;
         private int mMaxResults = DEFAULT_MAX_RESULTS;
-        private OnAllProvidersFailed mOnAllProvidersFailed;
 
         public GeocodingBuilder(
                 @NonNull SmartLocation smartLocation,
@@ -225,20 +226,15 @@ public class SmartLocation {
             return this;
         }
 
-        public GeocodingBuilder whenAllProvidersFailed(@NonNull OnAllProvidersFailed onAllProvidersFailed) {
-            mOnAllProvidersFailed = onAllProvidersFailed;
-            return this;
-        }
-
         public ReverseGeocodingController findNameByLocation(
                 @NonNull Location location,
-                @NonNull OnReverseGeocodingListener listener) {
+                @NonNull ReverseGeocodingUpdatedListener listener) {
             final ReverseGeocodingController controller = new ReverseGeocodingController(
                     mSmartLocation.context,
                     location,
                     mMaxResults,
                     listener,
-                    NullUtils.getOrDefault(mOnAllProvidersFailed, OnAllProvidersFailed.EMPTY),
+                    listener,
                     mGeocodingProviders,
                     mSmartLocation.logger);
             return controller.start();
@@ -246,13 +242,13 @@ public class SmartLocation {
 
         public GeocodingController findLocationByName(
                 @NonNull String name,
-                @NonNull OnGeocodingListener listener) {
+                @NonNull GeocodingUpdatedListener listener) {
             final GeocodingController controller = new GeocodingController(
                     mSmartLocation.context,
                     name,
                     mMaxResults,
                     listener,
-                    NullUtils.getOrDefault(mOnAllProvidersFailed, OnAllProvidersFailed.EMPTY),
+                    listener,
                     mGeocodingProviders,
                     mSmartLocation.logger);
             return controller.start();

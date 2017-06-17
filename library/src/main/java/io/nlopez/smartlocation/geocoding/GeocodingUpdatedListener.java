@@ -6,9 +6,15 @@ import io.nlopez.smartlocation.common.OnAllProvidersFailed;
 /**
  * Basic listener for geocoding updates.
  */
-public abstract class GeocodingUpdatedListener implements OnGeocodingListener, OnAllProvidersFailed {
-    @Override
-    public void onAllProvidersFailed() {
-        // Override if you want to do something if all providers failed
+public interface GeocodingUpdatedListener extends OnGeocodingListener, OnAllProvidersFailed {
+
+    /**
+     * Convenience abstract listener
+     */
+    abstract class SimpleGeocodingUpdatedListener implements GeocodingUpdatedListener {
+        @Override
+        public void onAllProvidersFailed() {
+            // Override if you want to do something if all providers failed
+        }
     }
 }
