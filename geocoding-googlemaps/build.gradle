@@ -18,10 +18,11 @@ dependencies {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:11.0.1'
-    compile 'com.android.support:support-annotations:25.3.1'
+    compile project(':library')
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
 
-    // Test dependencies
     testCompile "junit:junit:$junitVersion"
     testCompile "org.robolectric:robolectric:$robolectricVersion"
     testCompile "org.robolectric:robolectric-shadows:$robolectricVersion"
@@ -52,8 +53,8 @@ android.libraryVariants
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact "build/libs/SmartLocation-${version}.aar"
-            artifactId 'library'
+            artifact "build/libs/SmartLocation-GeocodingGoogleMapsExtension-${version}.aar"
+            artifactId 'geocoding-googlemaps'
         }
     }
 }
@@ -62,7 +63,7 @@ def isReleaseBuild() {
     return version.contains("SNAPSHOT") == false
 }
 
-static def getProperty(project, property) {
+def getProperty(project, property) {
     return project.hasProperty(property) ? project.property(property) : ""
 }
 
@@ -86,11 +87,11 @@ uploadArchives {
         }
 
         pom.project {
-            name 'Smart Location Library'
+            name 'Smart Location Library Google Maps Geocoding API Extension'
             packaging 'aar'
-            description 'This library handles all the boilerplate and repetitive code used when playing with Locations in Android projects.'
+            description 'This is an extension for using Google Maps Geocoding API with SmartLocation'
             url 'https://github.com/mrmans0n/smart-location-lib'
-            artifactId 'library'
+            artifactId 'geocoding-googlemaps'
 
             scm {
                 url 'scm:git@github.com:mrmans0n/smart-location-lib.git'
