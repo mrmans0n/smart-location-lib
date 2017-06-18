@@ -1,7 +1,6 @@
 package io.nlopez.smartlocation.rx;
 
 import android.content.Context;
-import android.location.Address;
 import android.location.Location;
 
 import com.google.android.gms.location.DetectedActivity;
@@ -9,13 +8,13 @@ import com.google.android.gms.location.DetectedActivity;
 import java.util.List;
 
 import io.nlopez.smartlocation.OnActivityUpdatedListener;
-import io.nlopez.smartlocation.OnGeocodingListener;
 import io.nlopez.smartlocation.OnGeofencingTransitionListener;
-import io.nlopez.smartlocation.OnLocationUpdatedListener;
-import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.geocoding.GeocodingUpdatedListener;
+import io.nlopez.smartlocation.geocoding.ReverseGeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.common.LocationAddress;
 import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
+import io.nlopez.smartlocation.location.LocationUpdatedListener;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -45,10 +44,15 @@ public class ObservableFactory {
         return Observable.create(new ObservableOnSubscribe<Location>() {
             @Override
             public void subscribe(final ObservableEmitter<Location> emitter) throws Exception {
-                locationBuilder.start(new OnLocationUpdatedListener() {
+                locationBuilder.start(new LocationUpdatedListener.SimpleLocationUpdatedListener() {
                     @Override
                     public void onLocationUpdated(Location location) {
                         emitter.onNext(location);
+                    }
+
+                    @Override
+                    public void onAllProvidersFailed() {
+                        emitter.onError(new RuntimeException("All providers failed"));
                     }
                 });
             }
@@ -122,12 +126,15 @@ public class ObservableFactory {
         return SingleSubject.create(new SingleOnSubscribe<List<LocationAddress>>() {
             @Override
             public void subscribe(final SingleEmitter<List<LocationAddress>> emitter) {
-                SmartLocation.with(context).geocoding().add(address, maxResults).start(new OnGeocodingListener() {
-                    @Override
-                    public void onLocationResolved(String name, List<LocationAddress> results) {
-                        emitter.onSuccess(results);
-                    }
-                });
+                SmartLocation.with(context)
+                        .geocoding()
+                        .maxResults(maxResults)
+                        .findLocationByName(address, new GeocodingUpdatedListener.SimpleGeocodingUpdatedListener() {
+                            @Override
+                            public void onLocationResolved(String name, List<LocationAddress> results) {
+                                emitter.onSuccess(results);
+                            }
+                        });
 
             }
         });
@@ -141,16 +148,20 @@ public class ObservableFactory {
      * @param maxResults max number of coincidences to return
      * @return Single for results. Gets a terminal event after the response
      */
-    public static Single<List<Address>> fromLocation(final Context context, final Location location, final int maxResults) {
-        return SingleSubject.create(new SingleOnSubscribe<List<Address>>() {
+    public static Single<List<LocationAddress>> fromLocation(final Context context, final Location location, final int maxResults) {
+        return SingleSubject.create(new SingleOnSubscribe<List<LocationAddress>>() {
             @Override
-            public void subscribe(final SingleEmitter<List<Address>> emitter) {
-                SmartLocation.with(context).geocoding().add(location, maxResults).start(new OnReverseGeocodingListener() {
-                    @Override
-                    public void onAddressResolved(Location original, List<Address> results) {
-                        emitter.onSuccess(results);
-                    }
-                });
+            public void subscribe(final SingleEmitter<List<LocationAddress>> emitter) {
+                SmartLocation.with(context)
+                        .geocoding()
+                        .maxResults(maxResults)
+                        .findNameByLocation(location,
+                                new ReverseGeocodingUpdatedListener.SimpleReverseGeocodingUpdatedListener() {
+                                    @Override
+                                    public void onAddressResolved(Location original, List<LocationAddress> results) {
+                                        emitter.onSuccess(results);
+                                    }
+                                });
             }
         });
     }
