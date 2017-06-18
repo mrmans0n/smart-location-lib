@@ -1,4 +1,4 @@
-package io.nlopez.smartlocation.location.utils;
+package io.nlopez.smartlocation.location.util;
 
 import android.content.Context;
 import android.location.LocationManager;

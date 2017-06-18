@@ -30,6 +30,7 @@ public class AndroidGeocodingProviderFactory implements GeocodingProviderFactory
         mLocale = locale;
     }
 
+    @NonNull
     @Override
     public GeocodingProvider create(Context context, Provider.StatusListener statusListener) {
         return new AndroidGeocodingProvider(context, statusListener, mLogger, mLocale);

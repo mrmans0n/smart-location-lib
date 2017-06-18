@@ -14,7 +14,7 @@ import io.nlopez.smartlocation.OnGeofencingTransitionListener;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
-import io.nlopez.smartlocation.geocoding.utils.LocationAddress;
+import io.nlopez.smartlocation.geocoding.common.LocationAddress;
 import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;

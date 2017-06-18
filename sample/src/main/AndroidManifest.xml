@@ -3,14 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.nlopez.smartlocation.sample">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:icon="@drawable/ic_launcher"
         android:label="SmartLocation Sample">
         <activity
             android:name=".MainActivity"
             android:label="SmartLocation Sample"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Locale;
 
 import io.nlopez.smartlocation.OnGeocodingListener;
-import io.nlopez.smartlocation.geocoding.utils.LocationAddress;
+import io.nlopez.smartlocation.geocoding.common.LocationAddress;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**

@@ -12,7 +12,7 @@ import io.nlopez.smartlocation.OnGeocodingListener;
 import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.common.Provider;
 import io.nlopez.smartlocation.geocoding.GeocodingProvider;
-import io.nlopez.smartlocation.geocoding.utils.LocationAddress;
+import io.nlopez.smartlocation.geocoding.common.LocationAddress;
 import io.nlopez.smartlocation.utils.Logger;
 
 /**

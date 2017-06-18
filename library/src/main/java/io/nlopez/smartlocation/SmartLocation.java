@@ -15,7 +15,6 @@ import java.util.WeakHashMap;
 import io.nlopez.smartlocation.activity.ActivityProvider;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
 import io.nlopez.smartlocation.activity.providers.ActivityGooglePlayServicesProvider;
-import io.nlopez.smartlocation.common.OnAllProvidersFailed;
 import io.nlopez.smartlocation.geocoding.GeocodingController;
 import io.nlopez.smartlocation.geocoding.GeocodingProviderFactory;
 import io.nlopez.smartlocation.geocoding.GeocodingUpdatedListener;
@@ -153,7 +152,6 @@ public class SmartLocation {
         private List<LocationProviderFactory> mProviderFactoryList;
         private LocationController mProviderController;
         private long mTimeout = LocationController.NO_TIMEOUT;
-        private OnAllProvidersFailed mOnAllProvidersFailed;
 
         public LocationBuilder(
                 @NonNull SmartLocation smartLocation,
@@ -170,11 +168,6 @@ public class SmartLocation {
 
         public LocationBuilder timeout(long timeout) {
             mTimeout = timeout;
-            return this;
-        }
-
-        public LocationBuilder whenAllProvidersFailed(@NonNull OnAllProvidersFailed onAllProvidersFailed) {
-            mOnAllProvidersFailed = onAllProvidersFailed;
             return this;
         }
 

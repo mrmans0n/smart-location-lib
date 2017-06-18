@@ -19,9 +19,15 @@ import java.util.List;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.geocoding.GeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.ReverseGeocodingUpdatedListener;
-import io.nlopez.smartlocation.geocoding.utils.LocationAddress;
+import io.nlopez.smartlocation.geocoding.common.LocationAddress;
+import io.nlopez.smartlocation.geocoding.providers.android.AndroidGeocodingProviderFactory;
+import io.nlopez.smartlocation.geocoding.providers.googlemaps.GoogleMapsApiGeocodingProviderFactory;
 
 public class GeocodingFragment extends Fragment {
+
+    // Change this for a Google Maps API key if you want to use it
+    // Info on how to do this: https://developers.google.com/maps/documentation/geocoding/get-api-key
+    private static final String GOOGLE_MAPS_API_KEY = "your-google-maps-api-key";
 
     private EditText mDirectEditText;
     private TextView mDirectResultText;
@@ -35,7 +41,7 @@ public class GeocodingFragment extends Fragment {
         @Override
         public void onClick(View v) {
             SmartLocation.with(getContext())
-                    .geocoding()
+                    .geocoding(new AndroidGeocodingProviderFactory(), new GoogleMapsApiGeocodingProviderFactory(GOOGLE_MAPS_API_KEY))
                     .findLocationByName(
                             mDirectEditText.getText().toString(),
                             new GeocodingUpdatedListener.SimpleGeocodingUpdatedListener() {
@@ -48,10 +54,17 @@ public class GeocodingFragment extends Fragment {
                                         mDirectResultText.setText(address.getLocation().toString());
                                     }
                                 }
+
+                                @Override
+                                public void onAllProvidersFailed() {
+                                    mDirectResultText.setText("All providers failed");
+                                }
+
                             });
             mDirectResultText.setText("Searching...");
         }
     };
+
     private final TextWatcher mDirectTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -72,6 +85,7 @@ public class GeocodingFragment extends Fragment {
     private final View.OnClickListener mInverseSearchClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            // Convert text input to location if possible
             final String latitudeText = mInverseLatitudeText.getText().toString();
             final Double latitude = Double.parseDouble(latitudeText);
             final String longitudeText = mInverseLongitudeText.getText().toString();
@@ -79,8 +93,10 @@ public class GeocodingFragment extends Fragment {
             final Location location = new Location("test");
             location.setLatitude(latitude);
             location.setLongitude(longitude);
+
+            // Inverse geocoding retrieval
             SmartLocation.with(getContext())
-                    .geocoding()
+                    .geocoding(new AndroidGeocodingProviderFactory(), new GoogleMapsApiGeocodingProviderFactory(GOOGLE_MAPS_API_KEY))
                     .findNameByLocation(location, new ReverseGeocodingUpdatedListener.SimpleReverseGeocodingUpdatedListener() {
                         @Override
                         public void onAddressResolved(Location original, List<LocationAddress> results) {
@@ -90,6 +106,11 @@ public class GeocodingFragment extends Fragment {
                                 final LocationAddress address = results.get(0);
                                 mInverseResultText.setText(address.getFormattedAddress());
                             }
+                        }
+
+                        @Override
+                        public void onAllProvidersFailed() {
+                            mInverseResultText.setText("All providers failed");
                         }
                     });
             mInverseResultText.setText("Searching...");
