@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.geocoding.GeocodingUpdatedListener;
@@ -28,6 +29,12 @@ public class GeocodingFragment extends Fragment {
     // Change this for a Google Maps API key if you want to use it
     // Info on how to do this: https://developers.google.com/maps/documentation/geocoding/get-api-key
     private static final String GOOGLE_MAPS_API_KEY = "your-google-maps-api-key";
+
+    private static final Pattern LATITUDE_REGEX =
+            Pattern.compile("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$");
+
+    private static final Pattern LONGITUDE_REGEX =
+            Pattern.compile("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$");
 
     private EditText mDirectEditText;
     private TextView mDirectResultText;
@@ -124,8 +131,14 @@ public class GeocodingFragment extends Fragment {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            final boolean hasLatitude = !TextUtils.isEmpty(mInverseLatitudeText.getText().toString());
-            final boolean hasLongitude = !TextUtils.isEmpty(mInverseLongitudeText.getText().toString());
+            final String latitudeText = mInverseLatitudeText.getText().toString();
+            final String longitudeText = mInverseLongitudeText.getText().toString();
+
+            final boolean hasLatitude = !TextUtils.isEmpty(latitudeText)
+                    && LATITUDE_REGEX.matcher(latitudeText).matches();
+            final boolean hasLongitude = !TextUtils.isEmpty(longitudeText)
+                    && LONGITUDE_REGEX.matcher(longitudeText).matches();
+
             mInverseStartButton.setEnabled(hasLatitude && hasLongitude);
         }
 

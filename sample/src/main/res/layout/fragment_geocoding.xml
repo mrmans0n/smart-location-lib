@@ -83,7 +83,6 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Latitude"
-        android:inputType="numberDecimal"
         app:layout_constraintStart_toStartOf="@+id/direct_search"
         app:layout_constraintTop_toBottomOf="@+id/inverse_title" />
 
@@ -101,7 +100,6 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Longitude"
-        android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="@+id/latitude_inverse"
         app:layout_constraintStart_toStartOf="@+id/latitude_inverse"
         app:layout_constraintTop_toBottomOf="@+id/latitude_inverse" />

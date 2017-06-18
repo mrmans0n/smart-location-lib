@@ -1,6 +1,7 @@
 package io.nlopez.smartlocation.location.providers.legacy;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import io.nlopez.smartlocation.common.Provider;
 import io.nlopez.smartlocation.location.LocationPermissionsManager;
@@ -16,8 +17,12 @@ public class LocationManagerProviderFactory implements LocationProviderFactory {
     private final LocationPermissionsManager mPermissionsManager;
 
     public LocationManagerProviderFactory() {
-        mLogger = LoggerFactory.get();
-        mPermissionsManager = LocationPermissionsManager.get();
+        this(LoggerFactory.get(), LocationPermissionsManager.get());
+    }
+
+    public LocationManagerProviderFactory(@NonNull Logger logger, @NonNull LocationPermissionsManager permissionsManager) {
+        mLogger = logger;
+        mPermissionsManager = permissionsManager;
     }
 
     @Override
