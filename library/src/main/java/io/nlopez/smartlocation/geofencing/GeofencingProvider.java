@@ -1,29 +1,23 @@
 package io.nlopez.smartlocation.geofencing;
 
-import android.content.Context;
+import android.app.PendingIntent;
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.location.GeofencingRequest;
 
 import java.util.List;
 
-import io.nlopez.smartlocation.OnGeofencingTransitionListener;
-import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
-import io.nlopez.smartlocation.utils.Logger;
+import io.nlopez.smartlocation.common.Provider;
 
 /**
- * Created by mrm on 20/12/14.
+ * Describes all the functionality needed for a geofencing provider.
+ * As of now there is only the play service geofencing provider so this
+ * api will mimic it for simplicity.
  */
-public interface GeofencingProvider {
-    void init(Context context, Logger logger);
+public interface GeofencingProvider extends Provider {
+    void addGeofences(@NonNull GeofencingRequest request, @NonNull PendingIntent pendingIntent);
 
-    void start(OnGeofencingTransitionListener listener);
+    void removeGeofences(@NonNull List<String> geofenceIds);
 
-    void addGeofence(GeofenceModel geofence);
-
-    void addGeofences(List<GeofenceModel> geofenceList);
-
-    void removeGeofence(String geofenceId);
-
-    void removeGeofences(List<String> geofenceIds);
-
-    void stop();
-
+    void removeGeofences(@NonNull PendingIntent pendingIntent);
 }

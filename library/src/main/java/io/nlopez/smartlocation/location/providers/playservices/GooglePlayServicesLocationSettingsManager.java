@@ -179,7 +179,7 @@ public class GooglePlayServicesLocationSettingsManager {
         }
     }
 
-    interface Listener {
+    public interface Listener {
         void onSettingsSuccess();
 
         void onSettingsFailed();

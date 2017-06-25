@@ -37,7 +37,7 @@ public class LocationPermissionsManager {
     }
 
     /**
-     * Launches the system permission request dialog. Any further action when the permissions are
+     * Launches the system permission request dialog. Any further geofencingAction when the permissions are
      * granted (or not) should be done in the ActivityCompat#onRequestPermissionsResult callback,
      * with the requestCode value specified in {@link LocationPermissionsManager#PERMISSIONS_REQUEST_CODE}.
      *

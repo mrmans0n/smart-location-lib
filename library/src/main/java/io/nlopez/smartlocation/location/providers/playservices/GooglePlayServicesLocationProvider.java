@@ -195,7 +195,7 @@ public class GooglePlayServicesLocationProvider
 
     @Override
     public void onConnectionSuspended(int i) {
-        mLogger.d("GoogleApiClient  onConnectionSuspended " + i);
+        mLogger.d("GoogleApiClient onConnectionSuspended " + i);
         mStatusListener.onProviderFailed(this);
     }
 

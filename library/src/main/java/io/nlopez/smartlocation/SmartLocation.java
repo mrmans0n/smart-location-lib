@@ -1,11 +1,13 @@
 package io.nlopez.smartlocation;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.android.gms.location.DetectedActivity;
+import com.google.android.gms.location.GeofencingRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,15 +17,17 @@ import java.util.WeakHashMap;
 import io.nlopez.smartlocation.activity.ActivityProvider;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
 import io.nlopez.smartlocation.activity.providers.ActivityGooglePlayServicesProvider;
+import io.nlopez.smartlocation.common.OnAllProvidersFailed;
 import io.nlopez.smartlocation.geocoding.GeocodingController;
 import io.nlopez.smartlocation.geocoding.GeocodingProviderFactory;
 import io.nlopez.smartlocation.geocoding.GeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.ReverseGeocodingController;
 import io.nlopez.smartlocation.geocoding.ReverseGeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.providers.android.AndroidGeocodingProviderFactory;
-import io.nlopez.smartlocation.geofencing.GeofencingProvider;
-import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
-import io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider;
+import io.nlopez.smartlocation.geofencing.GeofencingAddController;
+import io.nlopez.smartlocation.geofencing.GeofencingProviderFactory;
+import io.nlopez.smartlocation.geofencing.GeofencingRemoveController;
+import io.nlopez.smartlocation.geofencing.providers.playservices.GooglePlayServicesGeofencingProviderFactory;
 import io.nlopez.smartlocation.location.LocationController;
 import io.nlopez.smartlocation.location.LocationProviderFactory;
 import io.nlopez.smartlocation.location.LocationUpdatedListener;
@@ -33,14 +37,18 @@ import io.nlopez.smartlocation.location.providers.playservices.GooglePlayService
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
 
+import static io.nlopez.smartlocation.common.OnAllProvidersFailed.EMPTY;
+import static io.nlopez.smartlocation.utils.Nulls.orDefault;
+
 /**
  * Managing class for SmartLocation library.
  */
 public class SmartLocation {
 
+    @NonNull
     private Context context;
+    @NonNull
     private Logger logger;
-    private boolean preInitialize;
 
     /**
      * Creates the SmartLocation basic instance.
@@ -48,18 +56,20 @@ public class SmartLocation {
      * @param context execution context
      * @param logger  logger interface
      */
-    private SmartLocation(Context context, Logger logger) {
+    private SmartLocation(@NonNull Context context, @NonNull Logger logger) {
         this.context = context;
         this.logger = logger;
     }
 
-    public static SmartLocation with(Context context) {
+    @NonNull
+    public static SmartLocation with(@NonNull Context context) {
         return new Builder(context).build();
     }
 
     /**
      * @return request handler for location operations
      */
+    @NonNull
     public LocationBuilder location() {
         return location(
                 new GooglePlayServicesLocationProviderFactory(),
@@ -70,7 +80,8 @@ public class SmartLocation {
      * @param providerFactories factories for the location provider we want to use, in order
      * @return request handler for location operations
      */
-    public LocationBuilder location(LocationProviderFactory... providerFactories) {
+    @NonNull
+    public LocationBuilder location(@NonNull LocationProviderFactory... providerFactories) {
         return new LocationBuilder(this, providerFactories);
     }
 
@@ -103,21 +114,24 @@ public class SmartLocation {
     /**
      * @return request handler for geofencing operations
      */
-    public GeofencingControl geofencing() {
-        return geofencing(new GeofencingGooglePlayServicesProvider());
+    @NonNull
+    public GeofencingBuilder geofencing() {
+        return geofencing(new GooglePlayServicesGeofencingProviderFactory());
     }
 
     /**
-     * @param geofencingProvider geofencing provider we want to use
+     * @param geofencingProviderFactories geofencing we want to use, in order
      * @return request handler for geofencing operations
      */
-    public GeofencingControl geofencing(GeofencingProvider geofencingProvider) {
-        return new GeofencingControl(this, geofencingProvider);
+    @NonNull
+    public GeofencingBuilder geofencing(@NonNull GeofencingProviderFactory... geofencingProviderFactories) {
+        return new GeofencingBuilder(this, geofencingProviderFactories);
     }
 
     /**
      * @return request handler for geocoding operations
      */
+    @NonNull
     public GeocodingBuilder geocoding() {
         return geocoding(new AndroidGeocodingProviderFactory());
     }
@@ -126,7 +140,8 @@ public class SmartLocation {
      * @param providerFactories provider factories we want to use, in order
      * @return request handler for geocoding operations
      */
-    public GeocodingBuilder geocoding(GeocodingProviderFactory... providerFactories) {
+    @NonNull
+    public GeocodingBuilder geocoding(@NonNull GeocodingProviderFactory... providerFactories) {
         return new GeocodingBuilder(this, providerFactories);
     }
 
@@ -137,6 +152,7 @@ public class SmartLocation {
             this.context = context;
         }
 
+        @NonNull
         public SmartLocation build() {
             return new SmartLocation(context, LoggerFactory.get());
         }
@@ -161,20 +177,24 @@ public class SmartLocation {
             mProviderFactoryList = Arrays.asList(locationProviders);
         }
 
+        @NonNull
         public LocationBuilder config(@NonNull LocationProviderParams params) {
             mParams = params;
             return this;
         }
 
+        @NonNull
         public LocationBuilder timeout(long timeout) {
             mTimeout = timeout;
             return this;
         }
 
+        @NonNull
         public LocationBuilder get() {
             return this;
         }
 
+        @NonNull
         public LocationController start(@NonNull LocationUpdatedListener listener) {
             mProviderController = new LocationController(
                     mParent.context,
@@ -188,6 +208,7 @@ public class SmartLocation {
             return mProviderController.start();
         }
 
+        @NonNull
         public void stop() {
             if (mProviderController != null) {
                 mProviderController.stop();
@@ -203,47 +224,50 @@ public class SmartLocation {
     public static class GeocodingBuilder {
         static final int DEFAULT_MAX_RESULTS = 5;
 
-        private final SmartLocation mSmartLocation;
+        private final SmartLocation mParent;
         private final List<GeocodingProviderFactory> mGeocodingProviders;
         private int mMaxResults = DEFAULT_MAX_RESULTS;
 
         public GeocodingBuilder(
                 @NonNull SmartLocation smartLocation,
                 @NonNull GeocodingProviderFactory[] geocodingProviders) {
-            mSmartLocation = smartLocation;
+            mParent = smartLocation;
             mGeocodingProviders = Arrays.asList(geocodingProviders);
         }
 
+        @NonNull
         public GeocodingBuilder maxResults(int maxResults) {
             mMaxResults = maxResults;
             return this;
         }
 
+        @NonNull
         public ReverseGeocodingController findNameByLocation(
                 @NonNull Location location,
                 @NonNull ReverseGeocodingUpdatedListener listener) {
             final ReverseGeocodingController controller = new ReverseGeocodingController(
-                    mSmartLocation.context,
+                    mParent.context,
                     location,
                     mMaxResults,
                     listener,
                     listener,
                     mGeocodingProviders,
-                    mSmartLocation.logger);
+                    mParent.logger);
             return controller.start();
         }
 
+        @NonNull
         public GeocodingController findLocationByName(
                 @NonNull String name,
                 @NonNull GeocodingUpdatedListener listener) {
             final GeocodingController controller = new GeocodingController(
-                    mSmartLocation.context,
+                    mParent.context,
                     name,
                     mMaxResults,
                     listener,
                     listener,
                     mGeocodingProviders,
-                    mSmartLocation.logger);
+                    mParent.logger);
             return controller.start();
         }
     }
@@ -264,10 +288,6 @@ public class SmartLocation {
                 MAPPING.put(smartLocation.context, activityProvider);
             }
             provider = MAPPING.get(smartLocation.context);
-
-            if (smartLocation.preInitialize) {
-                provider.init(smartLocation.context, smartLocation.logger);
-            }
         }
 
         public ActivityRecognitionControl config(@NonNull ActivityParams params) {
@@ -297,56 +317,57 @@ public class SmartLocation {
 
     }
 
-    public static class GeofencingControl {
-        private static final Map<Context, GeofencingProvider> MAPPING = new WeakHashMap<>();
+    public static class GeofencingBuilder {
+        @NonNull
+        private final SmartLocation mParent;
+        @NonNull
+        private final List<GeofencingProviderFactory> mGeofencingProviders;
+        @Nullable
+        private OnAllProvidersFailed mProvidersFailed;
 
-        private final SmartLocation smartLocation;
-        private GeofencingProvider provider;
-
-        public GeofencingControl(@NonNull SmartLocation smartLocation, @NonNull GeofencingProvider geofencingProvider) {
-            this.smartLocation = smartLocation;
-
-            if (!MAPPING.containsKey(smartLocation.context)) {
-                MAPPING.put(smartLocation.context, geofencingProvider);
-            }
-            provider = MAPPING.get(smartLocation.context);
-
-            if (smartLocation.preInitialize) {
-                provider.init(smartLocation.context, smartLocation.logger);
-            }
+        public GeofencingBuilder(
+                @NonNull SmartLocation smartLocation,
+                @NonNull GeofencingProviderFactory[] geofencingProviders) {
+            mParent = smartLocation;
+            mGeofencingProviders = Arrays.asList(geofencingProviders);
         }
 
-        public GeofencingControl add(@NonNull GeofenceModel geofenceModel) {
-            provider.addGeofence(geofenceModel);
+        @NonNull
+        public GeofencingBuilder failureListener(@NonNull OnAllProvidersFailed providersFailed) {
+            mProvidersFailed = providersFailed;
             return this;
         }
 
-        public GeofencingControl remove(@NonNull String geofenceId) {
-            provider.removeGeofence(geofenceId);
-            return this;
+        @NonNull
+        public GeofencingAddController addGeofences(
+                @NonNull GeofencingRequest request,
+                @NonNull PendingIntent pendingIntent) {
+            final GeofencingAddController controller = new GeofencingAddController(
+                    mParent.context,
+                    orDefault(mProvidersFailed, EMPTY),
+                    mGeofencingProviders,
+                    mParent.logger);
+            return controller.addGeofences(request, pendingIntent);
         }
 
-        public GeofencingControl addAll(@NonNull List<GeofenceModel> geofenceModelList) {
-            provider.addGeofences(geofenceModelList);
-            return this;
+        @NonNull
+        public GeofencingRemoveController removeGeofences(@NonNull List<String> geofenceIds) {
+            final GeofencingRemoveController controller = new GeofencingRemoveController(
+                    mParent.context,
+                    orDefault(mProvidersFailed, EMPTY),
+                    mGeofencingProviders,
+                    mParent.logger);
+            return controller.removeGeofence(geofenceIds);
         }
 
-        public GeofencingControl removeAll(@NonNull List<String> geofenceIdsList) {
-            provider.removeGeofences(geofenceIdsList);
-            return this;
-        }
-
-        public void start(OnGeofencingTransitionListener listener) {
-            if (provider == null) {
-                throw new RuntimeException("A provider must be initialized");
-            }
-            provider.start(listener);
-        }
-
-        public void stop() {
-            provider.stop();
+        @NonNull
+        public GeofencingRemoveController removeGeofences(@NonNull PendingIntent pendingIntent) {
+            final GeofencingRemoveController controller = new GeofencingRemoveController(
+                    mParent.context,
+                    orDefault(mProvidersFailed, EMPTY),
+                    mGeofencingProviders,
+                    mParent.logger);
+            return controller.removeGeofence(pendingIntent);
         }
     }
-
-
 }

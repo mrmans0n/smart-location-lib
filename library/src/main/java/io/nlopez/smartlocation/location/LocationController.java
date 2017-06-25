@@ -67,9 +67,7 @@ public class LocationController implements Provider.StatusListener {
         LocationProviderFactory providerFactory = mProviderList.poll();
         if (providerFactory == null) {
             mLogger.w("All providers failed");
-            if (mListener != null) {
-                mListener.onAllProvidersFailed();
-            }
+            mListener.onAllProvidersFailed();
             return;
         }
         mCurrentProvider = providerFactory.create(mContext, this);
