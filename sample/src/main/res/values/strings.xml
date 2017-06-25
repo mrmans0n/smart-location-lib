@@ -3,7 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_location">Location</string>
-    <string name="title_geocoding">Geocoding</string>
+    <string name="navigation_location">Location</string>
+    <string name="navigation_geocoding">Geocoding</string>
     <string name="title_notifications">Notifications</string>
+    <string name="naviation_geofencing">Geofencing</string>
 </resources>

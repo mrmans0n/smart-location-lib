@@ -17,12 +17,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
+                case R.id.navigation_location:
                     mPager.setCurrentItem(0);
                     return true;
-                case R.id.navigation_dashboard:
+                case R.id.navigation_geocoding:
                     mPager.setCurrentItem(1);
                     return true;
+                case R.id.navigation_geofencing:
+                    mPager.setCurrentItem(2);
             }
             return false;
         }
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mPager = (ViewPager) findViewById(R.id.container);
-        mPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+        mPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), this));
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

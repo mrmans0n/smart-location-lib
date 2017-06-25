@@ -164,9 +164,9 @@ public class GeocodingFragment extends Fragment {
         mDirectEditText.addTextChangedListener(mDirectTextWatcher);
 
         // Inverse geocoding stuff
-        mInverseLatitudeText = (EditText) view.findViewById(R.id.latitude_inverse);
-        mInverseLongitudeText = (EditText) view.findViewById(R.id.longitude_inverse);
-        mInverseStartButton = (Button) view.findViewById(R.id.inverse_button);
+        mInverseLatitudeText = (EditText) view.findViewById(R.id.latitude);
+        mInverseLongitudeText = (EditText) view.findViewById(R.id.longitude);
+        mInverseStartButton = (Button) view.findViewById(R.id.add_geofence_button);
         mInverseStartButton.setOnClickListener(mInverseSearchClickListener);
         mInverseResultText = (TextView) view.findViewById(R.id.inverse_result);
         mInverseLatitudeText.addTextChangedListener(mInverseTextWatcher);

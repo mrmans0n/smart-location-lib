@@ -1,14 +1,19 @@
 package io.nlopez.smartlocation.sample;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-public class PagerAdapter extends FragmentPagerAdapter {
-    private final LocationFragment mLocationFragment = new LocationFragment();
-    private final GeocodingFragment mGeocodingFragment = new GeocodingFragment();
+import io.nlopez.smartlocation.utils.Nulls;
 
-    public PagerAdapter(FragmentManager fm) {
+public class PagerAdapter extends FragmentPagerAdapter {
+
+    private LocationFragment mLocationFragment;
+    private GeocodingFragment mGeocodingFragment;
+    private GeofencingFragment mGeofencingFragment;
+
+    public PagerAdapter(FragmentManager fm, Context context) {
         super(fm);
     }
 
@@ -16,16 +21,21 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
+                mLocationFragment = Nulls.orDefault(mLocationFragment, new LocationFragment());
                 return mLocationFragment;
             case 1:
+                mGeocodingFragment = Nulls.orDefault(mGeocodingFragment, new GeocodingFragment());
                 return mGeocodingFragment;
+            case 2:
+                mGeofencingFragment = Nulls.orDefault(mGeofencingFragment, new GeofencingFragment());
+                return mGeofencingFragment;
         }
         return null;
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -35,6 +45,8 @@ public class PagerAdapter extends FragmentPagerAdapter {
                 return "Location";
             case 1:
                 return "Geocoding";
+            case 2:
+                return "Geofencing";
             default:
                 return "Not implemented";
         }

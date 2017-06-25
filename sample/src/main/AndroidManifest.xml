@@ -23,5 +23,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"
             tools:replace="android:value" />
+        <service android:name=".GeofencingFragment$GeofenceIntentService" />
     </application>
 </manifest>

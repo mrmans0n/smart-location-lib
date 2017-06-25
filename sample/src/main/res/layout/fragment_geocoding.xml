@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/direct_title"
+        android:id="@+id/add_geofence_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -26,7 +26,7 @@
         android:hint="Place to look for"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/direct_title"
+        app:layout_constraintTop_toBottomOf="@+id/add_geofence_title"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="30dp" />
 
@@ -62,7 +62,7 @@
         tools:layout_editor_absoluteY="33dp" />
 
     <TextView
-        android:id="@+id/inverse_title"
+        android:id="@+id/remove_geofence_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="0dp"
@@ -76,7 +76,7 @@
         tools:layout_editor_absoluteY="184dp" />
 
     <EditText
-        android:id="@+id/latitude_inverse"
+        android:id="@+id/latitude"
         android:layout_width="214dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="0dp"
@@ -84,7 +84,7 @@
         android:ems="10"
         android:hint="Latitude"
         app:layout_constraintStart_toStartOf="@+id/direct_search"
-        app:layout_constraintTop_toBottomOf="@+id/inverse_title" />
+        app:layout_constraintTop_toBottomOf="@+id/remove_geofence_title" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -94,26 +94,26 @@
         app:layout_constraintGuide_percent="0.5" />
 
     <EditText
-        android:id="@+id/longitude_inverse"
+        android:id="@+id/longitude"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Longitude"
-        app:layout_constraintEnd_toEndOf="@+id/latitude_inverse"
-        app:layout_constraintStart_toStartOf="@+id/latitude_inverse"
-        app:layout_constraintTop_toBottomOf="@+id/latitude_inverse" />
+        app:layout_constraintEnd_toEndOf="@+id/latitude"
+        app:layout_constraintStart_toStartOf="@+id/latitude"
+        app:layout_constraintTop_toBottomOf="@+id/latitude" />
 
     <Button
-        android:id="@+id/inverse_button"
+        android:id="@+id/add_geofence_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Search"
-        app:layout_constraintBottom_toBottomOf="@+id/longitude_inverse"
+        app:layout_constraintBottom_toBottomOf="@+id/longitude"
         app:layout_constraintEnd_toEndOf="@+id/direct_button"
         app:layout_constraintStart_toStartOf="@+id/direct_button"
-        app:layout_constraintTop_toTopOf="@+id/longitude_inverse" />
+        app:layout_constraintTop_toTopOf="@+id/longitude" />
 
     <TextView
         android:id="@+id/inverse_result"
@@ -127,7 +127,7 @@
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inverse_button"
+        app:layout_constraintTop_toBottomOf="@+id/add_geofence_button"
         tools:layout_editor_absoluteX="163dp"
         tools:layout_editor_absoluteY="91dp"
         tools:text="RESULT" />
