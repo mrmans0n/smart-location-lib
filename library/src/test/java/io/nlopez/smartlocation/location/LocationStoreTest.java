@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +11,8 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import io.nlopez.smartlocation.CustomTestRunner;
+
+import static org.assertj.core.api.Java6Assertions.assertThat;
 
 /**
  * Created by nacho on 1/9/15.
@@ -32,6 +33,7 @@ public class LocationStoreTest {
     private static final int TIME = 987654321;
 
     private final Location testLocation = new Location("test");
+    private LocationStore mStore;
 
     @Before
     public void setup() {
@@ -42,31 +44,22 @@ public class LocationStoreTest {
         testLocation.setLongitude(LONGITUDE);
         testLocation.setSpeed(SPEED);
         testLocation.setTime(TIME);
+        mStore = new LocationStore(getSharedPreferences());
     }
 
     @Test
     public void test_location_store_full_cycle() {
-        LocationStore store = new LocationStore(RuntimeEnvironment.application.getApplicationContext());
-        store.setPreferences(getSharedPreferences());
+        assertThat(mStore.get(TEST_LOCATION_ID)).isNull();
+        mStore.put(TEST_LOCATION_ID, testLocation);
+        final Location location = mStore.get(TEST_LOCATION_ID);
 
-        Assert.assertNull(store.get(TEST_LOCATION_ID));
-
-        store.put(TEST_LOCATION_ID, testLocation);
-        Location storedLocation = store.get(TEST_LOCATION_ID);
-        Assert.assertEquals(storedLocation.getAccuracy(), testLocation.getAccuracy(), DELTA);
-        Assert.assertEquals(storedLocation.getAltitude(), testLocation.getAltitude(), DELTA);
-        Assert.assertEquals(storedLocation.getBearing(), testLocation.getBearing(), DELTA);
-        Assert.assertEquals(storedLocation.getLatitude(), testLocation.getLatitude(), DELTA);
-        Assert.assertEquals(storedLocation.getLongitude(), testLocation.getLongitude(), DELTA);
-        Assert.assertEquals(storedLocation.getSpeed(), testLocation.getSpeed(), DELTA);
-        Assert.assertEquals(storedLocation.getTime(), testLocation.getTime());
-
-        store.remove(TEST_LOCATION_ID);
-        Assert.assertNull(store.get(TEST_LOCATION_ID));
+        assertThat(location).isEqualToComparingFieldByField(testLocation);
+        mStore.remove(TEST_LOCATION_ID);
+        assertThat(mStore.get(TEST_LOCATION_ID)).isNull();
     }
 
     private SharedPreferences getSharedPreferences() {
         return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs",
-                                                                                           Context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
     }
 }

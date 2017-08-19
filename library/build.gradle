@@ -26,6 +26,7 @@ dependencies {
     testCompile "org.robolectric:robolectric:$robolectricVersion"
     testCompile "org.robolectric:robolectric-shadows:$robolectricVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testCompile "org.assertj:assertj-core:$assertjVersion"
 }
 
 android {

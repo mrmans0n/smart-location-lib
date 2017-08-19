@@ -10,7 +10,7 @@ import io.nlopez.smartlocation.common.Store;
 
 public class LocationStore implements Store<Location> {
 
-    public static final String PROVIDER = "LocationStore";
+    private static final String PROVIDER = "LocationStore";
 
     private static final String PREFERENCES_FILE = "LOCATION_STORE";
     private static final String PREFIX_ID = LocationStore.class.getCanonicalName() + ".KEY";
@@ -26,7 +26,12 @@ public class LocationStore implements Store<Location> {
     private SharedPreferences preferences;
 
     public LocationStore(@NonNull Context context) {
-        preferences = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+        this(context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE));
+    }
+
+    @VisibleForTesting
+    LocationStore(@NonNull SharedPreferences preferences) {
+        this.preferences = preferences;
     }
 
     @VisibleForTesting

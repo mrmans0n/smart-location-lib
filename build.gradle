@@ -7,6 +7,7 @@ buildscript {
     ext.robolectricVersion = "3.1"
     ext.mockitoVersion = "2.0.86-beta"
     ext.junitVersion = "4.12"
+    ext.assertjVersion = "2.6.0"
 
     repositories {
         mavenCentral()
@@ -15,6 +16,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-alpha4'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta2'
     }
 }
