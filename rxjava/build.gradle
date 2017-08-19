@@ -16,6 +16,7 @@ group 'io.nlopez.smartlocation'
 dependencies {
     repositories {
         mavenCentral()
+        maven { url "https://maven.google.com" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     compile project(':library')

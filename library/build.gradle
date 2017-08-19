@@ -16,9 +16,10 @@ group 'io.nlopez.smartlocation'
 dependencies {
     repositories {
         mavenCentral()
+        maven { url "https://maven.google.com" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:10.2.0'
+    compile 'com.google.android.gms:play-services-location:11.2.0'
     compile 'com.android.support:support-annotations:25.2.0'
     testCompile "junit:junit:$junitVersion"
     testCompile "org.robolectric:robolectric:$robolectricVersion"
