@@ -12,10 +12,10 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
-        maven { url "https://maven.google.com" }
+        google()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-beta2'
+        classpath 'com.android.tools.build:gradle:3.0.0-rc2'
     }
 }

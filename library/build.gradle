@@ -18,8 +18,8 @@ dependencies {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:11.0.1'
-    compile 'com.android.support:support-annotations:25.3.1'
+    compile 'com.google.android.gms:play-services-location:11.4.2'
+    compile 'com.android.support:support-annotations:26.1.0'
 
     // Test dependencies
     testCompile "junit:junit:$junitVersion"
@@ -30,13 +30,13 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
 
     buildTypes {
         defaultConfig {
             minSdkVersion 14
-            targetSdkVersion 25
+            targetSdkVersion 26
             versionCode 20006
             versionName version
         }
@@ -116,4 +116,8 @@ uploadArchives {
             }
         }
     }
+}
+
+repositories {
+    google()
 }

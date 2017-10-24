@@ -19,7 +19,7 @@ dependencies {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     compile project(':library')
-    compile 'io.reactivex.rxjava2:rxjava:2.0.6'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.5'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     testCompile "junit:junit:$junitVersion"
     testCompile "org.robolectric:robolectric:$robolectricVersion"
@@ -28,13 +28,13 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
 
     buildTypes {
         defaultConfig {
             minSdkVersion 14
-            targetSdkVersion 25
+            targetSdkVersion 26
             versionCode 20006
             versionName version
         }
@@ -114,4 +114,8 @@ uploadArchives {
             }
         }
     }
+}
+
+repositories {
+    google()
 }
