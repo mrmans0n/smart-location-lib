@@ -19,8 +19,8 @@ dependencies {
         maven { url "https://maven.google.com" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:11.2.0'
-    compile 'com.android.support:support-annotations:25.2.0'
+    compile 'com.google.android.gms:play-services-location:11.4.2'
+    compile 'com.android.support:support-annotations:26.1.0'
     testCompile "junit:junit:$junitVersion"
     testCompile "org.robolectric:robolectric:$robolectricVersion"
     testCompile "org.robolectric:robolectric-shadows:$robolectricVersion"
@@ -28,13 +28,13 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
 
     buildTypes {
         defaultConfig {
             minSdkVersion 14
-            targetSdkVersion 25
+            targetSdkVersion 26
             versionCode 20006
             versionName version
         }

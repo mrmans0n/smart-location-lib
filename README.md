@@ -13,15 +13,15 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:3.3.2'
+compile 'io.nlopez.smartlocation:library:3.3.3'
 ```
 
-Google Play Services compatible version: 11.2.0
+Google Play Services compatible version: 11.4.2
 
 If you want the rxjava wrappers, these are now in a separate dependency. Just add this new dependency as well:
 
 ```groovy
-compile 'io.nlopez.smartlocation:rx:3.3.2'
+compile 'io.nlopez.smartlocation:rx:3.3.3'
 ```
 
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
