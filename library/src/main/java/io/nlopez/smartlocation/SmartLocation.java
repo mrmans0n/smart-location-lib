@@ -6,7 +6,6 @@ import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.GeofencingRequest;
 
 import java.util.Arrays;
@@ -14,9 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import io.nlopez.smartlocation.activity.ActivityProvider;
-import io.nlopez.smartlocation.activity.config.ActivityParams;
-import io.nlopez.smartlocation.activity.providers.ActivityGooglePlayServicesProvider;
 import io.nlopez.smartlocation.common.OnAllProvidersFailed;
 import io.nlopez.smartlocation.geocoding.GeocodingController;
 import io.nlopez.smartlocation.geocoding.GeocodingProviderFactory;
@@ -43,6 +39,7 @@ import static io.nlopez.smartlocation.utils.Nulls.orDefault;
 /**
  * Managing class for SmartLocation library.
  */
+@SuppressWarnings("UnusedReturnValue")
 public class SmartLocation {
 
     @NonNull
@@ -83,32 +80,6 @@ public class SmartLocation {
     @NonNull
     public LocationBuilder location(@NonNull LocationProviderFactory... providerFactories) {
         return new LocationBuilder(this, providerFactories);
-    }
-
-    /**
-     * Builder for activity recognition. Use activity() instead.
-     *
-     * @return builder for activity recognition.
-     * @deprecated
-     */
-    @Deprecated
-    public ActivityRecognitionControl activityRecognition() {
-        return activity();
-    }
-
-    /**
-     * @return request handler for activity recognition
-     */
-    public ActivityRecognitionControl activity() {
-        return activity(new ActivityGooglePlayServicesProvider());
-    }
-
-    /**
-     * @param activityProvider activity provider we want to use
-     * @return request handler for activity recognition
-     */
-    public ActivityRecognitionControl activity(ActivityProvider activityProvider) {
-        return new ActivityRecognitionControl(this, activityProvider);
     }
 
     /**
@@ -208,7 +179,6 @@ public class SmartLocation {
             return mProviderController.start();
         }
 
-        @NonNull
         public void stop() {
             if (mProviderController != null) {
                 mProviderController.stop();
@@ -270,51 +240,6 @@ public class SmartLocation {
                     mParent.logger);
             return controller.start();
         }
-    }
-
-
-    public static class ActivityRecognitionControl {
-        private static final Map<Context, ActivityProvider> MAPPING = new WeakHashMap<>();
-
-        private final SmartLocation smartLocation;
-        private ActivityParams params;
-        private ActivityProvider provider;
-
-        public ActivityRecognitionControl(@NonNull SmartLocation smartLocation, @NonNull ActivityProvider activityProvider) {
-            this.smartLocation = smartLocation;
-            params = ActivityParams.NORMAL;
-
-            if (!MAPPING.containsKey(smartLocation.context)) {
-                MAPPING.put(smartLocation.context, activityProvider);
-            }
-            provider = MAPPING.get(smartLocation.context);
-        }
-
-        public ActivityRecognitionControl config(@NonNull ActivityParams params) {
-            this.params = params;
-            return this;
-        }
-
-        @Nullable
-        public DetectedActivity getLastActivity() {
-            return provider.getLastActivity();
-        }
-
-        public ActivityRecognitionControl get() {
-            return this;
-        }
-
-        public void start(OnActivityUpdatedListener listener) {
-            if (provider == null) {
-                throw new RuntimeException("A provider must be initialized");
-            }
-            provider.start(listener, params);
-        }
-
-        public void stop() {
-            provider.stop();
-        }
-
     }
 
     public static class GeofencingBuilder {

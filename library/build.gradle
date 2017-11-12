@@ -15,10 +15,11 @@ group 'io.nlopez.smartlocation'
 
 dependencies {
     repositories {
+        google()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:11.4.2'
+    compile 'com.google.android.gms:play-services-location:11.6.0'
     compile 'com.android.support:support-annotations:26.1.0'
 
     // Test dependencies
@@ -116,8 +117,4 @@ uploadArchives {
             }
         }
     }
-}
-
-repositories {
-    google()
 }

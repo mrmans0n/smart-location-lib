@@ -3,17 +3,12 @@ package io.nlopez.smartlocation.rx;
 import android.content.Context;
 import android.location.Location;
 
-import com.google.android.gms.location.DetectedActivity;
-
 import java.util.List;
 
-import io.nlopez.smartlocation.OnActivityUpdatedListener;
-import io.nlopez.smartlocation.OnGeofencingTransitionListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.geocoding.GeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.ReverseGeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.common.LocationAddress;
-import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
 import io.nlopez.smartlocation.location.LocationUpdatedListener;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -29,8 +24,8 @@ import io.reactivex.subjects.SingleSubject;
  * <p/>
  * For now it provides just basic support for all the available actions.
  */
-public class ObservableFactory {
-    private ObservableFactory() {
+public final class Observables {
+    private Observables() {
         throw new AssertionError("This should not be instantiated");
     }
 
@@ -60,56 +55,6 @@ public class ObservableFactory {
             @Override
             public void run() throws Exception {
                 locationBuilder.stop();
-            }
-        });
-    }
-
-    /**
-     * Returns a RxJava Observable for Activity Recognition changes
-     *
-     * @param activityControl instance with the needed configuration
-     * @return Observable for Activity changes
-     */
-    public static Observable<DetectedActivity> from(final SmartLocation.ActivityRecognitionControl activityControl) {
-        return Observable.create(new ObservableOnSubscribe<DetectedActivity>() {
-            @Override
-            public void subscribe(final ObservableEmitter<DetectedActivity> emitter) throws Exception {
-                activityControl.start(new OnActivityUpdatedListener() {
-                    @Override
-                    public void onActivityUpdated(DetectedActivity detectedActivity) {
-                        emitter.onNext(detectedActivity);
-                    }
-                });
-            }
-        }).doOnDispose(new Action() {
-            @Override
-            public void run() {
-                activityControl.stop();
-            }
-        });
-    }
-
-    /**
-     * Returns a RxJava Observable for Geofence transitions
-     *
-     * @param geofencingBuilder instance with the needed configuration
-     * @return Observable for Geofence transitions (enter, exit, dwell)
-     */
-    public static Observable<TransitionGeofence> from(final SmartLocation.GeofencingBuilder geofencingBuilder) {
-        return Observable.create(new ObservableOnSubscribe<TransitionGeofence>() {
-            @Override
-            public void subscribe(final ObservableEmitter<TransitionGeofence> emitter) {
-                geofencingBuilder.start(new OnGeofencingTransitionListener() {
-                    @Override
-                    public void onGeofenceTransition(TransitionGeofence transitionGeofence) {
-                        emitter.onNext(transitionGeofence);
-                    }
-                });
-            }
-        }).doOnDispose(new Action() {
-            @Override
-            public void run() {
-                geofencingBuilder.stop();
             }
         });
     }
@@ -165,5 +110,4 @@ public class ObservableFactory {
             }
         });
     }
-
 }

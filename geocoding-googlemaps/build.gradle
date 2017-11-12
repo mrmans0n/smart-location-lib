@@ -17,6 +17,7 @@ dependencies {
     repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        google()
     }
     compile project(':library')
     compile 'com.squareup.retrofit2:retrofit:2.3.0'

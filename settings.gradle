@@ -1,5 +1,5 @@
 rootProject.name = 'SmartLocation'
-include ':sample'
 include ':library'
-include ':rxjava'
+include ':rxjava2'
 include ':geocoding-googlemaps'
+include ':sample'
