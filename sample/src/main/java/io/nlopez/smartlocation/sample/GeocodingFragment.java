@@ -157,18 +157,18 @@ public class GeocodingFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // Direct geocoding stuff
-        mDirectStartButton = (Button) view.findViewById(R.id.direct_button);
+        mDirectStartButton = view.findViewById(R.id.direct_button);
         mDirectStartButton.setOnClickListener(mDirectSearchClickListener);
-        mDirectEditText = (EditText) view.findViewById(R.id.direct_search);
-        mDirectResultText = (TextView) view.findViewById(R.id.direct_result);
+        mDirectEditText = view.findViewById(R.id.direct_search);
+        mDirectResultText = view.findViewById(R.id.direct_result);
         mDirectEditText.addTextChangedListener(mDirectTextWatcher);
 
         // Inverse geocoding stuff
-        mInverseLatitudeText = (EditText) view.findViewById(R.id.latitude);
-        mInverseLongitudeText = (EditText) view.findViewById(R.id.longitude);
-        mInverseStartButton = (Button) view.findViewById(R.id.add_geofence_button);
+        mInverseLatitudeText = view.findViewById(R.id.latitude);
+        mInverseLongitudeText = view.findViewById(R.id.longitude);
+        mInverseStartButton = view.findViewById(R.id.add_geofence_button);
         mInverseStartButton.setOnClickListener(mInverseSearchClickListener);
-        mInverseResultText = (TextView) view.findViewById(R.id.inverse_result);
+        mInverseResultText = view.findViewById(R.id.inverse_result);
         mInverseLatitudeText.addTextChangedListener(mInverseTextWatcher);
         mInverseLongitudeText.addTextChangedListener(mInverseTextWatcher);
     }

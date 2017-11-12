@@ -1,6 +1,5 @@
 package io.nlopez.smartlocation.sample;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -13,7 +12,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     private GeocodingFragment mGeocodingFragment;
     private GeofencingFragment mGeofencingFragment;
 
-    public PagerAdapter(FragmentManager fm, Context context) {
+    public PagerAdapter(FragmentManager fm) {
         super(fm);
     }
 

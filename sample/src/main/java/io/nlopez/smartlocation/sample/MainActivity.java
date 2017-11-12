@@ -35,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPager = (ViewPager) findViewById(R.id.container);
-        mPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), this));
+        mPager = findViewById(R.id.container);
+        mPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
