@@ -13,7 +13,7 @@ Adding to your project
 You should add this to your dependencies:
 
 ```groovy
-compile 'io.nlopez.smartlocation:library:4.0'
+compile 'io.nlopez.smartlocation:library:4.0.0'
 ```
 
 Google Play Services compatible version: 11.6.0
@@ -21,7 +21,7 @@ Google Play Services compatible version: 11.6.0
 If you want the rxjava2 wrappers, these are now in a separate dependency. Just add this new dependency as well:
 
 ```groovy
-compile 'io.nlopez.smartlocation:rxjava2:4.0'
+compile 'io.nlopez.smartlocation:rxjava2:4.0.0'
 ```
 
 If you got any problem compiling, please check the Common Issues section at the bottom of this document.
@@ -34,110 +34,88 @@ For starting the location service:
 
 ````java
 SmartLocation.with(context).location()
-    .start(new OnLocationUpdatedListener() { ... });
+    .start(new LocationUpdatedListener() { ... });
 ````
 
-If you just want to get a single location (not periodic) you can just use the oneFix modifier. Example:
+The start method returns a LocationController that you can store for manual clean up. 
 
 ````java
-SmartLocation.with(context).location()
-    .oneFix()
-    .start(new OnLocationUpdatedListener() { ... });
+@Override
+public void onResume() {
+    super.onResume();
+    mLocationController = SmartLocation.with(context).location()
+        .start(new LocationUpdatedListener() { ... });
+}
+
+@Override
+public void onPause() {
+    super.onPause();
+    mLocationController.stop(); // analogous to SmartLocation.with(context).location().stop();
+}
+
+@Override
+public void onDestroy() {
+    mLocationController.release(); 
+    super.onDestroy();
+}
+
 ````
 
-### Stopping
-
-For stopping the location just use the stop method.
-
-````java
-SmartLocation.with(context).location().stop();
-````
-
-### Status
-
-You can get some information about the current status of location providers to know if you will be able to use the location providers.
-
-````java
-// Check if the location services are enabled
-SmartLocation.with(context).location().state().locationServicesEnabled();
-
-// Check if any provider (network or gps) is enabled
-SmartLocation.with(context).location().state().isAnyProviderAvailable();
-
-// Check if GPS is available
-SmartLocation.with(context).location().state().isGpsAvailable();
-
-// Check if Network is available
-SmartLocation.with(context).location().state().isNetworkAvailable();
-
-// Check if the passive provider is available
-SmartLocation.with(context).location().state().isPassiveAvailable();
-
-// Check if the location is mocked
-SmartLocation.with(context).location().state().isMockSettingEnabled();
-````
+Please note that the library will requests the permissions on its own if they are not present (for API >= Marshmallow).
 
 ### Location strategy
 
-There are three presets for location parameters:
+There are presets for location parameters:
 
-* `LocationParams.BEST_EFFORT` (default)
-* `LocationParams.NAVIGATION`
-* `LocationParams.LAZY`
+* `LocationProviderParams.BEST_EFFORT` (default)
+* `LocationProviderParams.NAVIGATION`
+* `LocationProviderParams.LAZY`
+* `LocationProviderParams.BEST_EFFORT_ONCE`
+* `LocationProviderParams.NAVIGATION_ONCE`
+* `LocationProviderParams.LAZY_ONCE`
 
-You can change it (if you want one other than the default one) by using the `config(locationParams)` modifier.
+You can select the one you want, if BEST_EFFORT doesn't suit your needs, by using the `config(locationParams)` modifier.
+
+````java
+SmartLocation.with(context).location()
+    .config(LocationProviderParams.BEST_EFFORT_ONCE)
+    .start(new LocationUpdatedListener() { ... });
+````
 
 If you want to add some custom parameters for the distances or times involved in the location strategy, you can create your own LocationParams class.
 
-### Changing providers
-
-There are some providers shipped with the library.
-
-* `LocationGooglePlayServicesProvider` (default). This will use the Fused Location Provider.
-* `LocationManagerProvider` This is the legacy implementation that uses LocationManager.
-* `LocationBasedOnActivityProvider` This allows you to use the activity recognition system to modify the location strategy depending on the activity changes (if the user is walking, running, on a car, a bike...).
-* `LocationGooglePlayServicesWithFallbackProvider` This one will use the Fused Location Provider if it's present, or the LocationManager as fallback if it's not.
-* `MultiFallbackLocationProvider` This lets you create your own "fallback provider" if the underlying location service is not available. See "Multiple Fallback Provider" below for details.
-
-You can implement your own if you want. That's ideal if you wanted to use a mock one for testing or something like that, or add support to another possible provider.
-
-Example:
-
 ````java
-SmartLocation.with(context).location(new LocationBasedOnActivityProvider(callback))
-    .start(new OnLocationUpdatedListener() { ... });
+SmartLocation.with(context).location()
+    .config(new LocationProviderParams.Builder()
+        .runOnlyOnce(true)
+        .accuracy(LocationAccuracy.MEDIUM)
+        .interval(10000)
+        .distance(500)
+        .build())
+    .start(new LocationUpdatedListener() { ... });
 ````
 
-### Multiple Fallback Provider
+*NOTE* If you want to run them only once, use the `_ONCE` parameters: BEST_EFFORT_ONCE, NAVIGATION_ONCE or LAZY_ONCE. Or as I said above, you can create you own with the builder LocationProviderParams.Builder class, with the runOnlyOnce value set to true.
 
-The `MultiFallbackProvider` lets you create your own provider that utilizes multiple underlying location services.
-The provider will use the location services in the order in which they are added to its `Builder`, which has convenience methods for setting up the Google Play Services provider and the default `LocationManager` provider.
-Providers must implement the `ServiceLocationProvider` interface to enable the fallback behavior.
-Example:
+### Multiple providers, with fallback
 
-````java
-LocationProvider myProvider = new MyLocationProvider();
-LocationProvider fallbackProvider = new MultiFallbackProvider.Builder()
-    .withGooglePlayServicesProvider().withProvider(myProvider).build();
-````
+By default we will be using Google Play Services, and if it can't be used for whatever reason, it will fall back to LocationManager (the Android old style).
 
-## Activity
-
-### Starting
-
-For starting the activity recognition service, you should run:
+But you can configure the providers you want to use and their priority. For instance, if you just want the LocationManager backed provider first and a mocked one as a fallback, and play services as last resort, you can! You just have to specify the provider factories in the order you want to run them. It will keep iterating through all of them until one gives a proper answer, or if not a single one of them gets a proper answer, the onAllProvidersFailed method would be run in the listener.
 
 ````java
-SmartLocation.with(context).activityRecognition()
-    .start(new OnActivityUpdatedListener() { ... });
-````
+SmartLocation.with(context).location(new LocationManagerProviderFactory(), new MockedProviderFactory(), new GooglePlayServicesLocationProviderFactory())
+    .start(new LocationUpdatedListener() {
+        @Override
+        public void onLocationUpdated(Location location) {
+            mText.setText("Location: " + location.toString());
+        }
 
-### Stopping
-
-For stopping the activity recognition you could use the stop method.
-
-````java
-SmartLocation.with(context).activityRecognition().stop();
+        @Override
+        public void onAllProvidersFailed() {
+            mText.setText("All providers failed");
+        }
+    });
 ````
 
 ## Geofencing
@@ -147,28 +125,34 @@ We can add geofences and receive the information when we enter, exit or dwell in
 We can add and remove geofences with a similar syntax as all the others.
 
 ````java
-GeofenceModel mestalla = new GeofenceModel.Builder("id_mestalla")
-    .setTransition(Geofence.GEOFENCE_TRANSITION_ENTER)
-    .setLatitude(39.47453120000001)
-    .setLongitude(-0.358065799999963)
-    .setRadius(500)
-    .build();
+// Prepare the geofence
+final List<Geofence> geofenceList = new ArrayList<>();
+geofenceList.add(new Geofence.Builder()
+        .setRequestId("id_mestalla")
+        .setCircularRegion(39.47453120000001, -0.358065799999963, 100)
+        .setLoiteringDelay(30000) // half a minute
+        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+        .setExpirationDuration(60) // 1 minute
+        .build());
+// Prepare the request
+final GeofencingRequest request = new GeofencingRequest.Builder()
+        .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+        .addGeofences(geofenceList)
+        .build();
 
-GeofenceModel cuenca = new GeofenceModel.Builder("id_cuenca")
-    .setTransition(Geofence.GEOFENCE_TRANSITION_EXIT)
-    .setLatitude(40.0703925)
-    .setLongitude(-2.1374161999999615)
-    .setRadius(2000)
-    .build();
+// Prepare a pending intent to reference your service that will be run when the geofence fires
+final PendingIntent pendingIntent = PendingIntent.getService(getContext(),
+        0,
+        new Intent(getContext(), GeofenceIntentService.class),
+        PendingIntent.FLAG_UPDATE_CURRENT);
 
-SmartLocation.with(context).geofencing()
-    .add(mestalla)
-    .add(cuenca)
-    .remove("already_existing_geofence_id")
-    .start(new OnGeofencingTransitionListener() { ... });
+// Add the geofence
+SmartLocation.with(getContext())
+        .geofencing()
+        .addGeofences(request, getGeofencePendingIntent());
 ````
 
-If you want to capture the Geofence transitions without the app running, you can hook up a BroadcastReceiver to the intent action stored in the `GeofencingGooglePlayServicesProvider.BROADCAST_INTENT_ACTION` constant. The intent will come with the geofence, the location and the type of transition within the bundle.
+Look at the sample project, in the GeofencingFragment class, for a complete usage example for this.
 
 ## Geocoding
 
@@ -176,10 +160,18 @@ The library has support for direct geocoding (aka getting a Location object base
 
 There are pretty basic calls in the API for both operations separatedly.
 
-### Direct geocoding
+The basic android Geocoder support is built in in the core package for the library, but if you want to also add a Google Maps API provider, you can do so by adding this dependency to your project:
+
+```groovy
+compile 'io.nlopez.smartlocation:geocoding-googlemaps:4.0.0'
+```
+
+And don't forget to add the provider in your providers list, same syntax as the one described in the location example above.
+
+### Direct geocoding (finding the geo location based on a name)
 ````java
-SmartLocation.with(context).geocoding()
-    .direct("Estadi de Mestalla", new OnGeocodingListener() {
+SmartLocation.with(context).geocoding() 
+    .findLocationByName("Estadi de Mestalla", new SimpleGeocodingUpdatedListener() {
         @Override
         public void onLocationResolved(String name, List<LocationAddress> results) {
             // name is the same you introduced in the parameters of the call
@@ -193,69 +185,65 @@ SmartLocation.with(context).geocoding()
     });
 ````
 
-### Reverse geocoding
+To support both Geocoder and Google Maps API in the above example, switch the first line for this one: 
+````java
+SmartLocation.with(context).geocoding(new AndroidGeocodingProviderFactory(), new GoogleMapsApiGeocodingProviderFactory(GOOGLE_MAPS_API_KEY))
+    .findLocationByName(...) // ... etc etc
+````
+
+### Reverse geocoding (finding a name based on a Location)
 ````java
 SmartLocation.with(context).geocoding()
-    .reverse(location, new OnReverseGeocodingListener() {
+    .findNameByLocation(location, new SimpleReverseGeocodingUpdatedListener() {
         @Override
-        public onAddressResolved(Location original, List<Address> results) {
+        public onAddressResolved(Location original, List<LocationAddress> results) {
             // ...
         }
     });
 ````
-
-### Mixing things up
-
-But we can mix and batch those requests, if needed. Also, you can provide the number of maximum possible matches you want to receive for each one of the lookups separatedly.
-
-````java
-Location myLocation1 = new Location(...);
-
-SmartLocation.with(context).geocoding()
-    .add("Estadi de Mestalla", 5)
-    .add("Big Ben", 2)
-    .add(myLocation1, 4)
-    .start(directGeocodingListener, reverseGeocodingListener);
-````
-
-This will launch a new call to the callbacks everytime one of the geofence lookups is resolved.
-
-### Stopping
-
-You should invoke the stop method whenever the calling activity/fragment or whatever is going to be destroyed, for cleanup purposes.
 
 ## RxJava / RxAndroid support
 
 The wrappers to rxjava2 are located in this package.
 
 ```groovy
-compile 'io.nlopez.smartlocation:rx:3.3.1'
+compile 'io.nlopez.smartlocation:rxjava2:4.0.0'
 ```
 
-You can wrap the calls with ObservableFactory methods to retrieve an Observable object. You won't need to call start, just subscribe to the observable to get the updates.
+You can wrap the calls with the `Observables` class static methods to retrieve an Observable object. You won't need to call start, just subscribe to the observable to get the updates.
 
 For example, for location:
 
 ```java
-Observable<Location> locationObservable = ObservableFactory.from(SmartLocation.with(context).location());
-locationObservable.subscribe(new Action1<Location>() {
-    @Override
-    public void call(Location location) {
-        // Do your stuff here :)
-    }
-});
+Observables.from(SmartLocation.with(context).location())
+    .subscribe(...);
 ```
+
+When you unsubscribe from these observables, you would automatically stop location updates as well. Don't forget to unsubscrie otherwise you would have a memory leak.
+
+For geocoding:
+```java
+Observables.fromAddress(SmartLocation.with(context).geocoding(), "221B Baker Street, London")
+    .subscribe(...);
+```
+
+For reverse geocoding:
+```java
+Observables.fromLocation(SmartLocation.with(context).geocoding(), mLocation)
+    .subscribe(...);
+```
+
+Please note both Geocoding and Reverse geocoding observables are implemented as Single to match their one off behavior.
+
+Migrating from 3.x
+------------------
+
+Many things changed from 3.x version. I suggest you read this file and reimplement the calls using your IDE for autocompletion. Ideally only the listener classes will need to get changed, as most of the changes were internal. 
+
+Some parameters have changed place, like `.oneFix()`. It has to be configured now as part of the LocationProviderParams class passed around in `config(...)`. 
 
 Common issues
 -------------
-
-If you are already using Google Play Services in your project and have problems compiling, you can try setting the transitive property to false:
-
-```groovy
-compile ('io.nlopez.smartlocation:library:3.3.1') {
-	transitive = false
-}
-```
 
 If you got an error in the manifest merging, like this one: 
 
@@ -288,7 +276,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2013-2016 Nacho Lopez
+Copyright (c) 2013-2017 Nacho Lopez
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

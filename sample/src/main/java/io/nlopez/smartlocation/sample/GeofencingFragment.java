@@ -111,10 +111,10 @@ public class GeofencingFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mAddGeofenceButton = (Button) view.findViewById(R.id.add_geofence_button);
+        mAddGeofenceButton = view.findViewById(R.id.add_geofence_button);
         mAddGeofenceButton.setOnClickListener(mAddClickListener);
-        mLatitudeText = (EditText) view.findViewById(R.id.latitude);
-        mLongitudeText = (EditText) view.findViewById(R.id.longitude);
+        mLatitudeText = view.findViewById(R.id.latitude);
+        mLongitudeText = view.findViewById(R.id.longitude);
         mLatitudeText.addTextChangedListener(mLatLngTextWatcher);
         mLongitudeText.addTextChangedListener(mLatLngTextWatcher);
     }

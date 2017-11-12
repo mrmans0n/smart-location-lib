@@ -64,12 +64,12 @@ public class LocationFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mStartButton = (Button) view.findViewById(R.id.start_location);
+        mStartButton = view.findViewById(R.id.start_location);
         mStartButton.setOnClickListener(mStartClickListener);
-        mStopButton = (Button) view.findViewById(R.id.stop_location);
+        mStopButton = view.findViewById(R.id.stop_location);
         mStopButton.setOnClickListener(mStopClickListener);
         mStopButton.setEnabled(false);
-        mText = (TextView) view.findViewById(R.id.location_text);
+        mText = view.findViewById(R.id.location_text);
     }
 
     private void updateUi(boolean locationEnabled) {
