@@ -25,11 +25,6 @@ import io.nlopez.smartlocation.location.LocationProvider;
 import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.utils.Logger;
 
-import static io.nlopez.smartlocation.location.config.LocationAccuracy.HIGH;
-import static io.nlopez.smartlocation.location.config.LocationAccuracy.LOW;
-import static io.nlopez.smartlocation.location.config.LocationAccuracy.LOWEST;
-import static io.nlopez.smartlocation.location.config.LocationAccuracy.MEDIUM;
-
 /**
  * Location provider that uses Google Play Services.
  */

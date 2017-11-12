@@ -44,7 +44,7 @@ public class LocationFragment extends Fragment {
     final LocationUpdatedListener mLocationUpdated = new LocationUpdatedListener() {
         @Override
         public void onLocationUpdated(Location location) {
-            mText.setText("Location: "+location.toString());
+            mText.setText("Location: " + location.toString());
         }
 
         @Override

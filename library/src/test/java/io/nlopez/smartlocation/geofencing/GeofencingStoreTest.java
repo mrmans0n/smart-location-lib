@@ -62,6 +62,6 @@ public class GeofencingStoreTest {
 
     private SharedPreferences getSharedPreferences() {
         return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs",
-                                                                                           Context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
     }
 }

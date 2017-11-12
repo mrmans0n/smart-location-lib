@@ -45,7 +45,7 @@ public class ObservableFactoryTest {
                         .activity(mActivityProvider)
         ).test();
 
-        DetectedActivity detectedActivity = new DetectedActivity(DetectedActivity.UNKNOWN,100);
+        DetectedActivity detectedActivity = new DetectedActivity(DetectedActivity.UNKNOWN, 100);
         mActivityProvider.fakeEmit(detectedActivity);
         testObserver.assertNoErrors();
         testObserver.assertValue(detectedActivity);

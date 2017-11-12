@@ -8,11 +8,6 @@ import java.util.Locale;
 import io.nlopez.smartlocation.common.Provider;
 import io.nlopez.smartlocation.geocoding.GeocodingProvider;
 import io.nlopez.smartlocation.geocoding.GeocodingProviderFactory;
-import io.nlopez.smartlocation.location.LocationPermissionsManager;
-import io.nlopez.smartlocation.location.LocationProvider;
-import io.nlopez.smartlocation.location.LocationProviderFactory;
-import io.nlopez.smartlocation.location.LocationStore;
-import io.nlopez.smartlocation.location.providers.legacy.LocationManagerProvider;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
 
