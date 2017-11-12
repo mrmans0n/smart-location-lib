@@ -97,6 +97,8 @@ SmartLocation.with(context).location()
 
 *NOTE* If you want to run them only once, use the `_ONCE` parameters: BEST_EFFORT_ONCE, NAVIGATION_ONCE or LAZY_ONCE. Or as I said above, you can create you own with the builder LocationProviderParams.Builder class, with the runOnlyOnce value set to true.
 
+You can see examples on how to do location in this library by taking a look to the [LocationFragment](sample/src/main/java/io/nlopez/smartlocation/sample/LocationFragment.java) in the sample app.
+
 ### Multiple providers, with fallback
 
 By default we will be using Google Play Services, and if it can't be used for whatever reason, it will fall back to LocationManager (the Android old style).
@@ -120,7 +122,7 @@ SmartLocation.with(context).location(new LocationManagerProviderFactory(), new M
 
 ## Geofencing
 
-We can add geofences and receive the information when we enter, exit or dwell in a Geofence. The geofences are defined by a GeofenceModel, and you should use the requestId as a identifier.
+We can add geofences and receive the information when we enter, exit or dwell in a Geofence. The geofences are defined by a Geofence model, and you should use the requestId as a identifier.
 
 We can add and remove geofences with a similar syntax as all the others.
 
@@ -152,7 +154,7 @@ SmartLocation.with(getContext())
         .addGeofences(request, getGeofencePendingIntent());
 ````
 
-Look at the sample project, in the GeofencingFragment class, for a complete usage example for this.
+Look at the sample project, in the [GeofencingFragment](sample/src/main/java/io/nlopez/smartlocation/sample/GeofencingFragment.java) class, for a complete usage example for this.
 
 ## Geocoding
 
@@ -201,6 +203,8 @@ SmartLocation.with(context).geocoding()
         }
     });
 ````
+
+You can see the [GeocodingFragment](sample/src/main/java/io/nlopez/smartlocation/sample/GeocodingFragment.java) class on the sample application to see a practical example. 
 
 ## RxJava / RxAndroid support
 
