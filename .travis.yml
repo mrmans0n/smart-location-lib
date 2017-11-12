@@ -17,7 +17,7 @@ android:
     - 'google-gdk-license-.+'
 script:
     - cp gradle.properties.example gradle.properties
-    - ./gradlew clean assembleDebug testDebug lintDebug
+    - ./gradlew clean assembleDebug testDebug
 
 // From Travis support: "NB: please note that `tools` is listed twice. My understanding is that the first
 // `tools` gets an xml containing a repository address, the second uses this repo to install the newer components."
