@@ -10,7 +10,7 @@ import io.nlopez.smartlocation.common.Store;
 
 public class LocationStore implements Store<Location> {
 
-    private static final String PROVIDER = "LocationStore";
+    static final String PROVIDER = "LocationStore";
 
     private static final String PREFERENCES_FILE = "LOCATION_STORE";
     private static final String PREFIX_ID = LocationStore.class.getCanonicalName() + ".KEY";
@@ -23,7 +23,7 @@ public class LocationStore implements Store<Location> {
     private static final String TIME_ID = "TIME";
     private static final String BEARING_ID = "BEARING";
 
-    private SharedPreferences preferences;
+    @NonNull private SharedPreferences mPreferences;
 
     public LocationStore(@NonNull Context context) {
         this(context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE));
@@ -31,17 +31,12 @@ public class LocationStore implements Store<Location> {
 
     @VisibleForTesting
     LocationStore(@NonNull SharedPreferences preferences) {
-        this.preferences = preferences;
-    }
-
-    @VisibleForTesting
-    public void setPreferences(SharedPreferences preferences) {
-        this.preferences = preferences;
+        mPreferences = preferences;
     }
 
     @Override
     public void put(String id, Location location) {
-        SharedPreferences.Editor editor = preferences.edit();
+        final SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(getFieldKey(id, PROVIDER_ID), location.getProvider());
         editor.putLong(getFieldKey(id, LATITUDE_ID), Double.doubleToLongBits(location.getLatitude()));
         editor.putLong(getFieldKey(id, LONGITUDE_ID), Double.doubleToLongBits(location.getLongitude()));
@@ -55,16 +50,16 @@ public class LocationStore implements Store<Location> {
 
     @Override
     public Location get(String id) {
-        if (preferences != null && preferences.contains(getFieldKey(id, LATITUDE_ID)) && preferences.contains(
+        if (mPreferences.contains(getFieldKey(id, LATITUDE_ID)) && mPreferences.contains(
                 getFieldKey(id, LONGITUDE_ID))) {
-            Location location = new Location(preferences.getString(PROVIDER_ID, PROVIDER));
-            location.setLatitude(Double.longBitsToDouble(preferences.getLong(getFieldKey(id, LATITUDE_ID), 0)));
-            location.setLongitude(Double.longBitsToDouble(preferences.getLong(getFieldKey(id, LONGITUDE_ID), 0)));
-            location.setAccuracy(preferences.getFloat(getFieldKey(id, ACCURACY_ID), 0));
-            location.setAltitude(Double.longBitsToDouble(preferences.getLong(getFieldKey(id, ALTITUDE_ID), 0)));
-            location.setSpeed(preferences.getFloat(getFieldKey(id, SPEED_ID), 0));
-            location.setTime(preferences.getLong(getFieldKey(id, TIME_ID), 0));
-            location.setBearing(preferences.getFloat(getFieldKey(id, BEARING_ID), 0));
+            final Location location = new Location(mPreferences.getString(PROVIDER_ID, PROVIDER));
+            location.setLatitude(Double.longBitsToDouble(mPreferences.getLong(getFieldKey(id, LATITUDE_ID), 0)));
+            location.setLongitude(Double.longBitsToDouble(mPreferences.getLong(getFieldKey(id, LONGITUDE_ID), 0)));
+            location.setAccuracy(mPreferences.getFloat(getFieldKey(id, ACCURACY_ID), 0));
+            location.setAltitude(Double.longBitsToDouble(mPreferences.getLong(getFieldKey(id, ALTITUDE_ID), 0)));
+            location.setSpeed(mPreferences.getFloat(getFieldKey(id, SPEED_ID), 0));
+            location.setTime(mPreferences.getLong(getFieldKey(id, TIME_ID), 0));
+            location.setBearing(mPreferences.getFloat(getFieldKey(id, BEARING_ID), 0));
             return location;
         } else {
             return null;
@@ -73,7 +68,7 @@ public class LocationStore implements Store<Location> {
 
     @Override
     public void remove(String id) {
-        SharedPreferences.Editor editor = preferences.edit();
+        final SharedPreferences.Editor editor = mPreferences.edit();
         editor.remove(getFieldKey(id, PROVIDER_ID));
         editor.remove(getFieldKey(id, LATITUDE_ID));
         editor.remove(getFieldKey(id, LONGITUDE_ID));
@@ -85,7 +80,8 @@ public class LocationStore implements Store<Location> {
         editor.apply();
     }
 
-    private String getFieldKey(String id, String field) {
+    @NonNull
+    private static String getFieldKey(String id, String field) {
         return PREFIX_ID + "_" + id + "_" + field;
     }
 

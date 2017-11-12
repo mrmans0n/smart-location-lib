@@ -3,6 +3,7 @@ package io.nlopez.smartlocation.location;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.support.annotation.NonNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class LocationStoreTest {
     private static final double LONGITUDE = 9.8765432;
     private static final int TIME = 987654321;
 
-    private final Location testLocation = new Location("test");
+    private final Location testLocation = new Location(LocationStore.PROVIDER);
     private LocationStore mStore;
 
     @Before
@@ -59,6 +60,7 @@ public class LocationStoreTest {
         assertThat(mStore.get(TEST_LOCATION_ID)).isNull();
     }
 
+    @NonNull
     private SharedPreferences getSharedPreferences() {
         return RuntimeEnvironment.application.getApplicationContext().getSharedPreferences("test_prefs",
                 Context.MODE_PRIVATE);

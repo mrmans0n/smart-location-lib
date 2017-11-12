@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -22,6 +23,8 @@ import java.lang.ref.WeakReference;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
 
+import static io.nlopez.smartlocation.utils.Nulls.orDefault;
+
 /**
  * Handles permissions related to location settings dialog
  */
@@ -30,17 +33,15 @@ public class GooglePlayServicesLocationSettingsManager {
     public static final int REQUEST_START_LOCATION_FIX = 10001;
     public static final int CHECK_SETTINGS_REQUEST_CODE = 20001;
 
-    @NonNull
-    private final Logger mLogger;
-    @NonNull
-    private final SettingsApiProxy mSettingsApiProxy;
-    @NonNull
-    private Listener mListener = Listener.EMPTY;
+    @NonNull private final Logger mLogger;
+    @NonNull private final SettingsApiProxy mSettingsApiProxy;
+    @NonNull private Listener mListener = Listener.EMPTY;
 
     private boolean mShouldCheckSettings = true;
     private boolean mAllowNever;
     private boolean mFulfilledCheckSettings;
 
+    @NonNull
     public static GooglePlayServicesLocationSettingsManager get() {
         if (sInstance == null) {
             sInstance = new GooglePlayServicesLocationSettingsManager(LoggerFactory.get(), new SettingsApiProxy());
@@ -53,7 +54,7 @@ public class GooglePlayServicesLocationSettingsManager {
         mSettingsApiProxy = settingsApiProxy;
     }
 
-    public boolean maybeShowLocationSettingsDialog(GoogleApiClient client, LocationRequest locationRequest, Context context) {
+    public boolean maybeShowLocationSettingsDialog(@NonNull GoogleApiClient client, @NonNull LocationRequest locationRequest, @NonNull Context context) {
         final boolean result = mShouldCheckSettings && !mFulfilledCheckSettings;
         if (result) {
             checkLocationSettings(client, locationRequest, context);
@@ -61,7 +62,7 @@ public class GooglePlayServicesLocationSettingsManager {
         return result;
     }
 
-    private void checkLocationSettings(GoogleApiClient client, LocationRequest locationRequest, Context context) {
+    private void checkLocationSettings(@NonNull GoogleApiClient client, @NonNull LocationRequest locationRequest, @NonNull Context context) {
         final LocationSettingsRequest request = new LocationSettingsRequest.Builder()
                 .setAlwaysShow(mAllowNever)
                 .addLocationRequest(locationRequest)
@@ -118,23 +119,21 @@ public class GooglePlayServicesLocationSettingsManager {
     }
 
     public void setListener(@Nullable Listener listener) {
-        mListener = listener == null ? Listener.EMPTY : listener;
+        mListener = orDefault(listener, Listener.EMPTY);
     }
 
+    @VisibleForTesting
     static class SettingsApiProxy {
-        PendingResult<LocationSettingsResult> checkLocationSettings(GoogleApiClient client, LocationSettingsRequest request) {
+        PendingResult<LocationSettingsResult> checkLocationSettings(@NonNull GoogleApiClient client, @NonNull LocationSettingsRequest request) {
             return LocationServices.SettingsApi.checkLocationSettings(client, request);
         }
     }
 
     static class SettingsResultCallback implements ResultCallback<LocationSettingsResult> {
 
-        @NonNull
-        private final WeakReference<Context> mContextRef;
-        @NonNull
-        private final Logger mLogger;
-        @NonNull
-        private final Listener mListener;
+        @NonNull private final WeakReference<Context> mContextRef;
+        @NonNull private final Logger mLogger;
+        @NonNull private final Listener mListener;
 
         public SettingsResultCallback(@NonNull Context context, @NonNull Logger logger, @NonNull Listener listener) {
             mLogger = logger;

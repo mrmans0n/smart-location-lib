@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.ActivityCompat;
 
 import io.nlopez.smartlocation.utils.Logger;
@@ -31,7 +32,8 @@ public class LocationPermissionsManager {
         return sInstance;
     }
 
-    private LocationPermissionsManager(@NonNull Logger logger, @NonNull ActivityCompatProxy activityCompatProxy) {
+    @VisibleForTesting
+    LocationPermissionsManager(@NonNull Logger logger, @NonNull ActivityCompatProxy activityCompatProxy) {
         mLogger = logger;
         mActivityCompatProxy = activityCompatProxy;
     }
