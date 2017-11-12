@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class LocationController implements Provider.StatusListener {
     @NonNull private final OnLocationUpdatedListener mUpdateListener;
     @NonNull private final LocationProviderParams mParams;
     @NonNull private final OnAllProvidersFailed mListener;
+    @NotNull private final Handler mHandler;
     @Nullable private LocationProvider mCurrentProvider;
     private final long mTimeout;
 
@@ -37,13 +40,15 @@ public class LocationController implements Provider.StatusListener {
             @NonNull LocationProviderParams params,
             long timeout,
             @NonNull List<LocationProviderFactory> providerList,
-            @NonNull Logger logger) {
+            @NonNull Logger logger,
+            @NonNull Handler handler) {
         mContext = context;
         mUpdateListener = updateListener;
         mParams = params;
         mListener = listener;
         mTimeout = timeout;
         mLogger = logger;
+        mHandler = handler;
         mProviderList = new LinkedList<>(providerList);
     }
 
@@ -59,29 +64,26 @@ public class LocationController implements Provider.StatusListener {
     }
 
     private void startNext() {
-        LocationProviderFactory providerFactory = mProviderList.poll();
+        final LocationProviderFactory providerFactory = mProviderList.poll();
         if (providerFactory == null) {
             mLogger.w("All providers failed");
             mListener.onAllProvidersFailed();
             return;
         }
         mCurrentProvider = providerFactory.create(mContext, this);
-        final TimeoutableLocationUpdateListener updateListener = new TimeoutableLocationUpdateListener(
-                mCurrentProvider,
-                mUpdateListener,
-                new ProviderTimeoutListener() {
-                    @Override
-                    public void onProviderTimeout(@NonNull Provider provider) {
-                        if (mCurrentProvider != provider) {
-                            return;
-                        }
-                        mLogger.d(provider + " timed out.");
-                        provider.release();
-                        startNext();
-                    }
-                },
-                mTimeout,
-                new Handler(Looper.getMainLooper()));
+        final TimeoutableLocationUpdateListener updateListener =
+                new TimeoutableLocationUpdateListener(
+                        mCurrentProvider,
+                        mUpdateListener,
+                        new ProviderTimeoutListener() {
+                            @Override
+                            public void onProviderTimeout(@NonNull Provider provider) {
+                                mLogger.d(provider + " timed out.");
+                                LocationController.this.onProviderFailed(provider);
+                            }
+                        },
+                        mTimeout,
+                        mHandler);
         mCurrentProvider.start(updateListener, mParams);
         updateListener.onProviderStarted();
     }
@@ -124,7 +126,7 @@ public class LocationController implements Provider.StatusListener {
     /**
      * Handles the dispatch of location updates, and allows extra features on top like timeouts.
      */
-    private static class TimeoutableLocationUpdateListener implements OnLocationUpdatedListener, Runnable {
+    static class TimeoutableLocationUpdateListener implements OnLocationUpdatedListener, Runnable {
 
         private final OnLocationUpdatedListener mListener;
         private final Handler mHandler;
@@ -168,6 +170,9 @@ public class LocationController implements Provider.StatusListener {
         }
     }
 
+    /**
+     * Used to create instances of {@link LocationController}
+     */
     public static class Factory {
         @NonNull
         public LocationController create(
@@ -178,7 +183,15 @@ public class LocationController implements Provider.StatusListener {
                 long timeout,
                 @NonNull List<LocationProviderFactory> providerList,
                 @NonNull Logger logger) {
-            return new LocationController(context, updateListener, listener, params, timeout, providerList, logger);
+            return new LocationController(
+                    context,
+                    updateListener,
+                    listener,
+                    params,
+                    timeout,
+                    providerList,
+                    logger,
+                    new Handler(Looper.getMainLooper()));
         }
     }
 }

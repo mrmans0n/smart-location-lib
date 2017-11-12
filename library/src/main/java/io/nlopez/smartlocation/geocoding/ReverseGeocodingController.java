@@ -84,6 +84,9 @@ public class ReverseGeocodingController implements Provider.StatusListener {
         startNext();
     }
 
+    /**
+     * Use to instantiate {@link ReverseGeocodingController}
+     */
     public static class Factory {
         @NonNull
         public ReverseGeocodingController create(

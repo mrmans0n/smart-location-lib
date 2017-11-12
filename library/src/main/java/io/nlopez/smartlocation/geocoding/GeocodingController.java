@@ -83,6 +83,9 @@ public class GeocodingController implements Provider.StatusListener {
         startNext();
     }
 
+    /**
+     * Use to instantiate {@link GeocodingController}
+     */
     public static class Factory {
         @NonNull
         public GeocodingController create(
