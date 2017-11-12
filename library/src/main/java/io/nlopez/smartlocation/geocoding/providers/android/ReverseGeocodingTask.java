@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -22,14 +23,10 @@ import io.nlopez.smartlocation.utils.Logger;
  */
 class ReverseGeocodingTask extends AsyncTask<Location, Void, Pair<Location, List<LocationAddress>>> {
 
-    @NonNull
-    private final Logger mLogger;
-    @NonNull
-    private final Locale mLocale;
-    @NonNull
-    private final Context mContext;
-    @NonNull
-    private final ReverseGeocodingTaskListener mListener;
+    @NonNull private final Logger mLogger;
+    @NonNull private final Locale mLocale;
+    @NonNull private final WeakReference<Context> mContextRef;
+    @NonNull private final ReverseGeocodingTaskListener mListener;
     private final int mMaxResults;
 
     ReverseGeocodingTask(
@@ -38,7 +35,7 @@ class ReverseGeocodingTask extends AsyncTask<Location, Void, Pair<Location, List
             @NonNull Locale locale,
             @NonNull ReverseGeocodingTaskListener listener,
             int maxResults) {
-        mContext = context;
+        mContextRef = new WeakReference<>(context);
         mLogger = logger;
         mLocale = locale;
         mListener = listener;
@@ -47,11 +44,11 @@ class ReverseGeocodingTask extends AsyncTask<Location, Void, Pair<Location, List
 
     @Override
     protected Pair<Location, List<LocationAddress>> doInBackground(Location... locations) {
-        if (locations.length == 0) {
+        if (locations.length == 0 || mContextRef.get() == null) {
             mLogger.e("Location was not provided");
             return null;
         }
-        final Geocoder geocoder = new Geocoder(mContext, mLocale);
+        final Geocoder geocoder = new Geocoder(mContextRef.get(), mLocale);
         final Location location = locations[0];
         final List<Address> addresses;
         try {

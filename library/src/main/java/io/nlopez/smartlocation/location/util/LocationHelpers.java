@@ -4,23 +4,25 @@ import android.content.Context;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-public class LocationHelpers {
-    private static LocationHelpers instance;
-    private Context context;
-    private LocationManager locationManager;
+import io.nlopez.smartlocation.utils.Nulls;
 
-    private LocationHelpers(Context context) {
-        this.context = context;
-        this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+import static io.nlopez.smartlocation.utils.Nulls.notNull;
+
+public class LocationHelpers {
+    @NonNull private Context mContext;
+    @NonNull private LocationManager mLocationManager;
+
+    private LocationHelpers(@NonNull Context context) {
+        mContext = context;
+        mLocationManager = notNull((LocationManager) context.getSystemService(Context.LOCATION_SERVICE));
     }
 
-    public static LocationHelpers with(Context context) {
-        if (instance == null) {
-            instance = new LocationHelpers(context.getApplicationContext());
-        }
-        return instance;
+    @NonNull
+    public static LocationHelpers with(@NonNull Context context) {
+        return new LocationHelpers(context.getApplicationContext());
     }
 
     /**
@@ -33,7 +35,7 @@ public class LocationHelpers {
             int locationMode = Settings.Secure.LOCATION_MODE_OFF;
 
             try {
-                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+                locationMode = Settings.Secure.getInt(mContext.getContentResolver(), Settings.Secure.LOCATION_MODE);
 
             } catch (Settings.SettingNotFoundException ignored) {
                 // This is ignored
@@ -42,7 +44,7 @@ public class LocationHelpers {
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
 
         } else {
-            String locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            String locationProviders = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
         }
     }
@@ -62,7 +64,7 @@ public class LocationHelpers {
      * @return <code>true</code> if GPS location updates are enabled.
      */
     public boolean isGpsAvailable() {
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     /**
@@ -71,7 +73,7 @@ public class LocationHelpers {
      * @return <code>true</code> if location can be determined from mobile network signals.
      */
     public boolean isNetworkAvailable() {
-        return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        return mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
     /**
@@ -80,7 +82,7 @@ public class LocationHelpers {
      * @return <code>true</code> if location updates from other applications are enabled.
      */
     public boolean isPassiveAvailable() {
-        return locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
+        return mLocationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
     }
 
     /**
@@ -92,7 +94,7 @@ public class LocationHelpers {
      */
     @Deprecated
     public boolean isMockSettingEnabled() {
-        return !("0".equals(Settings.Secure.getString(context.getContentResolver(), Settings
+        return !("0".equals(Settings.Secure.getString(mContext.getContentResolver(), Settings
                 .Secure.ALLOW_MOCK_LOCATION)));
     }
 

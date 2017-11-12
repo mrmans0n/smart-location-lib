@@ -35,20 +35,13 @@ public class GooglePlayServicesGeofencingProvider
         OnSuccessListener<Void>,
         OnFailureListener {
 
-    @NonNull
-    private final LocationPermissionsManager mPermissionsManager;
-    @NonNull
-    private final Logger mLogger;
-    @NonNull
-    private final Provider.StatusListener mStatusListener;
-    @NonNull
-    private final GeofencingApiProxy mApiProxy;
-    @NonNull
-    private Context mContext;
-    @Nullable
-    private GoogleApiClient mClient;
-    @NonNull
-    private LinkedList<Runnable> mActionQueue;
+    @NonNull private final LocationPermissionsManager mPermissionsManager;
+    @NonNull private final Logger mLogger;
+    @NonNull private final Provider.StatusListener mStatusListener;
+    @NonNull private final GeofencingApiProxy mApiProxy;
+    @NonNull private Context mContext;
+    @Nullable private GoogleApiClient mClient;
+    @NonNull private LinkedList<Runnable> mActionQueue;
 
     public GooglePlayServicesGeofencingProvider(
             @NonNull Context context,

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -21,12 +22,9 @@ import io.nlopez.smartlocation.utils.Logger;
  */
 class GeocodingTask extends AsyncTask<String, Void, Pair<String, List<LocationAddress>>> {
 
-    @NonNull
-    private final Logger mLogger;
-    @NonNull
-    private final Locale mLocale;
-    @NonNull
-    private final Context mContext;
+    @NonNull private final Logger mLogger;
+    @NonNull private final Locale mLocale;
+    @NonNull private final WeakReference<Context> mContextRef;
     @NonNull
     private final GeocodingTaskListener mListener;
     private final int mMaxResults;
@@ -37,7 +35,7 @@ class GeocodingTask extends AsyncTask<String, Void, Pair<String, List<LocationAd
             @NonNull Locale locale,
             @NonNull GeocodingTaskListener listener,
             int maxResults) {
-        mContext = context;
+        mContextRef = new WeakReference<>(context);
         mLogger = logger;
         mLocale = locale;
         mListener = listener;
@@ -46,11 +44,11 @@ class GeocodingTask extends AsyncTask<String, Void, Pair<String, List<LocationAd
 
     @Override
     protected Pair<String, List<LocationAddress>> doInBackground(String... strings) {
-        if (strings.length == 0) {
+        if (strings.length == 0 || mContextRef.get() == null) {
             mLogger.e("Name was not provided");
             return null;
         }
-        final Geocoder geocoder = new Geocoder(mContext, mLocale);
+        final Geocoder geocoder = new Geocoder(mContextRef.get(), mLocale);
         final String name = strings[0];
         final List<Address> addresses;
         try {
