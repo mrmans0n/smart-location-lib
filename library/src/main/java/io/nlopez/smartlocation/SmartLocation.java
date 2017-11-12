@@ -32,6 +32,7 @@ import io.nlopez.smartlocation.location.providers.legacy.LocationManagerProvider
 import io.nlopez.smartlocation.location.providers.playservices.GooglePlayServicesLocationProviderFactory;
 import io.nlopez.smartlocation.utils.Logger;
 import io.nlopez.smartlocation.utils.LoggerFactory;
+import io.nlopez.smartlocation.utils.Nulls;
 
 import static io.nlopez.smartlocation.common.OnAllProvidersFailed.EMPTY;
 import static io.nlopez.smartlocation.utils.Nulls.orDefault;
@@ -42,10 +43,8 @@ import static io.nlopez.smartlocation.utils.Nulls.orDefault;
 @SuppressWarnings("UnusedReturnValue")
 public class SmartLocation {
 
-    @NonNull
-    private Context context;
-    @NonNull
-    private Logger logger;
+    @NonNull private Context context;
+    @NonNull private Logger logger;
 
     /**
      * Creates the SmartLocation basic instance.
@@ -79,7 +78,7 @@ public class SmartLocation {
      */
     @NonNull
     public LocationBuilder location(@NonNull LocationProviderFactory... providerFactories) {
-        return new LocationBuilder(this, providerFactories);
+        return new LocationBuilder(this, new LocationController.Factory(), Arrays.asList(providerFactories));
     }
 
     /**
@@ -96,7 +95,7 @@ public class SmartLocation {
      */
     @NonNull
     public GeofencingBuilder geofencing(@NonNull GeofencingProviderFactory... geofencingProviderFactories) {
-        return new GeofencingBuilder(this, geofencingProviderFactories);
+        return new GeofencingBuilder(this, Arrays.asList(geofencingProviderFactories));
     }
 
     /**
@@ -113,39 +112,52 @@ public class SmartLocation {
      */
     @NonNull
     public GeocodingBuilder geocoding(@NonNull GeocodingProviderFactory... providerFactories) {
-        return new GeocodingBuilder(this, providerFactories);
+        return new GeocodingBuilder(this,
+                new GeocodingController.Factory(),
+                new ReverseGeocodingController.Factory(),
+                Arrays.asList(providerFactories));
     }
 
     public static class Builder {
-        private final Context context;
+        @NonNull private final Context context;
+        @Nullable private Logger mLogger;
 
         public Builder(@NonNull Context context) {
             this.context = context;
         }
 
         @NonNull
+        public Builder logger(@Nullable Logger logger) {
+            mLogger = logger;
+            return this;
+        }
+
+        @NonNull
         public SmartLocation build() {
-            return new SmartLocation(context, LoggerFactory.get());
+            return new SmartLocation(context, Nulls.orDefault(mLogger, LoggerFactory.get()));
         }
 
     }
 
     public static class LocationBuilder {
 
-        private static final Map<Context, LocationController> CONTROLLER_MAPPING = new WeakHashMap<>();
+        @NonNull static final Map<Context, LocationController> CONTROLLER_MAPPING = new WeakHashMap<>();
 
-        private final SmartLocation mParent;
-        private LocationProviderParams mParams;
-        private List<LocationProviderFactory> mProviderFactoryList;
-        private LocationController mProviderController;
+        @NonNull private final SmartLocation mParent;
+        @NonNull private final LocationController.Factory mLocationControllerFactory;
+        @NonNull private LocationProviderParams mParams;
+        @NonNull private List<LocationProviderFactory> mProviderFactoryList;
+        @Nullable private LocationController mProviderController;
         private long mTimeout = LocationController.NO_TIMEOUT;
 
         public LocationBuilder(
                 @NonNull SmartLocation smartLocation,
-                @NonNull LocationProviderFactory[] locationProviders) {
+                @NonNull LocationController.Factory locationControllerFactory,
+                @NonNull List<LocationProviderFactory> locationProviders) {
             mParent = smartLocation;
+            mLocationControllerFactory = locationControllerFactory;
             mParams = LocationProviderParams.BEST_EFFORT;
-            mProviderFactoryList = Arrays.asList(locationProviders);
+            mProviderFactoryList = locationProviders;
         }
 
         @NonNull
@@ -167,7 +179,7 @@ public class SmartLocation {
 
         @NonNull
         public LocationController start(@NonNull LocationUpdatedListener listener) {
-            mProviderController = new LocationController(
+            mProviderController = mLocationControllerFactory.create(
                     mParent.context,
                     listener,
                     listener,
@@ -194,15 +206,21 @@ public class SmartLocation {
     public static class GeocodingBuilder {
         static final int DEFAULT_MAX_RESULTS = 5;
 
-        private final SmartLocation mParent;
-        private final List<GeocodingProviderFactory> mGeocodingProviders;
+        @NonNull private final SmartLocation mParent;
+        @NonNull private final List<GeocodingProviderFactory> mGeocodingProviders;
+        @NonNull private final GeocodingController.Factory mGeocodingControllerFactory;
+        @NonNull private final ReverseGeocodingController.Factory mReverseGeocodingControllerFactory;
         private int mMaxResults = DEFAULT_MAX_RESULTS;
 
         public GeocodingBuilder(
                 @NonNull SmartLocation smartLocation,
-                @NonNull GeocodingProviderFactory[] geocodingProviders) {
+                @NonNull GeocodingController.Factory geocodingControllerFactory,
+                @NonNull ReverseGeocodingController.Factory reverseGeocodingControllerFactory,
+                @NonNull List<GeocodingProviderFactory> geocodingProviders) {
             mParent = smartLocation;
-            mGeocodingProviders = Arrays.asList(geocodingProviders);
+            mGeocodingControllerFactory = geocodingControllerFactory;
+            mReverseGeocodingControllerFactory = reverseGeocodingControllerFactory;
+            mGeocodingProviders = geocodingProviders;
         }
 
         @NonNull
@@ -215,46 +233,41 @@ public class SmartLocation {
         public ReverseGeocodingController findNameByLocation(
                 @NonNull Location location,
                 @NonNull ReverseGeocodingUpdatedListener listener) {
-            final ReverseGeocodingController controller = new ReverseGeocodingController(
+            return mReverseGeocodingControllerFactory.create(
                     mParent.context,
                     location,
                     mMaxResults,
                     listener,
                     listener,
                     mGeocodingProviders,
-                    mParent.logger);
-            return controller.start();
+                    mParent.logger).start();
         }
 
         @NonNull
         public GeocodingController findLocationByName(
                 @NonNull String name,
                 @NonNull GeocodingUpdatedListener listener) {
-            final GeocodingController controller = new GeocodingController(
+            return mGeocodingControllerFactory.create(
                     mParent.context,
                     name,
                     mMaxResults,
                     listener,
                     listener,
                     mGeocodingProviders,
-                    mParent.logger);
-            return controller.start();
+                    mParent.logger).start();
         }
     }
 
     public static class GeofencingBuilder {
-        @NonNull
-        private final SmartLocation mParent;
-        @NonNull
-        private final List<GeofencingProviderFactory> mGeofencingProviders;
-        @Nullable
-        private OnAllProvidersFailed mProvidersFailed;
+        @NonNull private final SmartLocation mParent;
+        @NonNull private final List<GeofencingProviderFactory> mGeofencingProviders;
+        @Nullable private OnAllProvidersFailed mProvidersFailed;
 
         public GeofencingBuilder(
                 @NonNull SmartLocation smartLocation,
-                @NonNull GeofencingProviderFactory[] geofencingProviders) {
+                @NonNull List<GeofencingProviderFactory> geofencingProviders) {
             mParent = smartLocation;
-            mGeofencingProviders = Arrays.asList(geofencingProviders);
+            mGeofencingProviders = geofencingProviders;
         }
 
         @NonNull

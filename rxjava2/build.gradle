@@ -19,11 +19,10 @@ dependencies {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     compile project(':library')
-    compile 'io.reactivex.rxjava2:rxjava:2.1.5'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.6'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     testCompile "junit:junit:$junitVersion"
     testCompile "org.robolectric:robolectric:$robolectricVersion"
-    testCompile "org.robolectric:robolectric-shadows:$robolectricVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 

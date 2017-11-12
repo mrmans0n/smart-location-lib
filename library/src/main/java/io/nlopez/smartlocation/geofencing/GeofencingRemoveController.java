@@ -13,10 +13,8 @@ import io.nlopez.smartlocation.utils.Logger;
 import static io.nlopez.smartlocation.utils.Nulls.notNull;
 
 public class GeofencingRemoveController extends GeofencingBaseController {
-    @Nullable
-    private PendingIntent mPendingIntent;
-    @Nullable
-    private List<String> mGeofenceIds;
+    @Nullable private PendingIntent mPendingIntent;
+    @Nullable private List<String> mGeofenceIds;
 
     public GeofencingRemoveController(
             @NonNull Context context,

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,23 +16,17 @@ import io.nlopez.smartlocation.utils.Logger;
 
 public class ReverseGeocodingController implements Provider.StatusListener {
 
-    @NonNull
-    private final LinkedList<GeocodingProviderFactory> mProviderList;
-    @NonNull
-    private final Logger mLogger;
-    @NonNull
-    private final Context mContext;
-    @NonNull
-    private final OnReverseGeocodingListener mUpdateListener;
+    @NonNull private final LinkedList<GeocodingProviderFactory> mProviderList;
+    @NonNull private final Logger mLogger;
+    @NonNull private final Context mContext;
+    @NonNull private final OnReverseGeocodingListener mUpdateListener;
+    @NonNull private final OnAllProvidersFailed mListener;
+    @NonNull private final Location mLocation;
     private final int mMaxResults;
-    @NonNull
-    private final OnAllProvidersFailed mListener;
-    @NonNull
-    private final Location mLocation;
-    @Nullable
-    private GeocodingProvider mCurrentProvider;
+    @Nullable private GeocodingProvider mCurrentProvider;
 
-    public ReverseGeocodingController(
+    @VisibleForTesting
+    ReverseGeocodingController(
             @NonNull Context context,
             @NonNull Location location,
             int maxResults,
@@ -87,5 +82,19 @@ public class ReverseGeocodingController implements Provider.StatusListener {
         mLogger.d(provider + " failed.");
         provider.release();
         startNext();
+    }
+
+    public static class Factory {
+        @NonNull
+        public ReverseGeocodingController create(
+                @NonNull Context context,
+                @NonNull Location location,
+                int maxResults,
+                @NonNull OnReverseGeocodingListener updateListener,
+                @NonNull OnAllProvidersFailed listener,
+                @NonNull List<GeocodingProviderFactory> providerList,
+                @NonNull Logger logger) {
+            return new ReverseGeocodingController(context, location, maxResults, updateListener, listener, providerList, logger);
+        }
     }
 }

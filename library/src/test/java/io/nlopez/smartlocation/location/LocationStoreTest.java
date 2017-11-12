@@ -7,18 +7,19 @@ import android.location.Location;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import io.nlopez.smartlocation.CustomTestRunner;
+import io.nlopez.smartlocation.BuildConfig;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 /**
- * Created by nacho on 1/9/15.
+ * Tests {@link LocationStore}
  */
-@RunWith(CustomTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(RobolectricTestRunner.class)
+@Config(constants = BuildConfig.class, manifest = Config.NONE)
 public class LocationStoreTest {
 
     private static final double DELTA = 1e-7;
@@ -48,7 +49,7 @@ public class LocationStoreTest {
     }
 
     @Test
-    public void test_location_store_full_cycle() {
+    public void testLocationStoreFullCircle() {
         assertThat(mStore.get(TEST_LOCATION_ID)).isNull();
         mStore.put(TEST_LOCATION_ID, testLocation);
         final Location location = mStore.get(TEST_LOCATION_ID);

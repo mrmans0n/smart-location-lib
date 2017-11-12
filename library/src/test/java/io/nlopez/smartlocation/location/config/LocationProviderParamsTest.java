@@ -3,12 +3,16 @@ package io.nlopez.smartlocation.location.config;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import io.nlopez.smartlocation.CustomTestRunner;
+import io.nlopez.smartlocation.BuildConfig;
 
-@RunWith(CustomTestRunner.class)
-@Config(manifest = Config.NONE)
+/**
+ * Tests {@link LocationProviderParams}
+ */
+@RunWith(RobolectricTestRunner.class)
+@Config(constants = BuildConfig.class)
 public class LocationProviderParamsTest {
 
     private static final LocationAccuracy ACCURACY = LocationAccuracy.HIGH;
@@ -17,7 +21,7 @@ public class LocationProviderParamsTest {
     private static final double DELTA = 1e-7;
 
     @Test
-    public void test_location_params_builder() {
+    public void testLocationParamsBuilder() {
         LocationProviderParams locationProviderParams = new LocationProviderParams.Builder()
                 .accuracy(ACCURACY).interval(INTERVAL).distance(DISTANCE).build();
 

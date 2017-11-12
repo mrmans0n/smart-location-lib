@@ -3,6 +3,7 @@ package io.nlopez.smartlocation.geocoding;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,23 +15,17 @@ import io.nlopez.smartlocation.utils.Logger;
 
 public class GeocodingController implements Provider.StatusListener {
 
-    @NonNull
-    private final LinkedList<GeocodingProviderFactory> mProviderList;
-    @NonNull
-    private final Logger mLogger;
-    @NonNull
-    private final Context mContext;
-    @NonNull
-    private final OnGeocodingListener mGeocodingUpdatedListener;
-    @NonNull
-    private final String mName;
+    @NonNull private final LinkedList<GeocodingProviderFactory> mProviderList;
+    @NonNull private final Logger mLogger;
+    @NonNull private final Context mContext;
+    @NonNull private final OnGeocodingListener mGeocodingUpdatedListener;
+    @NonNull private final String mName;
+    @NonNull private final OnAllProvidersFailed mListener;
+    @Nullable private GeocodingProvider mCurrentProvider;
     private final int mMaxResults;
-    @NonNull
-    private final OnAllProvidersFailed mListener;
-    @Nullable
-    private GeocodingProvider mCurrentProvider;
 
-    public GeocodingController(
+    @VisibleForTesting
+    GeocodingController(
             @NonNull Context context,
             @NonNull String name,
             int maxResults,
@@ -86,5 +81,26 @@ public class GeocodingController implements Provider.StatusListener {
         mLogger.d(provider + " failed.");
         provider.release();
         startNext();
+    }
+
+    public static class Factory {
+        @NonNull
+        public GeocodingController create(
+                @NonNull Context context,
+                @NonNull String name,
+                int maxResults,
+                @NonNull OnGeocodingListener geocodingUpdatedListener,
+                @NonNull OnAllProvidersFailed listener,
+                @NonNull List<GeocodingProviderFactory> providerList,
+                @NonNull Logger logger) {
+            return new GeocodingController(
+                    context,
+                    name,
+                    maxResults,
+                    geocodingUpdatedListener,
+                    listener,
+                    providerList,
+                    logger);
+        }
     }
 }

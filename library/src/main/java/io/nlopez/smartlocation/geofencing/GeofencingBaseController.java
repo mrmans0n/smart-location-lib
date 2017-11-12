@@ -12,16 +12,11 @@ import io.nlopez.smartlocation.common.Provider;
 import io.nlopez.smartlocation.utils.Logger;
 
 public abstract class GeofencingBaseController implements Provider.StatusListener {
-    @NonNull
-    private final LinkedList<GeofencingProviderFactory> mProviderList;
-    @NonNull
-    private final Logger mLogger;
-    @NonNull
-    private final Context mContext;
-    @NonNull
-    private final OnAllProvidersFailed mListener;
-    @Nullable
-    protected GeofencingProvider mCurrentProvider;
+    @NonNull private final LinkedList<GeofencingProviderFactory> mProviderList;
+    @NonNull private final Logger mLogger;
+    @NonNull private final Context mContext;
+    @NonNull private final OnAllProvidersFailed mListener;
+    @Nullable protected GeofencingProvider mCurrentProvider;
 
     public GeofencingBaseController(
             @NonNull Context context,

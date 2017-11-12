@@ -15,10 +15,8 @@ import io.nlopez.smartlocation.utils.Logger;
 import static io.nlopez.smartlocation.utils.Nulls.notNull;
 
 public class GeofencingAddController extends GeofencingBaseController {
-    @Nullable
-    private GeofencingRequest mRequest;
-    @Nullable
-    private PendingIntent mPendingIntent;
+    @Nullable private GeofencingRequest mRequest;
+    @Nullable private PendingIntent mPendingIntent;
 
     public GeofencingAddController(
             @NonNull Context context,

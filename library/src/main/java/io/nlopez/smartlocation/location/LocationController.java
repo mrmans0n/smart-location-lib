@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,23 +20,17 @@ import io.nlopez.smartlocation.utils.Logger;
 public class LocationController implements Provider.StatusListener {
     public static final int NO_TIMEOUT = -1;
 
-    @NonNull
-    private final LinkedList<LocationProviderFactory> mProviderList;
-    @NonNull
-    private final Logger mLogger;
-    @NonNull
-    private final Context mContext;
-    @NonNull
-    private final OnLocationUpdatedListener mUpdateListener;
-    @NonNull
-    private final LocationProviderParams mParams;
+    @NonNull private final LinkedList<LocationProviderFactory> mProviderList;
+    @NonNull private final Logger mLogger;
+    @NonNull private final Context mContext;
+    @NonNull private final OnLocationUpdatedListener mUpdateListener;
+    @NonNull private final LocationProviderParams mParams;
+    @NonNull private final OnAllProvidersFailed mListener;
+    @Nullable private LocationProvider mCurrentProvider;
     private final long mTimeout;
-    @NonNull
-    private final OnAllProvidersFailed mListener;
-    @Nullable
-    private LocationProvider mCurrentProvider;
 
-    public LocationController(
+    @VisibleForTesting
+    LocationController(
             @NonNull Context context,
             @NonNull OnLocationUpdatedListener updateListener,
             @NonNull OnAllProvidersFailed listener,
@@ -170,6 +165,20 @@ public class LocationController implements Provider.StatusListener {
                 mTimeoutListener.onProviderTimeout(mProvider);
                 cancelled = true;
             }
+        }
+    }
+
+    public static class Factory {
+        @NonNull
+        public LocationController create(
+                @NonNull Context context,
+                @NonNull OnLocationUpdatedListener updateListener,
+                @NonNull OnAllProvidersFailed listener,
+                @NonNull LocationProviderParams params,
+                long timeout,
+                @NonNull List<LocationProviderFactory> providerList,
+                @NonNull Logger logger) {
+            return new LocationController(context, updateListener, listener, params, timeout, providerList, logger);
         }
     }
 }
