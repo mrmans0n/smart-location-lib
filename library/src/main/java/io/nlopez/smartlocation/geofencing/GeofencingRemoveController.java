@@ -16,7 +16,7 @@ public class GeofencingRemoveController extends GeofencingBaseController {
     @Nullable private PendingIntent mPendingIntent;
     @Nullable private List<String> mGeofenceIds;
 
-    public GeofencingRemoveController(
+    GeofencingRemoveController(
             @NonNull Context context,
             @NonNull OnAllProvidersFailed listener,
             @NonNull List<GeofencingProviderFactory> providerList,

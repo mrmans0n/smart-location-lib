@@ -1,11 +1,11 @@
-package io.nlopez.smartlocation.rx;
+package io.nlopez.smartlocation;
 
 import android.content.Context;
 import android.location.Location;
+import android.support.annotation.NonNull;
 
 import java.util.List;
 
-import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.geocoding.GeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.ReverseGeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.common.LocationAddress;
@@ -21,8 +21,6 @@ import io.reactivex.subjects.SingleSubject;
 
 /**
  * Creates RxJava Observables for all the library calls.
- * <p/>
- * For now it provides just basic support for all the available actions.
  */
 public final class Observables {
     private Observables() {
@@ -35,7 +33,8 @@ public final class Observables {
      * @param locationBuilder instance with the needed configuration
      * @return Observable for Location changes
      */
-    public static Observable<Location> from(final SmartLocation.LocationBuilder locationBuilder) {
+    @NonNull
+    public static Observable<Location> from(@NonNull final SmartLocation.LocationBuilder locationBuilder) {
         return Observable.create(new ObservableOnSubscribe<Location>() {
             @Override
             public void subscribe(final ObservableEmitter<Location> emitter) throws Exception {
@@ -67,7 +66,8 @@ public final class Observables {
      * @param maxResults max number of coincidences to return
      * @return Single for results. Gets a terminal event after the response.
      */
-    public static Single<List<LocationAddress>> fromAddress(final Context context, final String address, final int maxResults) {
+    @NonNull
+    public static Single<List<LocationAddress>> fromAddress(@NonNull final Context context, @NonNull final String address, final int maxResults) {
         return SingleSubject.create(new SingleOnSubscribe<List<LocationAddress>>() {
             @Override
             public void subscribe(final SingleEmitter<List<LocationAddress>> emitter) {
@@ -93,7 +93,8 @@ public final class Observables {
      * @param maxResults max number of coincidences to return
      * @return Single for results. Gets a terminal event after the response
      */
-    public static Single<List<LocationAddress>> fromLocation(final Context context, final Location location, final int maxResults) {
+    @NonNull
+    public static Single<List<LocationAddress>> fromLocation(@NonNull final Context context, @NonNull final Location location, final int maxResults) {
         return SingleSubject.create(new SingleOnSubscribe<List<LocationAddress>>() {
             @Override
             public void subscribe(final SingleEmitter<List<LocationAddress>> emitter) {

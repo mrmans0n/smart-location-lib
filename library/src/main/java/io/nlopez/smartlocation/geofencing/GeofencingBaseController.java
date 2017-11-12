@@ -62,4 +62,24 @@ public abstract class GeofencingBaseController implements Provider.StatusListene
         provider.release();
         startNext();
     }
+
+    public static class Factory {
+        @NonNull
+        public GeofencingAddController createAddController(
+                @NonNull Context context,
+                @NonNull OnAllProvidersFailed listener,
+                @NonNull List<GeofencingProviderFactory> providerList,
+                @NonNull Logger logger) {
+            return new GeofencingAddController(context, listener, providerList, logger);
+        }
+
+        @NonNull
+        public GeofencingRemoveController createRemoveController(
+                @NonNull Context context,
+                @NonNull OnAllProvidersFailed listener,
+                @NonNull List<GeofencingProviderFactory> providerList,
+                @NonNull Logger logger) {
+            return new GeofencingRemoveController(context, listener, providerList, logger);
+        }
+    }
 }

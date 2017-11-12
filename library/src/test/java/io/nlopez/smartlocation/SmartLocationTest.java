@@ -1,8 +1,11 @@
 package io.nlopez.smartlocation;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
+
+import com.google.android.gms.location.GeofencingRequest;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,12 +20,16 @@ import org.robolectric.annotation.Config;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.nlopez.smartlocation.common.OnAllProvidersFailed;
 import io.nlopez.smartlocation.geocoding.GeocodingController;
 import io.nlopez.smartlocation.geocoding.GeocodingProviderFactory;
 import io.nlopez.smartlocation.geocoding.GeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.ReverseGeocodingController;
 import io.nlopez.smartlocation.geocoding.ReverseGeocodingUpdatedListener;
+import io.nlopez.smartlocation.geofencing.GeofencingAddController;
+import io.nlopez.smartlocation.geofencing.GeofencingBaseController;
 import io.nlopez.smartlocation.geofencing.GeofencingProviderFactory;
+import io.nlopez.smartlocation.geofencing.GeofencingRemoveController;
 import io.nlopez.smartlocation.location.LocationController;
 import io.nlopez.smartlocation.location.LocationProviderFactory;
 import io.nlopez.smartlocation.location.LocationUpdatedListener;
@@ -62,6 +69,12 @@ public class SmartLocationTest {
     @Mock private Location mLocation;
 
     @Mock private GeofencingProviderFactory mGeofencingProviderFactory;
+    @Mock private GeofencingBaseController.Factory mGeofencingControllerFactory;
+    @Mock private GeofencingAddController mGeofencingAddController;
+    @Mock private GeofencingRemoveController mGeofencingRemoveController;
+    @Mock private PendingIntent mPendingIntent;
+    @Mock private GeofencingRequest mGeofencingRequest;
+    @Mock private OnAllProvidersFailed mOnAllProvidersFailed;
 
     private SmartLocation mSmartLocation;
 
@@ -181,6 +194,44 @@ public class SmartLocationTest {
     private List<GeocodingProviderFactory> createGeocodingProvider() {
         final ArrayList<GeocodingProviderFactory> providers = new ArrayList<>();
         providers.add(mGeocodingProviderFactory);
+        return providers;
+    }
+
+    @Test
+    public void testSmartLocationGeofencingReturnsGeofencingBuilder() {
+        assertThat(mSmartLocation.geofencing()).isInstanceOf(SmartLocation.GeofencingBuilder.class);
+        assertThat(mSmartLocation.geofencing(mGeofencingProviderFactory)).isInstanceOf(SmartLocation.GeofencingBuilder.class);
+    }
+
+    @Test
+    public void testAddGeofencesStartedWithProperArguments() {
+        final List<GeofencingProviderFactory> geofencingProviders = createGeofencingProviders();
+        final SmartLocation.GeofencingBuilder geofencingBuilder =
+                new SmartLocation.GeofencingBuilder(mSmartLocation, mGeofencingControllerFactory, geofencingProviders);
+        geofencingBuilder.failureListener(mOnAllProvidersFailed);
+        when(mGeofencingControllerFactory.createAddController(mContext, mOnAllProvidersFailed, geofencingProviders, mLogger)).thenReturn(mGeofencingAddController);
+        geofencingBuilder.addGeofences(mGeofencingRequest, mPendingIntent);
+        verify(mGeofencingAddController).addGeofences(mGeofencingRequest, mPendingIntent);
+    }
+
+    @Test
+    public void testRemoveGeofencesStartedWithProperArguments() {
+        final List<GeofencingProviderFactory> geofencingProviders = createGeofencingProviders();
+        final SmartLocation.GeofencingBuilder geofencingBuilder =
+                new SmartLocation.GeofencingBuilder(mSmartLocation, mGeofencingControllerFactory, geofencingProviders);
+        geofencingBuilder.failureListener(mOnAllProvidersFailed);
+        when(mGeofencingControllerFactory.createRemoveController(mContext, mOnAllProvidersFailed, geofencingProviders, mLogger)).thenReturn(mGeofencingRemoveController);
+        final List<String> idList = new ArrayList<>();
+        geofencingBuilder.removeGeofences(idList);
+        verify(mGeofencingRemoveController).removeGeofence(idList);
+        geofencingBuilder.removeGeofences(mPendingIntent);
+        verify(mGeofencingRemoveController).removeGeofence(mPendingIntent);
+    }
+
+    @NonNull
+    private List<GeofencingProviderFactory> createGeofencingProviders() {
+        final ArrayList<GeofencingProviderFactory> providers = new ArrayList<>();
+        providers.add(mGeofencingProviderFactory);
         return providers;
     }
 }

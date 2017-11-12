@@ -21,6 +21,7 @@ import io.nlopez.smartlocation.geocoding.ReverseGeocodingController;
 import io.nlopez.smartlocation.geocoding.ReverseGeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.providers.android.AndroidGeocodingProviderFactory;
 import io.nlopez.smartlocation.geofencing.GeofencingAddController;
+import io.nlopez.smartlocation.geofencing.GeofencingBaseController;
 import io.nlopez.smartlocation.geofencing.GeofencingProviderFactory;
 import io.nlopez.smartlocation.geofencing.GeofencingRemoveController;
 import io.nlopez.smartlocation.geofencing.providers.playservices.GooglePlayServicesGeofencingProviderFactory;
@@ -95,7 +96,9 @@ public class SmartLocation {
      */
     @NonNull
     public GeofencingBuilder geofencing(@NonNull GeofencingProviderFactory... geofencingProviderFactories) {
-        return new GeofencingBuilder(this, Arrays.asList(geofencingProviderFactories));
+        return new GeofencingBuilder(this,
+                new GeofencingBaseController.Factory(),
+                Arrays.asList(geofencingProviderFactories));
     }
 
     /**
@@ -261,12 +264,15 @@ public class SmartLocation {
     public static class GeofencingBuilder {
         @NonNull private final SmartLocation mParent;
         @NonNull private final List<GeofencingProviderFactory> mGeofencingProviders;
+        @NonNull private final GeofencingBaseController.Factory mGeofencingControllerFactory;
         @Nullable private OnAllProvidersFailed mProvidersFailed;
 
         public GeofencingBuilder(
                 @NonNull SmartLocation smartLocation,
+                @NonNull final GeofencingBaseController.Factory geofencingControllerFactory,
                 @NonNull List<GeofencingProviderFactory> geofencingProviders) {
             mParent = smartLocation;
+            mGeofencingControllerFactory = geofencingControllerFactory;
             mGeofencingProviders = geofencingProviders;
         }
 
@@ -280,32 +286,29 @@ public class SmartLocation {
         public GeofencingAddController addGeofences(
                 @NonNull GeofencingRequest request,
                 @NonNull PendingIntent pendingIntent) {
-            final GeofencingAddController controller = new GeofencingAddController(
+            return mGeofencingControllerFactory.createAddController(
                     mParent.context,
                     orDefault(mProvidersFailed, EMPTY),
                     mGeofencingProviders,
-                    mParent.logger);
-            return controller.addGeofences(request, pendingIntent);
+                    mParent.logger).addGeofences(request, pendingIntent);
         }
 
         @NonNull
         public GeofencingRemoveController removeGeofences(@NonNull List<String> geofenceIds) {
-            final GeofencingRemoveController controller = new GeofencingRemoveController(
+            return mGeofencingControllerFactory.createRemoveController(
                     mParent.context,
                     orDefault(mProvidersFailed, EMPTY),
                     mGeofencingProviders,
-                    mParent.logger);
-            return controller.removeGeofence(geofenceIds);
+                    mParent.logger).removeGeofence(geofenceIds);
         }
 
         @NonNull
         public GeofencingRemoveController removeGeofences(@NonNull PendingIntent pendingIntent) {
-            final GeofencingRemoveController controller = new GeofencingRemoveController(
+            return mGeofencingControllerFactory.createRemoveController(
                     mParent.context,
                     orDefault(mProvidersFailed, EMPTY),
                     mGeofencingProviders,
-                    mParent.logger);
-            return controller.removeGeofence(pendingIntent);
+                    mParent.logger).removeGeofence(pendingIntent);
         }
     }
 }

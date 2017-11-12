@@ -18,7 +18,7 @@ public class GeofencingAddController extends GeofencingBaseController {
     @Nullable private GeofencingRequest mRequest;
     @Nullable private PendingIntent mPendingIntent;
 
-    public GeofencingAddController(
+    GeofencingAddController(
             @NonNull Context context,
             @NonNull OnAllProvidersFailed listener,
             @NonNull List<GeofencingProviderFactory> providerList,
