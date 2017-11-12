@@ -1,6 +1,5 @@
 package io.nlopez.smartlocation.geocoding.providers.googlemaps;
 
-import android.content.Context;
 import android.location.Geocoder;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -30,30 +29,20 @@ import retrofit2.Response;
  */
 public class GoogleMapsApiGeocodingProvider implements GeocodingProvider {
 
-    @NonNull
-    private final StatusListener mStatusListener;
-    @NonNull
-    private final Locale mLocale;
-    @NonNull
-    private final Context mContext;
-    @NonNull
-    private final Logger mLogger;
-    @NonNull
-    private final String mApiKey;
-    @NonNull
-    private final GoogleMapsGeocodingService mService;
-    @NonNull
-    private final LocationAddressFactory mLocationAddressFactory;
+    @NonNull private final StatusListener mStatusListener;
+    @NonNull private final Locale mLocale;
+    @NonNull private final Logger mLogger;
+    @NonNull private final String mApiKey;
+    @NonNull private final GoogleMapsGeocodingService mService;
+    @NonNull private final LocationAddressFactory mLocationAddressFactory;
 
     public GoogleMapsApiGeocodingProvider(
-            @NonNull Context context,
             @NonNull StatusListener statusListener,
             @NonNull GoogleMapsGeocodingService service,
             @NonNull String apiKey,
             @NonNull LocationAddressFactory locationAddressFactory,
             @NonNull Logger logger,
             @NonNull Locale locale) {
-        mContext = context;
         mStatusListener = statusListener;
         mService = service;
         mApiKey = apiKey;

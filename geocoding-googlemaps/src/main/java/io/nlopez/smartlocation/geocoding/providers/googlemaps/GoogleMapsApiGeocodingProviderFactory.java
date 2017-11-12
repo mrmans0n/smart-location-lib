@@ -3,6 +3,8 @@ package io.nlopez.smartlocation.geocoding.providers.googlemaps;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Locale;
 
 import io.nlopez.smartlocation.common.Provider;
@@ -39,9 +41,8 @@ public class GoogleMapsApiGeocodingProviderFactory implements GeocodingProviderF
 
     @NonNull
     @Override
-    public GeocodingProvider create(Context context, Provider.StatusListener statusListener) {
+    public GeocodingProvider create(@NotNull Context context, @NotNull Provider.StatusListener statusListener) {
         return new GoogleMapsApiGeocodingProvider(
-                context,
                 statusListener,
                 mService,
                 mApiKey,
