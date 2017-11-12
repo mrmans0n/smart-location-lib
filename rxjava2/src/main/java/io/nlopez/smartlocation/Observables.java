@@ -1,8 +1,8 @@
 package io.nlopez.smartlocation;
 
-import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.List;
 
@@ -38,9 +38,9 @@ public final class Observables {
         return Observable.create(new ObservableOnSubscribe<Location>() {
             @Override
             public void subscribe(final ObservableEmitter<Location> emitter) throws Exception {
-                locationBuilder.start(new LocationUpdatedListener.SimpleLocationUpdatedListener() {
+                locationBuilder.start(new LocationUpdatedListener() {
                     @Override
-                    public void onLocationUpdated(Location location) {
+                    public void onLocationUpdated(@Nullable Location location) {
                         emitter.onNext(location);
                     }
 
@@ -50,36 +50,45 @@ public final class Observables {
                     }
                 });
             }
-        }).doOnDispose(new Action() {
+        }).doOnDispose(stopLocation(locationBuilder))
+                .doAfterTerminate(stopLocation(locationBuilder));
+    }
+
+    @NonNull
+    private static Action stopLocation(final @NonNull SmartLocation.LocationBuilder locationBuilder) {
+        return new Action() {
             @Override
             public void run() throws Exception {
                 locationBuilder.stop();
             }
-        });
+        };
     }
 
     /**
      * Returns a RxJava single for direct geocoding results, aka get a Location from an address or name of a place.
      *
-     * @param context    caller context
-     * @param address    address or name of the place we want to get the location of
-     * @param maxResults max number of coincidences to return
+     * @param geocodingBuilder configuration for the geocoding operation to perform
+     * @param address          address or name of the place we want to get the location of
      * @return Single for results. Gets a terminal event after the response.
      */
     @NonNull
-    public static Single<List<LocationAddress>> fromAddress(@NonNull final Context context, @NonNull final String address, final int maxResults) {
+    public static Single<List<LocationAddress>> fromAddress(
+            @NonNull final SmartLocation.GeocodingBuilder geocodingBuilder,
+            @NonNull final String address) {
         return SingleSubject.create(new SingleOnSubscribe<List<LocationAddress>>() {
             @Override
             public void subscribe(final SingleEmitter<List<LocationAddress>> emitter) {
-                SmartLocation.with(context)
-                        .geocoding()
-                        .maxResults(maxResults)
-                        .findLocationByName(address, new GeocodingUpdatedListener.SimpleGeocodingUpdatedListener() {
-                            @Override
-                            public void onLocationResolved(String name, List<LocationAddress> results) {
-                                emitter.onSuccess(results);
-                            }
-                        });
+                geocodingBuilder.findLocationByName(address, new GeocodingUpdatedListener() {
+                    @Override
+                    public void onAllProvidersFailed() {
+                        emitter.onError(new RuntimeException("All providers failed"));
+                    }
+
+                    @Override
+                    public void onLocationResolved(@NonNull String name, @NonNull List<LocationAddress> results) {
+                        emitter.onSuccess(results);
+                    }
+                });
 
             }
         });
@@ -88,26 +97,29 @@ public final class Observables {
     /**
      * Returns a RxJava single for reverse geocoding results, aka get an address from a Location.
      *
-     * @param context    caller context
-     * @param location   location we want to know the address od
-     * @param maxResults max number of coincidences to return
+     * @param geocodingBuilder configuration for the reverse geocoding operation to perform
+     * @param location         location we want to know the address of
      * @return Single for results. Gets a terminal event after the response
      */
     @NonNull
-    public static Single<List<LocationAddress>> fromLocation(@NonNull final Context context, @NonNull final Location location, final int maxResults) {
+    public static Single<List<LocationAddress>> fromLocation(
+            @NonNull final SmartLocation.GeocodingBuilder geocodingBuilder,
+            @NonNull final Location location) {
         return SingleSubject.create(new SingleOnSubscribe<List<LocationAddress>>() {
             @Override
             public void subscribe(final SingleEmitter<List<LocationAddress>> emitter) {
-                SmartLocation.with(context)
-                        .geocoding()
-                        .maxResults(maxResults)
-                        .findNameByLocation(location,
-                                new ReverseGeocodingUpdatedListener.SimpleReverseGeocodingUpdatedListener() {
-                                    @Override
-                                    public void onAddressResolved(Location original, List<LocationAddress> results) {
-                                        emitter.onSuccess(results);
-                                    }
-                                });
+                geocodingBuilder.findNameByLocation(location,
+                        new ReverseGeocodingUpdatedListener() {
+                            @Override
+                            public void onAllProvidersFailed() {
+                                emitter.onError(new RuntimeException("All providers failed"));
+                            }
+
+                            @Override
+                            public void onAddressResolved(@NonNull Location original, @NonNull List<LocationAddress> results) {
+                                emitter.onSuccess(results);
+                            }
+                        });
             }
         });
     }
