@@ -28,6 +28,7 @@ import com.google.android.gms.location.GeofencingRequest;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.location.LocationController;
 import io.nlopez.smartlocation.location.LocationUpdatedListener;
 import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.utils.Nulls;
@@ -104,7 +106,7 @@ public class GeofencingFragment extends Fragment {
     private final View.OnClickListener mCurrentLocationListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-            SmartLocation.with(getContext())
+            final LocationController locationController = SmartLocation.with(getContext())
                     .location()
                     .config(LocationProviderParams.BEST_EFFORT_ONCE) // get location only once
                     .timeout(30000) // 30 seconds timeout
@@ -112,8 +114,7 @@ public class GeofencingFragment extends Fragment {
                         @Override
                         public void onLocationUpdated(final Location location) {
                             // Populate the text fields with the current location
-                            mLatitudeText.setText(NUMBER_FORMAT.format(location.getLatitude()));
-                            mLongitudeText.setText(NUMBER_FORMAT.format(location.getLongitude()));
+                            updateFromLocation(location);
                             reenableButton();
                         }
 
@@ -122,16 +123,28 @@ public class GeofencingFragment extends Fragment {
                             snackText("Unable to retrieve location");
                             reenableButton();
                         }
-
-                        private void reenableButton() {
-                            mCurrentLocationButton.setText("Current Location");
-                            mCurrentLocationButton.setEnabled(true);
-                        }
                     });
             mCurrentLocationButton.setText("Searching...");
             mCurrentLocationButton.setEnabled(false);
+
+            // If there is a last location we use that as a shortcut
+            final Location lastLocation = locationController.getLastLocation();
+            if (lastLocation != null) {
+                updateFromLocation(lastLocation);
+                locationController.stop();
+            }
         }
     };
+
+    private void updateFromLocation(@NotNull final Location location) {
+        mLatitudeText.setText(NUMBER_FORMAT.format(location.getLatitude()));
+        mLongitudeText.setText(NUMBER_FORMAT.format(location.getLongitude()));
+    }
+
+    private void reenableButton() {
+        mCurrentLocationButton.setText("Current Location");
+        mCurrentLocationButton.setEnabled(true);
+    }
 
     private final TextWatcher mLatLngTextWatcher = new TextWatcher() {
         @Override
@@ -177,6 +190,14 @@ public class GeofencingFragment extends Fragment {
         mEnterRadioButton = view.findViewById(R.id.radio_enter);
         mExitRadioButton = view.findViewById(R.id.radio_exit);
         mDwellRadioButton = view.findViewById(R.id.radio_dwell);
+        NUMBER_FORMAT.setMaximumFractionDigits(6);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SmartLocation.with(getContext()).location().stop();
+        reenableButton();
     }
 
     @Override
