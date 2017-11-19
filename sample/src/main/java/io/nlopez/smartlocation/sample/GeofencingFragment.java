@@ -1,6 +1,7 @@
 package io.nlopez.smartlocation.sample;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.location.Location;
@@ -9,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -18,17 +20,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.RadioButton;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.GeofencingRequest;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.utils.Nulls;
 
 public class GeofencingFragment extends Fragment {
     private static final Pattern LATITUDE_REGEX =
@@ -40,6 +45,9 @@ public class GeofencingFragment extends Fragment {
     private EditText mLatitudeText;
     private EditText mLongitudeText;
     private Button mAddGeofenceButton;
+    private RadioButton mEnterRadioButton;
+    private RadioButton mExitRadioButton;
+    private RadioButton mDwellRadioButton;
     private PendingIntent mGeofencePendingIntent;
 
     private final View.OnClickListener mAddClickListener = new View.OnClickListener() {
@@ -55,13 +63,21 @@ public class GeofencingFragment extends Fragment {
             location.setLongitude(longitude);
 
             // Prepare the geofence
+            final int transition;
+            if (mEnterRadioButton.isChecked()) {
+                transition = Geofence.GEOFENCE_TRANSITION_ENTER;
+            } else if (mExitRadioButton.isChecked()) {
+                transition = Geofence.GEOFENCE_TRANSITION_EXIT;
+            } else {
+                transition = Geofence.GEOFENCE_TRANSITION_DWELL;
+            }
             final List<Geofence> geofenceList = new ArrayList<>();
             geofenceList.add(new Geofence.Builder()
                     .setRequestId("test")
                     .setCircularRegion(latitude, longitude, 100)
                     .setLoiteringDelay(30000) // half a minute
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL)
-                    .setExpirationDuration(60) // 1 minute
+                    .setTransitionTypes(transition)
+                    .setExpirationDuration(600) // 10 minutes
                     .build());
 
             // Prepare the request
@@ -74,7 +90,7 @@ public class GeofencingFragment extends Fragment {
             SmartLocation.with(getContext())
                     .geofencing()
                     .addGeofences(request, getGeofencePendingIntent());
-            snackText("Geofence added (valid for 1 minute, 100 meters diameter)");
+            snackText("Geofence added (valid for 10 minutes, 100 meters diameter, " + getGeofenceTransitionString(transition) + ")");
         }
     };
 
@@ -117,6 +133,9 @@ public class GeofencingFragment extends Fragment {
         mLongitudeText = view.findViewById(R.id.longitude);
         mLatitudeText.addTextChangedListener(mLatLngTextWatcher);
         mLongitudeText.addTextChangedListener(mLatLngTextWatcher);
+        mEnterRadioButton = view.findViewById(R.id.radio_enter);
+        mExitRadioButton = view.findViewById(R.id.radio_exit);
+        mDwellRadioButton = view.findViewById(R.id.radio_dwell);
     }
 
     @Override
@@ -143,11 +162,26 @@ public class GeofencingFragment extends Fragment {
     }
 
     private void snackText(@NonNull String message) {
-        Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(Nulls.notNull(getView()), message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @NotNull
+    private static String getGeofenceTransitionString(int transition) {
+        switch (transition) {
+            case Geofence.GEOFENCE_TRANSITION_DWELL:
+                return "dwell";
+            case Geofence.GEOFENCE_TRANSITION_ENTER:
+                return "enter";
+            case Geofence.GEOFENCE_TRANSITION_EXIT:
+                return "exit";
+            default:
+                return "¯\\_(ツ)_/¯";
+        }
     }
 
     public static class GeofenceIntentService extends IntentService {
         private static final String TAG = GeofenceIntentService.class.getSimpleName();
+        private static final int NOTIFICATION_ID = 1234;
 
         public GeofenceIntentService() {
             super("geofence_svc");
@@ -164,19 +198,30 @@ public class GeofencingFragment extends Fragment {
             // Get the transition type.
             final int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
-            // Test that the reported transition was of interest.
-            if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-                    geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+            // Create a notification to display the geofence intent
+            final NotificationCompat.Builder notificationBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_geofence_notification)
+                            .setContentTitle("SmartLocation Geofence Alert");
 
-                // Get the geofences that were triggered. A single event can trigger
-                // multiple geofences.
-                final List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-                // TODO better stuff here
-                Toast.makeText(this, "Geofence triggered!", Toast.LENGTH_LONG).show();
-            } else {
-                // Log the error.
-                Log.e(TAG, "Unsupported geofence transition");
+            final StringBuilder builder = new StringBuilder();
+            builder.append("[");
+            builder.append(getGeofenceTransitionString(geofenceTransition));
+            builder.append("]");
+
+            // Get the geofences that were triggered. A single event can trigger
+            // multiple geofences.
+            for (final Geofence geofence : geofencingEvent.getTriggeringGeofences()) {
+                builder.append(" ");
+                builder.append(geofence.getRequestId());
             }
+            notificationBuilder.setContentText(builder);
+
+            // Gets an instance of the NotificationManager service
+            final NotificationManager notificationManager =
+                    Nulls.notNull((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
+            // Builds the notification and issues it.
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
         }
     }
 }

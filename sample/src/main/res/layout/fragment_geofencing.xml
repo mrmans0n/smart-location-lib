@@ -58,4 +58,32 @@
         app:layout_constraintStart_toEndOf="@+id/longitude"
         app:layout_constraintTop_toTopOf="@+id/longitude" />
 
+    <RadioGroup
+        android:id="@+id/transitions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="@+id/longitude"
+        app:layout_constraintTop_toBottomOf="@+id/longitude">
+
+        <RadioButton
+            android:id="@+id/radio_enter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enter" />
+
+        <RadioButton
+            android:id="@+id/radio_exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Exit" />
+
+        <RadioButton
+            android:id="@+id/radio_dwell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Dwell" />
+    </RadioGroup>
+
 </android.support.constraint.ConstraintLayout>
