@@ -28,11 +28,15 @@ import com.google.android.gms.location.GeofencingRequest;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.location.LocationUpdatedListener;
+import io.nlopez.smartlocation.location.config.LocationProviderParams;
 import io.nlopez.smartlocation.utils.Nulls;
 
 public class GeofencingFragment extends Fragment {
@@ -42,9 +46,12 @@ public class GeofencingFragment extends Fragment {
     private static final Pattern LONGITUDE_REGEX =
             Pattern.compile("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$");
 
+    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(Locale.US);
+
     private EditText mLatitudeText;
     private EditText mLongitudeText;
     private Button mAddGeofenceButton;
+    private Button mCurrentLocationButton;
     private RadioButton mEnterRadioButton;
     private RadioButton mExitRadioButton;
     private RadioButton mDwellRadioButton;
@@ -94,6 +101,38 @@ public class GeofencingFragment extends Fragment {
         }
     };
 
+    private final View.OnClickListener mCurrentLocationListener = new View.OnClickListener() {
+        @Override
+        public void onClick(final View view) {
+            SmartLocation.with(getContext())
+                    .location()
+                    .config(LocationProviderParams.BEST_EFFORT_ONCE) // get location only once
+                    .timeout(30000) // 30 seconds timeout
+                    .start(new LocationUpdatedListener() {
+                        @Override
+                        public void onLocationUpdated(final Location location) {
+                            // Populate the text fields with the current location
+                            mLatitudeText.setText(NUMBER_FORMAT.format(location.getLatitude()));
+                            mLongitudeText.setText(NUMBER_FORMAT.format(location.getLongitude()));
+                            reenableButton();
+                        }
+
+                        @Override
+                        public void onAllProvidersFailed() {
+                            snackText("Unable to retrieve location");
+                            reenableButton();
+                        }
+
+                        private void reenableButton() {
+                            mCurrentLocationButton.setText("Current Location");
+                            mCurrentLocationButton.setEnabled(true);
+                        }
+                    });
+            mCurrentLocationButton.setText("Searching...");
+            mCurrentLocationButton.setEnabled(false);
+        }
+    };
+
     private final TextWatcher mLatLngTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -129,6 +168,8 @@ public class GeofencingFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mAddGeofenceButton = view.findViewById(R.id.add_geofence_button);
         mAddGeofenceButton.setOnClickListener(mAddClickListener);
+        mCurrentLocationButton = view.findViewById(R.id.current_location_button);
+        mCurrentLocationButton.setOnClickListener(mCurrentLocationListener);
         mLatitudeText = view.findViewById(R.id.latitude);
         mLongitudeText = view.findViewById(R.id.longitude);
         mLatitudeText.addTextChangedListener(mLatLngTextWatcher);

@@ -50,13 +50,24 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="0dp"
         android:enabled="false"
-        android:text="Search"
+        android:text="Add"
         app:layout_constraintBottom_toBottomOf="@+id/longitude"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/longitude"
         app:layout_constraintTop_toTopOf="@+id/longitude" />
+
+    <Button
+        android:id="@+id/current_location_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:text="Current Location"
+        app:layout_constraintBottom_toBottomOf="@+id/latitude"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/latitude"
+        app:layout_constraintTop_toTopOf="@+id/latitude" />
 
     <RadioGroup
         android:id="@+id/transitions"
