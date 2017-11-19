@@ -2,7 +2,9 @@ package io.nlopez.smartlocation.sample;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -14,7 +16,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import io.nlopez.smartlocation.SmartLocation;
@@ -23,6 +29,10 @@ import io.nlopez.smartlocation.geocoding.ReverseGeocodingUpdatedListener;
 import io.nlopez.smartlocation.geocoding.common.LocationAddress;
 import io.nlopez.smartlocation.geocoding.providers.android.AndroidGeocodingProviderFactory;
 import io.nlopez.smartlocation.geocoding.providers.googlemaps.GoogleMapsApiGeocodingProviderFactory;
+import io.nlopez.smartlocation.location.LocationController;
+import io.nlopez.smartlocation.location.LocationUpdatedListener;
+import io.nlopez.smartlocation.location.config.LocationProviderParams;
+import io.nlopez.smartlocation.utils.Nulls;
 
 public class GeocodingFragment extends Fragment {
 
@@ -36,6 +46,8 @@ public class GeocodingFragment extends Fragment {
     private static final Pattern LONGITUDE_REGEX =
             Pattern.compile("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$");
 
+    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(Locale.US);
+
     private EditText mDirectEditText;
     private TextView mDirectResultText;
     private Button mDirectStartButton;
@@ -43,6 +55,7 @@ public class GeocodingFragment extends Fragment {
     private EditText mInverseLongitudeText;
     private Button mInverseStartButton;
     private TextView mInverseResultText;
+    private Button mCurrentLocationButton;
 
     private final View.OnClickListener mDirectSearchClickListener = new View.OnClickListener() {
         @Override
@@ -123,6 +136,7 @@ public class GeocodingFragment extends Fragment {
             mInverseResultText.setText("Searching...");
         }
     };
+
     private final TextWatcher mInverseTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -148,6 +162,49 @@ public class GeocodingFragment extends Fragment {
         }
     };
 
+    private final View.OnClickListener mCurrentLocationListener = new View.OnClickListener() {
+        @Override
+        public void onClick(final View view) {
+            final LocationController locationController = SmartLocation.with(getContext())
+                    .location()
+                    .config(LocationProviderParams.BEST_EFFORT_ONCE) // get location only once
+                    .timeout(30000) // 30 seconds timeout
+                    .start(new LocationUpdatedListener() {
+                        @Override
+                        public void onLocationUpdated(final Location location) {
+                            // Populate the text fields with the current location
+                            updateFromLocation(location);
+                            reenableButton();
+                        }
+
+                        @Override
+                        public void onAllProvidersFailed() {
+                            snackText("Unable to retrieve location");
+                            reenableButton();
+                        }
+                    });
+            mCurrentLocationButton.setText("Searching...");
+            mCurrentLocationButton.setEnabled(false);
+
+            // If there is a last location we use that as a shortcut
+            final Location lastLocation = locationController.getLastLocation();
+            if (lastLocation != null) {
+                updateFromLocation(lastLocation);
+                locationController.stop();
+            }
+        }
+    };
+
+    private void updateFromLocation(@NotNull final Location location) {
+        mInverseLatitudeText.setText(NUMBER_FORMAT.format(location.getLatitude()));
+        mInverseLongitudeText.setText(NUMBER_FORMAT.format(location.getLongitude()));
+    }
+
+    private void reenableButton() {
+        mCurrentLocationButton.setText("Current Location");
+        mCurrentLocationButton.setEnabled(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -171,6 +228,17 @@ public class GeocodingFragment extends Fragment {
         mInverseResultText = view.findViewById(R.id.inverse_result);
         mInverseLatitudeText.addTextChangedListener(mInverseTextWatcher);
         mInverseLongitudeText.addTextChangedListener(mInverseTextWatcher);
+
+        // Current location
+        mCurrentLocationButton = view.findViewById(R.id.current_location_button);
+        mCurrentLocationButton.setOnClickListener(mCurrentLocationListener);
+        NUMBER_FORMAT.setMaximumFractionDigits(6);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SmartLocation.with(getContext()).location().stop();
     }
 
     @Override
@@ -184,5 +252,9 @@ public class GeocodingFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    private void snackText(@NonNull String message) {
+        Snackbar.make(Nulls.notNull(getView()), message, Snackbar.LENGTH_LONG).show();
     }
 }
