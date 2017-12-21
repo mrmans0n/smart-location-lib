@@ -6,5 +6,5 @@
     <string name="navigation_location">Location</string>
     <string name="navigation_geocoding">Geocoding</string>
     <string name="title_notifications">Notifications</string>
-    <string name="naviation_geofencing">Geofencing</string>
+    <string name="navigation_geofencing">Geofencing</string>
 </resources>
