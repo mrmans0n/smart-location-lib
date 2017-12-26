@@ -2,8 +2,8 @@ package io.nlopez.smartlocation.geocoding;
 
 import android.content.Context;
 import android.location.Location;
+import android.support.annotation.NonNull;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -75,8 +75,8 @@ public class ReverseGeocodingControllerTest {
         verify(mOnAllProvidersFailed).onAllProvidersFailed();
     }
 
-    @NotNull
-    private ReverseGeocodingController createControllerForProviders(@NotNull GeocodingProviderFactory... providers) {
+    @NonNull
+    private ReverseGeocodingController createControllerForProviders(@NonNull GeocodingProviderFactory... providers) {
         return new ReverseGeocodingController(mContext, mLocation, MAX_RESULTS, mOnReverseGeocodingListener, mOnAllProvidersFailed, Arrays.asList(providers), mLogger);
     }
 }

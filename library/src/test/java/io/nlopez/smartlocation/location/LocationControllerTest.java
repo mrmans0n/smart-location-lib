@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -118,7 +117,7 @@ public class LocationControllerTest {
     }
 
     @NonNull
-    private LocationController createControllerForProviders(@NotNull LocationProviderFactory... providers) {
+    private LocationController createControllerForProviders(@NonNull LocationProviderFactory... providers) {
         return new LocationController(
                 mContext,
                 mOnLocationUpdatedListener,

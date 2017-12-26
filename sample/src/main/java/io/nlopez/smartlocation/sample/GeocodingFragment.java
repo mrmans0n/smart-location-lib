@@ -16,8 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -195,7 +193,7 @@ public class GeocodingFragment extends Fragment {
         }
     };
 
-    private void updateFromLocation(@NotNull final Location location) {
+    private void updateFromLocation(@NonNull final Location location) {
         mInverseLatitudeText.setText(NUMBER_FORMAT.format(location.getLatitude()));
         mInverseLongitudeText.setText(NUMBER_FORMAT.format(location.getLongitude()));
     }

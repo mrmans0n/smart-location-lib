@@ -1,8 +1,8 @@
 package io.nlopez.smartlocation.geocoding;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -74,8 +74,8 @@ public class GeocodingControllerTest {
         verify(mOnAllProvidersFailed).onAllProvidersFailed();
     }
 
-    @NotNull
-    private GeocodingController createControllerForProviders(@NotNull GeocodingProviderFactory... providers) {
+    @NonNull
+    private GeocodingController createControllerForProviders(@NonNull GeocodingProviderFactory... providers) {
         return new GeocodingController(mContext, NAME, MAX_RESULTS, mOnGeocodingListener, mOnAllProvidersFailed, Arrays.asList(providers), mLogger);
     }
 }

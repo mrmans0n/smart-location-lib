@@ -26,9 +26,6 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.GeofencingRequest;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -136,7 +133,7 @@ public class GeofencingFragment extends Fragment {
         }
     };
 
-    private void updateFromLocation(@NotNull final Location location) {
+    private void updateFromLocation(@NonNull final Location location) {
         mLatitudeText.setText(NUMBER_FORMAT.format(location.getLatitude()));
         mLongitudeText.setText(NUMBER_FORMAT.format(location.getLongitude()));
     }
@@ -227,7 +224,7 @@ public class GeofencingFragment extends Fragment {
         Snackbar.make(Nulls.notNull(getView()), message, Snackbar.LENGTH_LONG).show();
     }
 
-    @NotNull
+    @NonNull
     private static String getGeofenceTransitionString(int transition) {
         switch (transition) {
             case Geofence.GEOFENCE_TRANSITION_DWELL:

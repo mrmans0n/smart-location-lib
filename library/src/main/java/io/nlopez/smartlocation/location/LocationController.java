@@ -8,8 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,7 +26,7 @@ public class LocationController implements Provider.StatusListener {
     @NonNull private final OnLocationUpdatedListener mUpdateListener;
     @NonNull private final LocationProviderParams mParams;
     @NonNull private final OnAllProvidersFailed mListener;
-    @NotNull private final Handler mHandler;
+    @NonNull private final Handler mHandler;
     @Nullable private LocationProvider mCurrentProvider;
     private final long mTimeout;
 

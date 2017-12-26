@@ -5,6 +5,8 @@ package io.nlopez.smartlocation.common;
  */
 public interface Store<T> {
     T get(String key);
+
     void put(String key, T value);
+
     void remove(String key);
 }

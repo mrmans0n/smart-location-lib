@@ -7,8 +7,6 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import io.nlopez.smartlocation.utils.Nulls;
-
 import static io.nlopez.smartlocation.utils.Nulls.notNull;
 
 public class LocationHelpers {

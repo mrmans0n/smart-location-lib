@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.GeofencingRequest;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -78,7 +77,7 @@ public class GeofencingAddControllerTest {
     }
 
     @NonNull
-    private GeofencingAddController createControllerForProviders(@NotNull GeofencingProviderFactory... providers) {
+    private GeofencingAddController createControllerForProviders(@NonNull GeofencingProviderFactory... providers) {
         return new GeofencingAddController(
                 mContext,
                 mOnAllProvidersFailed,
