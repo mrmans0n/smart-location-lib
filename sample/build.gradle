@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion slCompileSdkVersion
+    buildToolsVersion slBuildToolsVersion
 
     defaultConfig {
         applicationId "io.nlopez.smartlocation"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion slTargetSdkVersion
         versionCode 100
         versionName "1.0.0"
         vectorDrawables.useSupportLibrary = true
@@ -20,12 +20,12 @@ repositories {
 }
 
 dependencies {
-    compile project(':library')
-    compile project(':geocoding-googlemaps')
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.android.support:design:26.1.0'
-    compile 'com.android.support:support-vector-drawable:26.1.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation project(':library')
+    implementation project(':geocoding-googlemaps')
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    implementation 'com.android.support:appcompat-v7:27.0.2'
+    implementation 'com.android.support:design:27.0.2'
+    implementation 'com.android.support:support-vector-drawable:27.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }

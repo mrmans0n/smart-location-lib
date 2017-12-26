@@ -3,6 +3,11 @@
 buildscript {
     ext.smartLocationVersion = "4.0.0-SNAPSHOT"
 
+    ext.slMinSdkVersion = 14
+    ext.slCompileSdkVersion = 27
+    ext.slTargetSdkVersion = 27
+    ext.slBuildToolsVersion = "27.0.1"
+
     // Common dependencies
     ext.robolectricVersion = "3.5.1"
     ext.mockitoVersion = "2.12.0"
@@ -16,6 +21,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.0.1'
     }
 }

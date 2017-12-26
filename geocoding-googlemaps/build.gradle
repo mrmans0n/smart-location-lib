@@ -20,24 +20,24 @@ dependencies {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         google()
     }
-    compile project(':library')
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
-    compile 'com.squareup.okhttp3:okhttp:3.8.0'
+    implementation project(':library')
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
 
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.robolectric:robolectric:$robolectricVersion"
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion slCompileSdkVersion
+    buildToolsVersion slBuildToolsVersion
 
     buildTypes {
         defaultConfig {
-            minSdkVersion 14
-            targetSdkVersion 26
+            minSdkVersion slMinSdkVersion
+            targetSdkVersion slTargetSdkVersion
             versionCode 20006
             versionName version
         }
@@ -47,7 +47,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
-
 }
 
 android.libraryVariants
