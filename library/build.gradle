@@ -19,8 +19,8 @@ dependencies {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    implementation 'com.google.android.gms:play-services-location:12.0.0'
-    implementation 'com.android.support:support-annotations:27.1.0'
+    implementation 'com.google.android.gms:play-services-location:11.8.0'
+    implementation 'com.android.support:support-annotations:27.0.2'
     implementation 'org.jetbrains:annotations:15.0'
 
     // Test dependencies
