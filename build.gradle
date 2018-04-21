@@ -6,7 +6,7 @@ buildscript {
     ext.slMinSdkVersion = 14
     ext.slCompileSdkVersion = 27
     ext.slTargetSdkVersion = 27
-    ext.slBuildToolsVersion = "27.0.1"
+    ext.slBuildToolsVersion = "27.0.3"
 
     // Common dependencies
     ext.robolectricVersion = "3.5.1"
@@ -21,6 +21,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.1'
     }
 }
