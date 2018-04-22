@@ -16,7 +16,7 @@ You should add this to your dependencies:
 compile 'io.nlopez.smartlocation:library:4.0.0'
 ```
 
-Google Play Services compatible version: 11.8.0
+Google Play Services compatible version: 15.0.0
 
 If you want the rxjava2 wrappers, these are now in a separate dependency. Just add this new dependency as well:
 
@@ -280,7 +280,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2013-2017 Nacho Lopez
+Copyright (c) 2013-2018 Nacho Lopez
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
