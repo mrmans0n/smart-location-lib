@@ -1,9 +1,3 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-}
-
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
@@ -18,6 +12,7 @@ dependencies {
         google()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        jcenter()
     }
     implementation 'com.google.android.gms:play-services-location:15.0.0'
     implementation 'com.android.support:support-annotations:27.1.1'
