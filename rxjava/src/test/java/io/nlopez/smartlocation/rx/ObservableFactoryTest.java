@@ -120,5 +120,10 @@ public class ObservableFactoryTest {
         public void fakeEmit(Location location) {
             mListener.onLocationUpdated(location);
         }
+
+        @Override
+        public void destroy() {
+
+        }
     }
 }

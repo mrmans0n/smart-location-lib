@@ -61,6 +61,11 @@ public class LocationGooglePlayServicesWithFallbackProvider implements LocationP
     }
 
     @Override
+    public void destroy() {
+        context = null;
+    }
+
+    @Override
     public Location getLastLocation() {
         return provider.getLastLocation();
     }

@@ -154,7 +154,7 @@ public class SmartLocation {
 
         private static final Map<Context, LocationProvider> MAPPING = new WeakHashMap<>();
 
-        private final SmartLocation smartLocation;
+        private SmartLocation smartLocation;
         private LocationParams params;
         private LocationProvider provider;
         private boolean oneFix;
@@ -211,6 +211,12 @@ public class SmartLocation {
 
         public void stop() {
             provider.stop();
+        }
+
+        public void destroy() {
+            provider = null;
+            params = null;
+            smartLocation = null;
         }
     }
 

@@ -39,4 +39,9 @@ public class MockLocationProvider implements LocationProvider {
     public void fakeEmitLocation(Location location) {
         listener.onLocationUpdated(location);
     }
+
+    @Override
+    public void destroy() {
+
+    }
 }
