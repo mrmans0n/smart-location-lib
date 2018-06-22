@@ -48,17 +48,15 @@ android {
 
 }
 
-//android.libraryVariants
-//publishing {
-//    publications {
-//        maven(MavenPublication) {
-//            artifact ("build/libs/SmartLocation-RxJavaExtension-${version}.aar") {
-//                builtBy assembleRelease
-//            }
-//            artifactId 'rx'
-//        }
-//    }
-//}
+android.libraryVariants
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact "build/libs/SmartLocation-RxJavaExtension-${version}.aar"
+            artifactId 'rx'
+        }
+    }
+}
 
 def isReleaseBuild() {
     return version.contains("SNAPSHOT") == false
