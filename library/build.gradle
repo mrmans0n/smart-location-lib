@@ -51,7 +51,9 @@ android.libraryVariants
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact "build/libs/SmartLocation-${version}.aar"
+            artifact ("build/libs/SmartLocation-${version}.aar") {
+                builtBy assembleRelease
+            }
             artifactId 'library'
         }
     }
