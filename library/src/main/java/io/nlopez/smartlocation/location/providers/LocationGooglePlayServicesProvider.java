@@ -208,6 +208,8 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
     public void destroy() {
         context = null;
         listener = null;
+        googlePlayServicesListener = null;
+        serviceListener = null;
     }
 
     @Override

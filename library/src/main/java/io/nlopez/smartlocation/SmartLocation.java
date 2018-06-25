@@ -214,6 +214,7 @@ public class SmartLocation {
         }
 
         public void destroy() {
+            provider.destroy();
             provider = null;
             params = null;
             smartLocation = null;
