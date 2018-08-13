@@ -19,12 +19,12 @@ dependencies {
         maven { url "https://maven.google.com" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:11.4.2'
-    compile 'com.android.support:support-annotations:26.1.0'
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.robolectric:robolectric:$robolectricVersion"
-    testCompile "org.robolectric:robolectric-shadows:$robolectricVersion"
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    implementation 'com.google.android.gms:play-services-location:11.4.2'
+    implementation 'com.android.support:support-annotations:26.1.0'
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "org.robolectric:robolectric-shadows:$robolectricVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 
 android {
