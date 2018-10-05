@@ -93,10 +93,10 @@ If you want to add some custom parameters for the distances or times involved in
 
 There are some providers shipped with the library.
 
-* `LocationGooglePlayServicesProvider` (default). This will use the Fused Location Provider.
+* `LocationGooglePlayServicesWithFallbackProvider` (default). This one will use the Fused Location Provider if it's present, or the LocationManager as fallback if it's not.
+* `LocationGooglePlayServicesProvider` This will use the Fused Location Provider.
 * `LocationManagerProvider` This is the legacy implementation that uses LocationManager.
 * `LocationBasedOnActivityProvider` This allows you to use the activity recognition system to modify the location strategy depending on the activity changes (if the user is walking, running, on a car, a bike...).
-* `LocationGooglePlayServicesWithFallbackProvider` This one will use the Fused Location Provider if it's present, or the LocationManager as fallback if it's not.
 * `MultiFallbackLocationProvider` This lets you create your own "fallback provider" if the underlying location service is not available. See "Multiple Fallback Provider" below for details.
 
 You can implement your own if you want. That's ideal if you wanted to use a mock one for testing or something like that, or add support to another possible provider.
