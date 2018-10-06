@@ -90,7 +90,7 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
 
     private LocationRequest createRequest(LocationParams params, boolean singleUpdate) {
         LocationRequest request = LocationRequest.create()
-                .setFastestInterval(params.getInterval())
+                .setFastestInterval(params.getFastestInterval())
                 .setInterval(params.getInterval())
                 .setSmallestDisplacement(params.getDistance());
 
