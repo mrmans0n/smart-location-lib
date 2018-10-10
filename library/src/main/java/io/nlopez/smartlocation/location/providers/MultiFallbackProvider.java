@@ -125,6 +125,14 @@ public class MultiFallbackProvider implements LocationProvider {
         }
     }
 
+    @Override
+    public void destroy() {
+        context = null;
+        if (currentProvider != null) {
+            currentProvider.destroy();
+        }
+    }
+
     /**
      * Builder class for the {@link MultiFallbackProvider}.
      */

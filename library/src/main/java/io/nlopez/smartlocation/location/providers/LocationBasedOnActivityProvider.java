@@ -69,4 +69,9 @@ public class LocationBasedOnActivityProvider implements LocationProvider, OnActi
     public interface LocationBasedOnActivityListener {
         public LocationParams locationParamsForActivity(DetectedActivity detectedActivity);
     }
+
+    @Override
+    public void destroy() {
+        locationProvider.destroy();
+    }
 }

@@ -79,4 +79,9 @@ public class TestServiceProvider implements ServiceLocationProvider {
             listener.onConnectionFailed();
         }
     }
+
+    @Override
+    public void destroy() {
+
+    }
 }

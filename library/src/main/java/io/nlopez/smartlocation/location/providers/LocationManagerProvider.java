@@ -173,4 +173,9 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
     public void onProviderDisabled(String provider) {
 
     }
+
+    @Override
+    public void destroy() {
+        mContext = null;
+    }
 }

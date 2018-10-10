@@ -205,6 +205,14 @@ public class LocationGooglePlayServicesProvider implements ServiceLocationProvid
     }
 
     @Override
+    public void destroy() {
+        context = null;
+        listener = null;
+        googlePlayServicesListener = null;
+        serviceListener = null;
+    }
+
+    @Override
     public ServiceConnectionListener getServiceListener() {
         return serviceListener;
     }
