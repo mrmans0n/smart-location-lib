@@ -62,8 +62,17 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
             }
             locationManager.requestSingleUpdate(criteria, this, Looper.getMainLooper());
         } else {
+            String provider = locationManager.getBestProvider(criteria, true);
+            if (provider == null) {
+                logger.e("No provider found for criteria %s", criteria.toString());
+                return;
+            }
             locationManager.requestLocationUpdates(
-                    params.getInterval(), params.getDistance(), criteria, this, Looper.getMainLooper());
+                provider,
+                params.getInterval(),
+                params.getDistance(),
+                this,  Looper.getMainLooper()
+            );
         }
     }
 
