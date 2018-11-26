@@ -114,6 +114,10 @@ public class SmartLocation {
     public GeocodingControl geocoding() {
         return geocoding(new AndroidGeocodingProvider());
     }
+    public GeocodingControl geocoding(Locale locale) {
+        return geocoding(new AndroidGeocodingProvider(locale));
+    }
+    
 
     /**
      * @param geocodingProvider geocoding provider we want to use
