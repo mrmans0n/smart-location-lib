@@ -10,6 +10,7 @@ import com.google.android.gms.location.DetectedActivity;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.Locale;
 
 import io.nlopez.smartlocation.activity.ActivityProvider;
 import io.nlopez.smartlocation.activity.config.ActivityParams;
@@ -114,6 +115,10 @@ public class SmartLocation {
     public GeocodingControl geocoding() {
         return geocoding(new AndroidGeocodingProvider());
     }
+    public GeocodingControl geocoding(Locale locale) {
+        return geocoding(new AndroidGeocodingProvider(locale));
+    }
+    
 
     /**
      * @param geocodingProvider geocoding provider we want to use
