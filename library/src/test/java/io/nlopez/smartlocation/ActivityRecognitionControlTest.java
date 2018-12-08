@@ -73,8 +73,7 @@ public class ActivityRecognitionControlTest {
     private SmartLocation.ActivityRecognitionControl createActivityRecognitionControl() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
         SmartLocation smartLocation = new SmartLocation.Builder(context).preInitialize(false).build();
-        SmartLocation.ActivityRecognitionControl activityRecognitionControl = smartLocation.activity(mockProvider);
-        return activityRecognitionControl;
+        return smartLocation.activity(mockProvider);
     }
 
 }
