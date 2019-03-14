@@ -33,13 +33,11 @@ import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProv
 
 public class MainActivity extends Activity implements OnLocationUpdatedListener, OnActivityUpdatedListener, OnGeofencingTransitionListener {
 
+    private static final int LOCATION_PERMISSION_ID = 1001;
     private TextView locationText;
     private TextView activityText;
     private TextView geofenceText;
-
     private LocationGooglePlayServicesProvider provider;
-
-    private static final int LOCATION_PERMISSION_ID = 1001;
 
     @Override
     public void onCreate(Bundle bundle) {

@@ -1,6 +1,5 @@
 package io.nlopez.smartlocation.geocoding.providers;
 
-import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +7,9 @@ import android.content.IntentFilter;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +44,32 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
     private HashMap<Location, Integer> fromLocationList;
     private Context context;
     private Logger logger;
+    private BroadcastReceiver directReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (BROADCAST_DIRECT_GEOCODING_ACTION.equals(intent.getAction())) {
+                logger.d("sending new direct geocoding response");
+                if (geocodingListener != null) {
+                    final String name = intent.getStringExtra(NAME_ID);
+                    final ArrayList<LocationAddress> results = intent.getParcelableArrayListExtra(RESULT_ID);
+                    geocodingListener.onLocationResolved(name, results);
+                }
+            }
+        }
+    };
+    private BroadcastReceiver reverseReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (BROADCAST_REVERSE_GEOCODING_ACTION.equals(intent.getAction())) {
+                logger.d("sending new reverse geocoding response");
+                if (reverseGeocodingListener != null) {
+                    final Location location = intent.getParcelableExtra(LOCATION_ID);
+                    final ArrayList<Address> results = (ArrayList<Address>) intent.getSerializableExtra(RESULT_ID);
+                    reverseGeocodingListener.onAddressResolved(location, results);
+                }
+            }
+        }
+    };
 
     public AndroidGeocodingProvider() {
         this(Locale.getDefault());
@@ -99,7 +127,12 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
                 context.registerReceiver(reverseReceiver, reverseFilter);
                 serviceIntent.putExtra(REVERSE_GEOCODING_ID, fromLocationList);
             }
-            context.startService(serviceIntent);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(serviceIntent);
+            } else {
+                context.startService(serviceIntent);
+            }
 
             // Clear hashmaps so they don't stay added for next invocations
             fromNameList.clear();
@@ -122,45 +155,13 @@ public class AndroidGeocodingProvider implements GeocodingProvider {
         }
     }
 
-    private BroadcastReceiver directReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (BROADCAST_DIRECT_GEOCODING_ACTION.equals(intent.getAction())) {
-                logger.d("sending new direct geocoding response");
-                if (geocodingListener != null) {
-                    final String name = intent.getStringExtra(NAME_ID);
-                    final ArrayList<LocationAddress> results = intent.getParcelableArrayListExtra(RESULT_ID);
-                    geocodingListener.onLocationResolved(name, results);
-                }
-            }
-        }
-    };
-
-    private BroadcastReceiver reverseReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (BROADCAST_REVERSE_GEOCODING_ACTION.equals(intent.getAction())) {
-                logger.d("sending new reverse geocoding response");
-                if (reverseGeocodingListener != null) {
-                    final Location location = intent.getParcelableExtra(LOCATION_ID);
-                    final ArrayList<Address> results = (ArrayList<Address>) intent.getSerializableExtra(RESULT_ID);
-                    reverseGeocodingListener.onAddressResolved(location, results);
-                }
-            }
-        }
-    };
-
-
-    public static class AndroidGeocodingService extends IntentService {
+    public static class AndroidGeocodingService extends JobIntentService {
 
         private Geocoder geocoder;
 
-        public AndroidGeocodingService() {
-            super(AndroidGeocodingService.class.getSimpleName());
-        }
-
         @Override
-        protected void onHandleIntent(Intent intent) {
+        protected void onHandleWork(@NonNull Intent intent) {
+
             final Locale locale = (Locale) intent.getSerializableExtra(LOCALE_ID);
 
             if (locale == null) {

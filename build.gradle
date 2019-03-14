@@ -5,16 +5,17 @@ buildscript {
 
     // Common dependencies
     ext.robolectricVersion = "3.1"
-    ext.mockitoVersion = "2.0.86-beta"
+    ext.mockitoVersion = "2.25.0"
     ext.junitVersion = "4.12"
 
     repositories {
         mavenCentral()
         maven { url "https://maven.google.com" }
         jcenter()
+        google()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-rc2'
+        classpath 'com.android.tools.build:gradle:3.3.2'
     }
 }
