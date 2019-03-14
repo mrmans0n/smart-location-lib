@@ -6,10 +6,6 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'maven-publish'
-apply plugin: 'maven'
-apply plugin: 'signing'
-
 
 version smartLocationVersion
 group 'io.nlopez.smartlocation'
@@ -19,7 +15,6 @@ dependencies {
         mavenCentral()
         google()
         maven { url "https://maven.google.com" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     api 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.android.support:support-annotations:28.0.0'
@@ -35,7 +30,7 @@ android {
 
     buildTypes {
         defaultConfig {
-            minSdkVersion 14
+            minSdkVersion 19
             targetSdkVersion 28
             versionCode 20006
             versionName version
@@ -47,73 +42,4 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
-}
-
-android.libraryVariants
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifact "build/libs/SmartLocation-${version}.aar"
-            artifactId 'library'
-        }
-    }
-}
-
-def isReleaseBuild() {
-    return version.contains("SNAPSHOT") == false
-}
-
-def getProperty(project, property) {
-    return project.hasProperty(property) ? project.property(property) : ""
-}
-
-signing {
-    required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-}
-
-uploadArchives {
-    configuration = configurations.archives
-    repositories.mavenDeployer {
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-        repository(url: getProperty(project, "sonatypeRepo")) {
-            authentication(userName: getProperty(project, "sonatypeUsername"),
-                    password: getProperty(project, "sonatypePassword"))
-        }
-        snapshotRepository(url: getProperty(project, "sonatypeSnapshotRepo")) {
-            authentication(userName: getProperty(project, "sonatypeUsername"),
-                    password: getProperty(project, "sonatypePassword"))
-        }
-
-        pom.project {
-            name 'Smart Location Library'
-            packaging 'aar'
-            description 'This library handles all the boilerplate and repetitive code used when playing with Locations in Android projects.'
-            url 'https://github.com/mrmans0n/smart-location-lib'
-            artifactId 'library'
-
-            scm {
-                url 'scm:git@github.com:mrmans0n/smart-location-lib.git'
-                connection 'scm:git@github.com:mrmans0n/smart-location-lib.git'
-                developerConnection 'scm:git@github.com:mrmans0n/smart-location-lib.git'
-            }
-
-            licenses {
-                license {
-                    name 'MIT license'
-                    url 'http://www.opensource.org/licenses/mit-license.php'
-                    distribution 'repo'
-                }
-            }
-
-            developers {
-                developer {
-                    id 'mrmans0n'
-                    name 'Nacho Lopez'
-                    email 'nacho@nlopez.io'
-                }
-            }
-        }
-    }
 }
