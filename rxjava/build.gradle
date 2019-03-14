@@ -6,10 +6,6 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'maven-publish'
-apply plugin: 'maven'
-apply plugin: 'signing'
-
 
 version smartLocationVersion
 group 'io.nlopez.smartlocation'
