@@ -1,43 +1,56 @@
 buildscript {
     repositories {
         mavenCentral()
+        google()
+        jcenter()
     }
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'maven-publish'
-apply plugin: 'maven'
-apply plugin: 'signing'
-
 
 version smartLocationVersion
 group 'io.nlopez.smartlocation'
 
 dependencies {
     repositories {
+        jcenter()
         mavenCentral()
+        google()
         maven { url "https://maven.google.com" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-    compile 'com.google.android.gms:play-services-location:11.4.2'
-    compile 'com.android.support:support-annotations:26.1.0'
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.robolectric:robolectric:$robolectricVersion"
-    testCompile "org.robolectric:robolectric-shadows:$robolectricVersion"
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    api 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.android.support:support-annotations:28.0.0'
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "org.robolectric:robolectric-shadows:$robolectricVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     buildTypes {
         defaultConfig {
-            minSdkVersion 14
-            targetSdkVersion 26
+            minSdkVersion 19
+            targetSdkVersion 28
             versionCode 20006
             versionName version
         }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+            minifyEnabled false
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        //If you want to continue even if errors found use following line
+        abortOnError false
     }
 
     compileOptions {
@@ -45,73 +58,4 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
-}
-
-android.libraryVariants
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifact "build/libs/SmartLocation-${version}.aar"
-            artifactId 'library'
-        }
-    }
-}
-
-def isReleaseBuild() {
-    return version.contains("SNAPSHOT") == false
-}
-
-def getProperty(project, property) {
-    return project.hasProperty(property) ? project.property(property) : ""
-}
-
-signing {
-    required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-}
-
-uploadArchives {
-    configuration = configurations.archives
-    repositories.mavenDeployer {
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-        repository(url: getProperty(project, "sonatypeRepo")) {
-            authentication(userName: getProperty(project, "sonatypeUsername"),
-                    password: getProperty(project, "sonatypePassword"))
-        }
-        snapshotRepository(url: getProperty(project, "sonatypeSnapshotRepo")) {
-            authentication(userName: getProperty(project, "sonatypeUsername"),
-                    password: getProperty(project, "sonatypePassword"))
-        }
-
-        pom.project {
-            name 'Smart Location Library'
-            packaging 'aar'
-            description 'This library handles all the boilerplate and repetitive code used when playing with Locations in Android projects.'
-            url 'https://github.com/mrmans0n/smart-location-lib'
-            artifactId 'library'
-
-            scm {
-                url 'scm:git@github.com:mrmans0n/smart-location-lib.git'
-                connection 'scm:git@github.com:mrmans0n/smart-location-lib.git'
-                developerConnection 'scm:git@github.com:mrmans0n/smart-location-lib.git'
-            }
-
-            licenses {
-                license {
-                    name 'MIT license'
-                    url 'http://www.opensource.org/licenses/mit-license.php'
-                    distribution 'repo'
-                }
-            }
-
-            developers {
-                developer {
-                    id 'mrmans0n'
-                    name 'Nacho Lopez'
-                    email 'nacho@nlopez.io'
-                }
-            }
-        }
-    }
 }

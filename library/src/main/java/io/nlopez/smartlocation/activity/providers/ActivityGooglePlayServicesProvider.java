@@ -1,7 +1,6 @@
 package io.nlopez.smartlocation.activity.providers;
 
 import android.app.Activity;
-import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -35,7 +35,7 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
     private static final String GMS_ID = "GMS";
     private static final String BROADCAST_INTENT_ACTION = ActivityGooglePlayServicesProvider.class.getCanonicalName() + ".DETECTED_ACTIVITY";
     private static final String DETECTED_ACTIVITY_EXTRA_ID = "activity";
-
+    private final GooglePlayServicesListener googlePlayServicesListener;
     private GoogleApiClient client;
     private Logger logger;
     private OnActivityUpdatedListener listener;
@@ -45,8 +45,16 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
     private boolean stopped = false;
     private PendingIntent pendingIntent;
     private ActivityParams activityParams;
-    private final GooglePlayServicesListener googlePlayServicesListener;
-
+    private BroadcastReceiver activityReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (BROADCAST_INTENT_ACTION.equals(intent.getAction()) && intent.hasExtra(DETECTED_ACTIVITY_EXTRA_ID)) {
+                logger.d("sending new activity");
+                DetectedActivity detectedActivity = intent.getParcelableExtra(DETECTED_ACTIVITY_EXTRA_ID);
+                notifyActivity(detectedActivity);
+            }
+        }
+    };
 
     public ActivityGooglePlayServicesProvider() {
         this(null);
@@ -100,9 +108,9 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
         // TODO wait until the connection is done and retry
         if (client.isConnected()) {
             pendingIntent = PendingIntent.getService(context, 0, new Intent(context, ActivityRecognitionService.class),
-                                                     PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent.FLAG_UPDATE_CURRENT);
             ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(client, params.getInterval(),
-                                                                              pendingIntent).setResultCallback(this);
+                    pendingIntent).setResultCallback(this);
         }
     }
 
@@ -167,38 +175,6 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
         }
     }
 
-
-    private BroadcastReceiver activityReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (BROADCAST_INTENT_ACTION.equals(intent.getAction()) && intent.hasExtra(DETECTED_ACTIVITY_EXTRA_ID)) {
-                logger.d("sending new activity");
-                DetectedActivity detectedActivity = intent.getParcelableExtra(DETECTED_ACTIVITY_EXTRA_ID);
-                notifyActivity(detectedActivity);
-            }
-        }
-    };
-
-    public static class ActivityRecognitionService extends IntentService {
-
-        public ActivityRecognitionService() {
-            super(ActivityRecognitionService.class.getSimpleName());
-        }
-
-        @Override
-        protected void onHandleIntent(Intent intent) {
-            if (ActivityRecognitionResult.hasResult(intent)) {
-                ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
-                DetectedActivity mostProbableActivity = result.getMostProbableActivity();
-
-                // Broadcast an intent containing the activity
-                Intent activityIntent = new Intent(BROADCAST_INTENT_ACTION);
-                activityIntent.putExtra(DETECTED_ACTIVITY_EXTRA_ID, mostProbableActivity);
-                sendBroadcast(activityIntent);
-            }
-        }
-    }
-
     @Override
     public void onResult(@NonNull Status status) {
         if (status.isSuccess()) {
@@ -214,6 +190,23 @@ public class ActivityGooglePlayServicesProvider implements ActivityProvider, Goo
         } else {
             // No recovery. Weep softly or inform the user.
             logger.e("Registering failed: " + status.getStatusMessage());
+        }
+    }
+
+    public static class ActivityRecognitionService extends JobIntentService {
+
+        @Override
+        protected void onHandleWork(@NonNull Intent intent) {
+            if (ActivityRecognitionResult.hasResult(intent)) {
+                ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
+                DetectedActivity mostProbableActivity = result.getMostProbableActivity();
+
+                // Broadcast an intent containing the activity
+                Intent activityIntent = new Intent(BROADCAST_INTENT_ACTION);
+                activityIntent.putExtra(DETECTED_ACTIVITY_EXTRA_ID, mostProbableActivity);
+                sendBroadcast(activityIntent);
+            }
+
         }
     }
 

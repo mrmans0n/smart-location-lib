@@ -2,7 +2,6 @@ package io.nlopez.smartlocation.geofencing.providers;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.JobIntentService;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -48,7 +48,7 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
     private final List<Geofence> geofencesToAdd = Collections.synchronizedList(new ArrayList<Geofence>());
     private final List<String> geofencesToRemove = Collections.synchronizedList(new ArrayList<String>());
-
+    private final GooglePlayServicesListener googlePlayServicesListener;
     private GoogleApiClient client;
     private Logger logger;
     private OnGeofencingTransitionListener listener;
@@ -56,17 +56,35 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
     private Context context;
     private PendingIntent pendingIntent;
     private boolean stopped = false;
-    private final GooglePlayServicesListener googlePlayServicesListener;
+    private BroadcastReceiver geofencingReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (BROADCAST_INTENT_ACTION.equals(intent.getAction()) && intent.hasExtra(GEOFENCES_EXTRA_ID)) {
+                logger.d("Received geofencing event");
+                final int transitionType = intent.getIntExtra(TRANSITION_EXTRA_ID, -1);
+                final List<String> geofencingIds = intent.getStringArrayListExtra(GEOFENCES_EXTRA_ID);
+                for (final String geofenceId : geofencingIds) {
+                    // Get GeofenceModel
+                    GeofenceModel geofenceModel = geofencingStore.get(geofenceId);
+                    if (geofenceModel != null) {
+                        listener.onGeofenceTransition(new TransitionGeofence(geofenceModel, transitionType));
+                    } else {
+                        logger.w("Tried to retrieve geofence " + geofenceId + " but it was not in the store");
+                    }
 
+                }
+            }
+        }
+    };
 
     public GeofencingGooglePlayServicesProvider() {
         this(null);
     }
 
+
     public GeofencingGooglePlayServicesProvider(GooglePlayServicesListener playServicesListener) {
         googlePlayServicesListener = playServicesListener;
     }
-
 
     @Override
     public void init(@NonNull Context context, Logger logger) {
@@ -230,53 +248,6 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
 
     }
 
-    private BroadcastReceiver geofencingReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (BROADCAST_INTENT_ACTION.equals(intent.getAction()) && intent.hasExtra(GEOFENCES_EXTRA_ID)) {
-                logger.d("Received geofencing event");
-                final int transitionType = intent.getIntExtra(TRANSITION_EXTRA_ID, -1);
-                final List<String> geofencingIds = intent.getStringArrayListExtra(GEOFENCES_EXTRA_ID);
-                for (final String geofenceId : geofencingIds) {
-                    // Get GeofenceModel
-                    GeofenceModel geofenceModel = geofencingStore.get(geofenceId);
-                    if (geofenceModel != null) {
-                        listener.onGeofenceTransition(new TransitionGeofence(geofenceModel, transitionType));
-                    } else {
-                        logger.w("Tried to retrieve geofence " + geofenceId + " but it was not in the store");
-                    }
-
-                }
-            }
-        }
-    };
-
-    public static class GeofencingService extends IntentService {
-
-        public GeofencingService() {
-            super(GeofencingService.class.getSimpleName());
-        }
-
-        @Override
-        protected void onHandleIntent(Intent intent) {
-            GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
-            if (geofencingEvent != null && !geofencingEvent.hasError()) {
-                int transition = geofencingEvent.getGeofenceTransition();
-
-                // Broadcast an intent containing the geofencing info
-                Intent geofenceIntent = new Intent(BROADCAST_INTENT_ACTION);
-                geofenceIntent.putExtra(TRANSITION_EXTRA_ID, transition);
-                geofenceIntent.putExtra(LOCATION_EXTRA_ID, geofencingEvent.getTriggeringLocation());
-                ArrayList<String> geofencingIds = new ArrayList<>();
-                for (Geofence geofence : geofencingEvent.getTriggeringGeofences()) {
-                    geofencingIds.add(geofence.getRequestId());
-                }
-                geofenceIntent.putStringArrayListExtra(GEOFENCES_EXTRA_ID, geofencingIds);
-                sendBroadcast(geofenceIntent);
-            }
-        }
-    }
-
     @Override
     public void onResult(@NonNull Status status) {
         if (status.isSuccess()) {
@@ -292,6 +263,28 @@ public class GeofencingGooglePlayServicesProvider implements GeofencingProvider,
         } else {
             // No recovery. Weep softly or inform the user.
             logger.e("Registering failed: " + status.getStatusMessage());
+        }
+    }
+
+    public static class GeofencingService extends JobIntentService {
+
+        @Override
+        protected void onHandleWork(@NonNull Intent intent) {
+            GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
+            if (geofencingEvent != null && !geofencingEvent.hasError()) {
+                int transition = geofencingEvent.getGeofenceTransition();
+
+                // Broadcast an intent containing the geofencing info
+                Intent geofenceIntent = new Intent(BROADCAST_INTENT_ACTION);
+                geofenceIntent.putExtra(TRANSITION_EXTRA_ID, transition);
+                geofenceIntent.putExtra(LOCATION_EXTRA_ID, geofencingEvent.getTriggeringLocation());
+                ArrayList<String> geofencingIds = new ArrayList<>();
+                for (Geofence geofence : geofencingEvent.getTriggeringGeofences()) {
+                    geofencingIds.add(geofence.getRequestId());
+                }
+                geofenceIntent.putStringArrayListExtra(GEOFENCES_EXTRA_ID, geofencingIds);
+                sendBroadcast(geofenceIntent);
+            }
         }
     }
 
