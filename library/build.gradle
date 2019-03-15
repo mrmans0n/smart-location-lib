@@ -2,6 +2,7 @@ buildscript {
     repositories {
         mavenCentral()
         google()
+        jcenter()
     }
 }
 
@@ -12,6 +13,7 @@ group 'io.nlopez.smartlocation'
 
 dependencies {
     repositories {
+        jcenter()
         mavenCentral()
         google()
         maven { url "https://maven.google.com" }
