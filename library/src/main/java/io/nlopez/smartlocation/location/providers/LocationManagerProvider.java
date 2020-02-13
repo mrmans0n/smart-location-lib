@@ -48,18 +48,19 @@ public class LocationManagerProvider implements LocationProvider, LocationListen
 
         Criteria criteria = getProvider(params);
 
-        if (singleUpdate) {
-            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                logger.i("Permission check failed. Please handle it in your app before setting up location");
-                // TODO: Consider calling ActivityCompat#requestPermissions here to request the
-                // missing permissions, and then overriding onRequestPermissionsResult
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            logger.i("Permission check failed. Please handle it in your app before setting up location");
+            // TODO: Consider calling ActivityCompat#requestPermissions here to request the
+            // missing permissions, and then overriding onRequestPermissionsResult
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
 
-                return;
-            }
+            return;
+        }
+        
+        if (singleUpdate) {
             locationManager.requestSingleUpdate(criteria, this, Looper.getMainLooper());
         } else {
             locationManager.requestLocationUpdates(
