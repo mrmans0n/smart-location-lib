@@ -2,8 +2,9 @@ package io.nlopez.smartlocation.sample;
 
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ public class LocationFragment extends Fragment {
     final View.OnClickListener mStartClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mController = SmartLocation.with(getContext())
+            mController = SmartLocation.with(requireContext())
                     .location()
                     .start(mLocationUpdated);
             updateUi(true);

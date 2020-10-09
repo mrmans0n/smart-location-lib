@@ -1,8 +1,10 @@
 package io.nlopez.smartlocation.sample;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.nlopez.smartlocation.utils.Nulls;
 
@@ -17,7 +19,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public Fragment getItem(int position) {
+    public @NotNull Fragment getItem(int position) {
         switch (position) {
             case 0:
                 mLocationFragment = Nulls.orDefault(mLocationFragment, new LocationFragment());
@@ -29,7 +31,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
                 mGeofencingFragment = Nulls.orDefault(mGeofencingFragment, new GeofencingFragment());
                 return mGeofencingFragment;
         }
-        return null;
+        throw new IllegalStateException("This should never happen");
     }
 
     @Override

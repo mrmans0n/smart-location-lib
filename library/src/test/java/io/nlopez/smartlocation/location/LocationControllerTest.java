@@ -3,7 +3,8 @@ package io.nlopez.smartlocation.location;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,13 +16,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
+import org.robolectric.Shadows;
+import org.robolectric.annotation.LooperMode;
 import org.robolectric.shadows.ShadowLooper;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import io.nlopez.smartlocation.BuildConfig;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.common.OnAllProvidersFailed;
 import io.nlopez.smartlocation.common.Provider;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.when;
  * Tests {@link LocationController}
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, manifest = Config.NONE)
+@LooperMode(LooperMode.Mode.PAUSED)
 public class LocationControllerTest {
     private static final int TIMEOUT = 1000;
     @Rule public MockitoRule mMockitoRule = MockitoJUnit.rule();
@@ -51,13 +52,13 @@ public class LocationControllerTest {
     @Mock private LocationProvider mLocationProvider;
     @Captor private ArgumentCaptor<LocationController.TimeoutableLocationUpdateListener> mTimeoutableCaptor;
     private Handler mHandler;
-    private Looper mLooper;
+    private ShadowLooper mLooper;
     private LocationController mController;
 
     @Before
     public void setup() {
-        mLooper = ShadowLooper.getMainLooper();
-        mHandler = new Handler(mLooper);
+        mHandler = new Handler(Looper.getMainLooper());
+        mLooper = Shadows.shadowOf(Looper.getMainLooper());
         when(mLocationProviderFactory.create(any(Context.class), any(Provider.StatusListener.class))).thenReturn(mLocationProvider);
 
         mController = createControllerForProviders(mLocationProviderFactory);
@@ -106,10 +107,8 @@ public class LocationControllerTest {
 
     @Test
     public void testTimeoutableListenerTimesOut() {
-        ShadowLooper.pauseLooper(mLooper);
         mController.start();
-        ShadowLooper.idleMainLooper(TIMEOUT, TimeUnit.MILLISECONDS);
-        ShadowLooper.unPauseLooper(mLooper);
+        mLooper.idleFor(TIMEOUT, TimeUnit.MILLISECONDS);
         // as we only have 1 provider, after it times out it will be released and the next one
         // (null) will be invoked, hence causing the on all providers failed signal.
         verify(mLocationProvider).release();

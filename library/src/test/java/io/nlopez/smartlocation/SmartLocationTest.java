@@ -3,7 +3,8 @@ package io.nlopez.smartlocation;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.location.Location;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.location.GeofencingRequest;
 
@@ -15,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,6 @@ import static org.mockito.Mockito.when;
  * Tests {@link SmartLocation}
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, manifest = Config.NONE)
 public class SmartLocationTest {
     private static final int TIMEOUT = 1000;
     private static final int MAX_RESULTS = 10;

@@ -2,10 +2,10 @@ package io.nlopez.smartlocation.sample;
 
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -58,7 +60,7 @@ public class GeocodingFragment extends Fragment {
     private final View.OnClickListener mDirectSearchClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            SmartLocation.with(getContext())
+            SmartLocation.with(requireContext())
                     .geocoding(new AndroidGeocodingProviderFactory(), new GoogleMapsApiGeocodingProviderFactory(GOOGLE_MAPS_API_KEY))
                     .findLocationByName(
                             mDirectEditText.getText().toString(),
@@ -105,15 +107,15 @@ public class GeocodingFragment extends Fragment {
         public void onClick(View v) {
             // Convert text input to location if possible
             final String latitudeText = mInverseLatitudeText.getText().toString();
-            final Double latitude = Double.parseDouble(latitudeText);
+            final double latitude = Double.parseDouble(latitudeText);
             final String longitudeText = mInverseLongitudeText.getText().toString();
-            final Double longitude = Double.parseDouble(longitudeText);
+            final double longitude = Double.parseDouble(longitudeText);
             final Location location = new Location("test");
             location.setLatitude(latitude);
             location.setLongitude(longitude);
 
             // Inverse geocoding retrieval
-            SmartLocation.with(getContext())
+            SmartLocation.with(requireContext())
                     .geocoding(new AndroidGeocodingProviderFactory(), new GoogleMapsApiGeocodingProviderFactory(GOOGLE_MAPS_API_KEY))
                     .findNameByLocation(location, new ReverseGeocodingUpdatedListener.SimpleReverseGeocodingUpdatedListener() {
                         @Override
@@ -163,7 +165,7 @@ public class GeocodingFragment extends Fragment {
     private final View.OnClickListener mCurrentLocationListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-            final LocationController locationController = SmartLocation.with(getContext())
+            final LocationController locationController = SmartLocation.with(requireContext())
                     .location()
                     .config(LocationProviderParams.BEST_EFFORT_ONCE) // get location only once
                     .timeout(30000) // 30 seconds timeout
@@ -236,7 +238,7 @@ public class GeocodingFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        SmartLocation.with(getContext()).location().stop();
+        SmartLocation.with(requireContext()).location().stop();
     }
 
     @Override

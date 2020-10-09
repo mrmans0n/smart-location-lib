@@ -4,15 +4,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-import io.nlopez.smartlocation.BuildConfig;
 
 /**
  * Tests {@link LocationProviderParams}
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class)
 public class LocationProviderParamsTest {
 
     private static final LocationAccuracy ACCURACY = LocationAccuracy.HIGH;

@@ -1,6 +1,6 @@
 package io.nlopez.smartlocation.geocoding.providers.googlemaps.api;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import io.nlopez.smartlocation.geocoding.providers.googlemaps.model.GeocodeResult;
 import retrofit2.Call;

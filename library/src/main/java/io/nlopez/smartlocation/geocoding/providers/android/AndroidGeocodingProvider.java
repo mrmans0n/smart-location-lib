@@ -3,7 +3,7 @@ package io.nlopez.smartlocation.geocoding.providers.android;
 import android.content.Context;
 import android.location.Geocoder;
 import android.location.Location;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.List;
 import java.util.Locale;

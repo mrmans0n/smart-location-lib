@@ -1,7 +1,7 @@
 package io.nlopez.smartlocation.geocoding;
 
 import android.location.Location;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import io.nlopez.smartlocation.OnGeocodingListener;
 import io.nlopez.smartlocation.OnReverseGeocodingListener;

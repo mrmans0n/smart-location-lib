@@ -1,7 +1,7 @@
 package io.nlopez.smartlocation.location.providers.playservices;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import io.nlopez.smartlocation.common.Provider;
 import io.nlopez.smartlocation.location.LocationPermissionsManager;

@@ -3,16 +3,14 @@ package io.nlopez.smartlocation.location;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
-
-import io.nlopez.smartlocation.BuildConfig;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -20,7 +18,6 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
  * Tests {@link LocationStore}
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, manifest = Config.NONE)
 public class LocationStoreTest {
 
     private static final double DELTA = 1e-7;

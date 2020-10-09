@@ -1,6 +1,6 @@
 package io.nlopez.smartlocation.geocoding.providers.googlemaps.model;
 
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 
 import java.util.List;
 

@@ -2,7 +2,8 @@ package io.nlopez.smartlocation.geocoding.providers.googlemaps.util;
 
 import android.location.Address;
 import android.location.Location;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import java.util.Locale;
 

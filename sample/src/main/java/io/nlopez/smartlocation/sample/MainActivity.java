@@ -1,8 +1,11 @@
 package io.nlopez.smartlocation.sample;
 
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,5 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
         final ViewPager pager = findViewById(R.id.container);
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+        final TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(pager);
     }
 }

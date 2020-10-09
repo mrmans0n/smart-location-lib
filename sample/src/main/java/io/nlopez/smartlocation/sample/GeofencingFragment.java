@@ -6,11 +6,11 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
+
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -25,6 +25,7 @@ import android.widget.RadioButton;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -61,9 +62,9 @@ public class GeofencingFragment extends Fragment {
         public void onClick(View v) {
             // Convert text input to location if possible
             final String latitudeText = mLatitudeText.getText().toString();
-            final Double latitude = Double.parseDouble(latitudeText);
+            final double latitude = Double.parseDouble(latitudeText);
             final String longitudeText = mLongitudeText.getText().toString();
-            final Double longitude = Double.parseDouble(longitudeText);
+            final double longitude = Double.parseDouble(longitudeText);
             final Location location = new Location("test");
             location.setLatitude(latitude);
             location.setLongitude(longitude);
@@ -93,7 +94,7 @@ public class GeofencingFragment extends Fragment {
                     .build();
 
             // Add the geofence
-            SmartLocation.with(getContext())
+            SmartLocation.with(requireContext())
                     .geofencing()
                     .addGeofences(request, getGeofencePendingIntent());
             snackText("Geofence added (valid for 10 minutes, 100 meters diameter, " + getGeofenceTransitionString(transition) + ")");
@@ -103,7 +104,7 @@ public class GeofencingFragment extends Fragment {
     private final View.OnClickListener mCurrentLocationListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-            final LocationController locationController = SmartLocation.with(getContext())
+            final LocationController locationController = SmartLocation.with(requireContext())
                     .location()
                     .config(LocationProviderParams.BEST_EFFORT_ONCE) // get location only once
                     .timeout(30000) // 30 seconds timeout
@@ -193,7 +194,7 @@ public class GeofencingFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        SmartLocation.with(getContext()).location().stop();
+        SmartLocation.with(requireContext()).location().stop();
         reenableButton();
     }
 

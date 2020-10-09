@@ -4,7 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,9 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
-import io.nlopez.smartlocation.BuildConfig;
 import io.nlopez.smartlocation.utils.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +27,6 @@ import static org.mockito.Mockito.when;
  * Tests {@link LocationPermissionsManager}
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, manifest = Config.NONE)
 public class LocationPermissionsManagerTest {
     @Rule public MockitoRule mMockitoRule = MockitoJUnit.rule();
     @Mock private Activity mActivity;

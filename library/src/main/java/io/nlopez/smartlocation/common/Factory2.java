@@ -1,6 +1,6 @@
 package io.nlopez.smartlocation.common;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public interface Factory2<T, ARG1, ARG2> {
     @NonNull

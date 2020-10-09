@@ -4,7 +4,7 @@ import android.location.Address;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Wrapper for addresses for when what we really want most of the time is the Location class instead (ie in a geocoding operation).

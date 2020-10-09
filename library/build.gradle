@@ -15,7 +15,7 @@ dependencies {
         jcenter()
     }
     implementation 'com.google.android.gms:play-services-location:17.1.0'
-    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'org.jetbrains:annotations:20.1.0'
 
     // Test dependencies

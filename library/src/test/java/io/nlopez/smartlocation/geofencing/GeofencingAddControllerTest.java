@@ -2,7 +2,8 @@ package io.nlopez.smartlocation.geofencing;
 
 import android.app.PendingIntent;
 import android.content.Context;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.location.GeofencingRequest;
 
@@ -16,11 +17,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 
-import io.nlopez.smartlocation.BuildConfig;
 import io.nlopez.smartlocation.common.OnAllProvidersFailed;
 import io.nlopez.smartlocation.common.Provider;
 import io.nlopez.smartlocation.utils.Logger;
@@ -33,7 +32,6 @@ import static org.mockito.Mockito.when;
  * Tests {@link GeofencingAddController}
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, manifest = Config.NONE)
 public class GeofencingAddControllerTest {
     @Rule public MockitoRule mMockitoRule = MockitoJUnit.rule();
     @Mock private Context mContext;

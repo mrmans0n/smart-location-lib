@@ -2,7 +2,8 @@ package io.nlopez.smartlocation.geocoding;
 
 import android.content.Context;
 import android.location.Location;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,10 +15,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-import io.nlopez.smartlocation.BuildConfig;
+import java.util.Arrays;
+
 import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.common.OnAllProvidersFailed;
 import io.nlopez.smartlocation.common.Provider;
@@ -31,7 +31,6 @@ import static org.mockito.Mockito.when;
  * Tests {@link GeocodingController}
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, manifest = Config.NONE)
 public class ReverseGeocodingControllerTest {
     private static final int MAX_RESULTS = 10;
     @Rule public MockitoRule mMockitoRule = MockitoJUnit.rule();
