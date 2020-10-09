@@ -1,5 +1,6 @@
 package io.nlopez.smartlocation.sample;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.LocationController;
 import io.nlopez.smartlocation.location.LocationUpdatedListener;
+import io.nlopez.smartlocation.location.providers.playservices.GooglePlayServicesLocationSettingsManager;
 
 public class LocationFragment extends Fragment {
 
