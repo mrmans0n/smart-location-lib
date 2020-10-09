@@ -1,12 +1,9 @@
 language: android
-jdk: oraclejdk8
-sudo: false
-
+dist: trusty
 android:
   components:
     - tools
     - platform-tools
-    - tools
     - build-tools-30.0.0
     - android-30
     - extra-android-m2repository
