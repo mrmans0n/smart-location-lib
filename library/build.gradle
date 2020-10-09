@@ -14,8 +14,8 @@ dependencies {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         jcenter()
     }
-    implementation 'com.google.android.gms:play-services-location:15.0.0'
-    implementation 'com.android.support:support-annotations:27.1.1'
+    implementation 'com.google.android.gms:play-services-location:17.1.0'
+    implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'org.jetbrains:annotations:15.0'
 
     // Test dependencies
@@ -39,8 +39,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
