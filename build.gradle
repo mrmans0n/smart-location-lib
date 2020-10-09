@@ -11,7 +11,7 @@ buildscript {
     // Common dependencies
     ext.robolectricVersion = "4.2.1"
     ext.mockitoVersion = "2.12.0"
-    ext.junitVersion = "4.12"
+    ext.junitVersion = '4.13'
     ext.assertjVersion = "2.6.0"
 
     repositories {
