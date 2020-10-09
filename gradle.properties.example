@@ -7,3 +7,5 @@ signing.keyId=
 signing.password=
 signing.secretKeyRingFile=
 sdk.dir=
+android.useAndroidX=true
+android.enableJetifier=true
