@@ -18,6 +18,9 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'org.jetbrains:annotations:20.1.0'
 
+    // Permissions
+    api 'com.karumi:dexter:6.2.1'
+
     // Test dependencies
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.robolectric:robolectric:4.4"
